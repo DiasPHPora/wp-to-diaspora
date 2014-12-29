@@ -51,6 +51,11 @@ function wp_to_diaspora_post($post_id){
 add_action('publish_post', 'wp_to_diaspora_post', 10, 2);
 
 
+// i18n
+function wp_to_diaspora_plugins_loaded() {
+    load_plugin_textdomain( 'wp_to_diaspora', false, 'wp-to-diaspora/languages' );
+}
+add_action( 'plugins_loaded', 'wp_to_diaspora_plugins_loaded' );
 
 
 /* OPTIONS PAGE */
@@ -65,14 +70,14 @@ function wp_to_diaspora_settings_init(  ) {
 
     add_settings_section(
         'wp_to_diaspora_pluginPage_section', 
-        __( '', 'wp_to_diaspora' ), 
+        _e( '', 'wp_to_diaspora' ), 
         'wp_to_diaspora_settings_section_callback', 
         'pluginPage'
     );
 
     add_settings_field( 
         'pod', 
-        __( 'Diaspora* Pod', 'wp_to_diaspora' ), 
+        _e( 'Diaspora* Pod', 'wp_to_diaspora' ), 
         'wp_to_diaspora_pod_render', 
         'pluginPage', 
         'wp_to_diaspora_pluginPage_section' 
@@ -80,7 +85,7 @@ function wp_to_diaspora_settings_init(  ) {
 
     add_settings_field( 
         'user', 
-        __( 'Username', 'wp_to_diaspora' ), 
+        _e( 'Username', 'wp_to_diaspora' ), 
         'wp_to_diaspora_user_render', 
         'pluginPage', 
         'wp_to_diaspora_pluginPage_section' 
@@ -88,7 +93,7 @@ function wp_to_diaspora_settings_init(  ) {
 
     add_settings_field( 
         'password', 
-        __( 'Password', 'wp_to_diaspora' ), 
+        _e( 'Password', 'wp_to_diaspora' ), 
         'wp_to_diaspora_password_render', 
         'pluginPage', 
         'wp_to_diaspora_pluginPage_section' 
