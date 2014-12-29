@@ -11,3 +11,4 @@ Automatically share WordPress posts on Diaspora*
 - test connection when updating login info
 - image support
 - i18n
+- remove data on deactivation
