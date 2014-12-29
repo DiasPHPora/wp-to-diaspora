@@ -5,7 +5,6 @@ Automatically share WordPress posts on Diaspora*
 
 
 ## TODO
-- generate .pot and translate to pt_BR
 - Admin notice (success or error) after posting
 - not share on diaspora when post was updated
 - availability to choose if a post is going to be shared or not

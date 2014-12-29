@@ -70,14 +70,14 @@ function wp_to_diaspora_settings_init(  ) {
 
     add_settings_section(
         'wp_to_diaspora_pluginPage_section', 
-        _e( '', 'wp_to_diaspora' ), 
+        __( '', 'wp_to_diaspora' ), 
         'wp_to_diaspora_settings_section_callback', 
         'pluginPage'
     );
 
     add_settings_field( 
         'pod', 
-        _e( 'Diaspora* Pod', 'wp_to_diaspora' ), 
+        __( 'Diaspora* Pod', 'wp_to_diaspora' ), 
         'wp_to_diaspora_pod_render', 
         'pluginPage', 
         'wp_to_diaspora_pluginPage_section' 
@@ -85,7 +85,7 @@ function wp_to_diaspora_settings_init(  ) {
 
     add_settings_field( 
         'user', 
-        _e( 'Username', 'wp_to_diaspora' ), 
+        __( 'Username', 'wp_to_diaspora' ), 
         'wp_to_diaspora_user_render', 
         'pluginPage', 
         'wp_to_diaspora_pluginPage_section' 
@@ -93,7 +93,7 @@ function wp_to_diaspora_settings_init(  ) {
 
     add_settings_field( 
         'password', 
-        _e( 'Password', 'wp_to_diaspora' ), 
+        __( 'Password', 'wp_to_diaspora' ), 
         'wp_to_diaspora_password_render', 
         'pluginPage', 
         'wp_to_diaspora_pluginPage_section' 
