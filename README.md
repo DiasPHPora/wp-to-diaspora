@@ -1,4 +1,4 @@
-wordpress-to-diaspora
+wp-to-diaspora
 =====================
 
 Post WordPress posts on Diaspora*
