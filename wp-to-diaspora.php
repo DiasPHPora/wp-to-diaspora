@@ -37,8 +37,8 @@ function wp_to_diaspora_post($post_id){
         $status_message .= 'Full entry on [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
 
         try {
-            $conn = new Diasphp( 'https://' . $options['wp_to_diaspora_pod'] );
-            $conn->login( $options['wp_to_diaspora_user'], $options['wp_to_diaspora_password'] );
+            $conn = new Diasphp( 'https://' . $options['pod'] );
+            $conn->login( $options['user'], $options['password'] );
             $conn->post($status_message, 'wp-to-diaspora');
         } catch (Exception $e) {
             echo '<div class="error">WP to Diaspora*: Send ' . $post->post_title . ' failed: ' . $e->getMessage() . '</div>';
@@ -101,7 +101,7 @@ function wp_to_diaspora_settings_init(  ) {
 function wp_to_diaspora_pod_render(  ) { 
     $options = get_option( 'wp_to_diaspora_settings' );
     ?>
-    <input type='text' name='wp_to_diaspora_settings[wp_to_diaspora_pod]' value='<?php echo $options['wp_to_diaspora_pod']; ?>' placeholder="e.g. joindiaspora.com">
+    <input type='text' name='wp_to_diaspora_settings[pod]' value='<?php echo $options['pod']; ?>' placeholder="e.g. joindiaspora.com" required>
     <?php
 }
 
@@ -109,7 +109,7 @@ function wp_to_diaspora_pod_render(  ) {
 function wp_to_diaspora_user_render(  ) { 
     $options = get_option( 'wp_to_diaspora_settings' );
     ?>
-    <input type='text' name='wp_to_diaspora_settings[wp_to_diaspora_user]' value='<?php echo $options['wp_to_diaspora_user']; ?>' placeholder="username">
+    <input type='text' name='wp_to_diaspora_settings[user]' value='<?php echo $options['user']; ?>' placeholder="username" required>
     <?php
 }
 
@@ -117,7 +117,7 @@ function wp_to_diaspora_user_render(  ) {
 function wp_to_diaspora_password_render(  ) { 
     $options = get_option( 'wp_to_diaspora_settings' );
     ?>
-    <input type='password' name='wp_to_diaspora_settings[wp_to_diaspora_password]' value='<?php echo $options['wp_to_diaspora_password']; ?>' placeholder="password">
+    <input type='password' name='wp_to_diaspora_settings[password]' value='<?php echo $options['password']; ?>' placeholder="password" required>
     <?php
 }
 
