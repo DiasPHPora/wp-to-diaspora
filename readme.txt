@@ -13,22 +13,22 @@ Automatically share WordPress posts on Diaspora*
 
 Automatically share WordPress posts on Diaspora*
 
+**Development**
+https://github.com/gutobenn/wp-to-diaspora
+
 == Installation ==
 
 1. Upload 'wp-to-diaspora' folder to the '/wp-content/plugins/' directory
 2. Go to the options page and set your pod, username and password
-
-== Frequently Asked Questions ==
-
-= Example? =
-
-Answer here
 
 == Screenshots ==
 
 1. Configuration page
 
 == Changelog ==
+
+= 1.1 =
+* First version
 
 = 1.0 =
 * First version

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP to Diaspora*\n"
-"POT-Creation-Date: 2014-12-29 19:05-0300\n"
-"PO-Revision-Date: 2014-12-29 19:07-0300\n"
+"POT-Creation-Date: 2014-12-29 23:26-0300\n"
+"PO-Revision-Date: 2014-12-29 23:26-0300\n"
 "Last-Translator: Augusto Bennemann <gutobenn@gmail.com>\n"
 "Language-Team:  <gutobenn@gmail.com>\n"
 "Language: en\n"
@@ -13,3 +13,32 @@ msgstr ""
 "X-Poedit-Basepath: ../\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: wp-to-diaspora.php:82
+msgid "Diaspora* Pod"
+msgstr ""
+
+#: wp-to-diaspora.php:90
+msgid "Username"
+msgstr ""
+
+#: wp-to-diaspora.php:98
+msgid "Password"
+msgstr ""
+
+#: wp-to-diaspora.php:164
+msgid "Post to Diaspora*"
+msgstr ""
+
+#: wp-to-diaspora.php:196
+msgid "Yes"
+msgstr ""
+
+#: wp-to-diaspora.php:197
+msgid "No"
+msgstr ""
+
+#: wp-to-diaspora.php:264
+msgid "Settings"
+msgstr ""
