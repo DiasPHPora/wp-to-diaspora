@@ -13,4 +13,5 @@ https://wordpress.org/plugins/wp-to-diaspora/
 
 ### Medium priority
 - Test connection after saving login credentials
+- Show an admin notice if plugin isn't configured
 - Remove data on plugin deactivation
