@@ -10,6 +10,7 @@ https://wordpress.org/plugins/wp-to-diaspora/
 ### High priority
 - Include post images when posting to diaspora
 - Admin notice (success or error) after posting
+
 ### Medium priority
 - Test connection after saving login credentials
 - Remove data on plugin deactivation
