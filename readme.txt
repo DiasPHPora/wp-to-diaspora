@@ -24,6 +24,9 @@ https://github.com/gutobenn/wp-to-diaspora
 == Screenshots ==
 
 1. Configuration page
+2. Select to post or not to Diaspora*
+3. Example post on Diaspora*
+4. Example post on WordPress
 
 == Changelog ==
 
