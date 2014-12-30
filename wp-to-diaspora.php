@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WP to Diaspora
+ * Plugin Name: WP to Diaspora*
  * Description: Post WordPress posts on Diaspora*
  * Version: 1.1
  * Author: Augusto Bennemann
@@ -60,6 +60,17 @@ function wp_to_diaspora_plugins_loaded() {
 add_action( 'plugins_loaded', 'wp_to_diaspora_plugins_loaded' );
 
 
+/* 'Settings' link on plugins page */
+function wp_to_diaspora_settings_link ( $links ) {
+    $mylinks = array(
+        '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __('Settings', 'wp_to_diaspora') . '</a>',
+    );
+    return array_merge( $links, $mylinks );
+}
+add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'wp_to_diaspora_settings_link' );
+
+
+
 /* OPTIONS PAGE */
 
 function wp_to_diaspora_add_admin_menu(  ) {
@@ -106,8 +117,10 @@ function wp_to_diaspora_settings_init(  ) {
 function wp_to_diaspora_pod_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' );
     ?>
+
     <input type='text' name='wp_to_diaspora_settings[pod]' value='<?php echo $options['pod']; ?>' placeholder="e.g. joindiaspora.com" required>
-                            <?php
+    
+    <?php
 }
 
 
@@ -115,15 +128,16 @@ function wp_to_diaspora_user_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' );
     ?>
     <input type='text' name='wp_to_diaspora_settings[user]' value='<?php echo $options['user']; ?>' placeholder="username" required>
-                            <?php
+    <?php
 }
 
 
 function wp_to_diaspora_password_render(  ) {
-    $options = get_option( 'wp_to_diaspora_settings' );
-    ?>
+    $options = get_option( 'wp_to_diaspora_settings' ); ?>
+
     <input type='password' name='wp_to_diaspora_settings[password]' value='<?php echo $options['password']; ?>' placeholder="password" required>
-                                <?php
+
+    <?php
 }
 
 
@@ -132,16 +146,15 @@ function wp_to_diaspora_settings_section_callback(  ) {
 }
 
 
-function wp_to_diaspora_options_page(  ) {
-    ?>
+function wp_to_diaspora_options_page(  ) { ?>
     <form action='options.php' method='post'>
 
-                                      <h2>WP to Diaspora*</h2>
+    <h2>WP to Diaspora*</h2>
 
-                                      <?php
-                                      settings_fields( 'pluginPage' );
-    do_settings_sections( 'pluginPage' );
-    submit_button();
+    <?php
+        settings_fields( 'pluginPage' );
+        do_settings_sections( 'pluginPage' );
+        submit_button();
     ?>
 
     </form>
@@ -255,15 +268,4 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
 }
 add_action( 'save_post', 'wp_to_diaspora_save_meta_box_data' );
 
-
-
-
-
-function wp_to_diaspora_settings_link ( $links ) {
- $mylinks = array(
- '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __('Settings', 'wp_to_diaspora') . '</a>',
- );
-return array_merge( $links, $mylinks );
-}
-add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'wp_to_diaspora_settings_link' );
 ?>
