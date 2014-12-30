@@ -28,7 +28,10 @@ https://github.com/gutobenn/wp-to-diaspora
 == Changelog ==
 
 = 1.1 =
-* First version
+* Possibility of posting or not to diaspora*
+* Required fields
+* i18n support
+* pt_BR translation
 
 = 1.0 =
 * First version
