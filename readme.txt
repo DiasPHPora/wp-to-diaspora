@@ -13,6 +13,8 @@ Automatically share WordPress posts on Diaspora*
 
 Automatically share WordPress posts on Diaspora*
 
+**What's Diaspora*?** Diaspora* is a decentralized social network. More about on https://diasporafoundation.org/
+
 **Development**
 https://github.com/gutobenn/wp-to-diaspora
 
