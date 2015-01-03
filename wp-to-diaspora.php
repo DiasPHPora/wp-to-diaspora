@@ -170,17 +170,19 @@ function wp_to_diaspora_settings_section_callback(  ) {
 
 
 function wp_to_diaspora_options_page(  ) { ?>
-    <form action='options.php' method='post'>
+    <div class="wrap">
+        <h2>WP to Diaspora*</h2>
 
-    <h2>WP to Diaspora*</h2>
+        <form action='options.php' method='post'>
 
-    <?php
-        settings_fields( 'pluginPage' );
-        do_settings_sections( 'pluginPage' );
-        submit_button();
-    ?>
+        <?php
+            settings_fields( 'pluginPage' );
+            do_settings_sections( 'pluginPage' );
+            submit_button();
+        ?>
 
-    </form>
+        </form>
+    </div>
     <?php
 }
 add_action( 'admin_menu', 'wp_to_diaspora_add_admin_menu' );
