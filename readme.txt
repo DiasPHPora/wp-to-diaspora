@@ -3,7 +3,7 @@ Contributors: gutobenn
 Tags: diaspora
 Requires at least: 3.6
 Tested up to: 4.1
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,10 @@ Answer
 
 == Changelog ==
 
+= 1.2 =
+* Image support added
+* Posts are now converted to markdown before sharing on diaspora
+
 = 1.1 =
 * Possibility of posting or not to diaspora*
 * Required fields
@@ -46,3 +50,6 @@ Answer
 
 = 1.0 =
 * First version
+
+== Upgrade Notice ==
+Image support and better rendering added.
