@@ -39,7 +39,10 @@ function wp_to_diaspora_post($post_id) {
 
         $status_message = "<p><b><a href='" . get_permalink($post_id) . "'>{$post->post_title}</a></b></p>";
         $status_message .= apply_filters ("the_content", $post->post_content);
-        $status_message .= 'Full entry on [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
+
+        if( $options['fullentrylink'] == 'yes' )
+            $status_message .= __( 'Full entry on', 'wp_to_diaspora' ) . ' [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
+
         $status_markdown = new HTML_To_Markdown($status_message);
         $status_message = $status_markdown->output();
 
@@ -114,6 +117,14 @@ function wp_to_diaspora_settings_init(  ) {
         'pluginPage',
         'wp_to_diaspora_pluginPage_section'
     );
+
+    add_settings_field(
+        'fullentrylink',
+        __( 'Show "Full entry on" link?', 'wp_to_diaspora' ),
+        'wp_to_diaspora_fullentrylink_render',
+        'pluginPage',
+        'wp_to_diaspora_pluginPage_section'
+    );
 }
 
 
@@ -139,6 +150,15 @@ function wp_to_diaspora_password_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' ); ?>
 
     <input type='password' name='wp_to_diaspora_settings[password]' value='<?php echo $options['password']; ?>' placeholder="password" required>
+
+    <?php
+}
+
+function wp_to_diaspora_fullentrylink_render(  ) {
+    $options = get_option( 'wp_to_diaspora_settings' ); ?>
+    
+    <input type="radio" name="wp_to_diaspora_settings[fullentrylink]" value="yes" <?php checked( $options['fullentrylink'], 'yes' );?> ><?php _e( 'Yes', 'wp_to_diaspora' );?><br>
+    <input type="radio" name="wp_to_diaspora_settings[fullentrylink]" value="no" <?php checked( $options['fullentrylink'], 'no' ); ?> ><?php _e( 'No', 'wp_to_diaspora' ); ?><br>
 
     <?php
 }
