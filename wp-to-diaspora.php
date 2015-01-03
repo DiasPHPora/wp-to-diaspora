@@ -26,6 +26,7 @@
 */
 
 require_once dirname (__FILE__) . '/class-diaspora.php';
+require_once dirname( __FILE__) . '/HTML_To_Markdown.php';
 
 
 function wp_to_diaspora_post($post_id) {
@@ -36,9 +37,11 @@ function wp_to_diaspora_post($post_id) {
     if($value == 'yes' && get_post_status($post_id) == "publish" && empty($post->post_password)) {
         $options = get_option( 'wp_to_diaspora_settings' );
 
-        $status_message = "<b><a href='{get_permalink($post_id)}'>{$post->post_title}</a></b>";
+        $status_message = "<p><b><a href='" . get_permalink($post_id) . "'>{$post->post_title}</a></b></p>";
         $status_message .= apply_filters ("the_content", $post->post_content);
         $status_message .= 'Full entry on [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
+        $status_markdown = new HTML_To_Markdown($status_message);
+        $status_message = $status_markdown->output();
 
         try {
             $conn = new Diasphp( 'https://' . $options['pod'] );

@@ -8,7 +8,6 @@ https://wordpress.org/plugins/wp-to-diaspora/
 
 ## TODO
 ### High priority
-- Include post images when posting to diaspora
 - Admin notice (success or error) after posting
 
 ### Medium priority
