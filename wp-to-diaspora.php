@@ -37,6 +37,12 @@ function wp_to_diaspora_post($post_id) {
     if($value == 'yes' && get_post_status($post_id) == "publish" && empty($post->post_password)) {
         $options = get_option( 'wp_to_diaspora_settings' );
 
+        // disallow all filters and then enable only defaults. that's for preventing additional filters from being posted to diaspora
+        remove_all_filters('the_content');
+        foreach ( array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment' ) as $filter )
+            add_filter( 'the_content', $filter );
+        
+
         $status_message = "<p><b><a href='" . get_permalink($post_id) . "'>{$post->post_title}</a></b></p>";
         $status_message .= apply_filters ("the_content", $post->post_content);
 
