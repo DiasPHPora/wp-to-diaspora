@@ -125,6 +125,7 @@ function wp_to_diaspora_settings_init(  ) {
         'pluginPage',
         'wp_to_diaspora_pluginPage_section'
     );
+
 }
 
 
@@ -166,12 +167,40 @@ function wp_to_diaspora_fullentrylink_render(  ) {
 
 function wp_to_diaspora_settings_section_callback(  ) {
     echo __( '', 'wp_to_diaspora' );
+
 }
 
 
 function wp_to_diaspora_options_page(  ) { ?>
     <div class="wrap">
         <h2>WP to Diaspora*</h2>
+
+        <?php              
+            $options = get_option( 'wp_to_diaspora_settings' );
+
+            try {
+                $conn = new Diasphp( 'https://' . $options['pod'] );
+                $conn->login( $options['user'], $options['password'] );
+
+                add_settings_error( 
+                        'wp_to_diaspora_settings',
+                        'wp_to_diaspora_connected',
+                        __("Connected to", 'wp_to_diaspora') . ' ' . $options['pod'],
+                        'updated'
+                );
+
+            } catch (Exception $e) {
+                add_settings_error( 
+                        'wp_to_diaspora_settings',
+                        'wp_to_diaspora_connected',
+                        __("Couldn't connect to Diaspora*: invalid pod, username or password.", 'wp_to_diaspora'),
+                        'error'
+                );
+            }
+
+
+            settings_errors('wp_to_diaspora_settings'); 
+        ?>
 
         <form action='options.php' method='post'>
 
@@ -234,6 +263,8 @@ function wp_to_diaspora_meta_box_callback( $post ) {
     <input type="radio" name="wp_to_diaspora_check" value="yes" <?php checked( $value, 'yes' );?> ><?php _e( 'Yes', 'wp_to_diaspora' );?><br>
     <input type="radio" name="wp_to_diaspora_check" value="no" <?php checked( $value, 'no' ); ?> ><?php _e( 'No', 'wp_to_diaspora' ); ?><br>
 
+
+
     <?php
 }
 
@@ -290,6 +321,7 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
 
     // Update the meta field in the database.
     update_post_meta( $post_id, '_wp_to_diaspora_checked', $my_data );
+
 }
 add_action( 'save_post', 'wp_to_diaspora_save_meta_box_data' );
 

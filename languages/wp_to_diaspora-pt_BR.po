@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP to Diaspora*\n"
-"POT-Creation-Date: 2014-12-29 23:25-0300\n"
-"PO-Revision-Date: 2014-12-29 23:25-0300\n"
+"POT-Creation-Date: 2015-01-03 22:53-0300\n"
+"PO-Revision-Date: 2015-01-03 22:53-0300\n"
 "Last-Translator: Augusto Bennemann <gutobenn@gmail.com>\n"
 "Language-Team:  <gutobenn@gmail.com>\n"
 "Language: pt_BR\n"
@@ -15,30 +15,47 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: wp-to-diaspora.php:82
+#: wp-to-diaspora.php:44
+msgid "Full entry on"
+msgstr "Post completo em"
+
+#: wp-to-diaspora.php:72
+msgid "Settings"
+msgstr "Configurações"
+
+#: wp-to-diaspora.php:99
 msgid "Diaspora* Pod"
 msgstr "Pod do Diaspora*"
 
-#: wp-to-diaspora.php:90
+#: wp-to-diaspora.php:107
 msgid "Username"
 msgstr "Usuário"
 
-#: wp-to-diaspora.php:98
+#: wp-to-diaspora.php:115
 msgid "Password"
 msgstr "Senha"
 
-#: wp-to-diaspora.php:164
-msgid "Post to Diaspora*"
-msgstr "Postar no Diaspora*"
+#: wp-to-diaspora.php:123
+msgid "Show \"Full entry on\" link?"
+msgstr "Exibir link  \"Post completo em\" ?"
 
-#: wp-to-diaspora.php:196
+#: wp-to-diaspora.php:161 wp-to-diaspora.php:263
 msgid "Yes"
 msgstr "Sim"
 
-#: wp-to-diaspora.php:197
+#: wp-to-diaspora.php:162 wp-to-diaspora.php:264
 msgid "No"
 msgstr "Não"
 
-#: wp-to-diaspora.php:264
-msgid "Settings"
-msgstr "Configurações"
+#: wp-to-diaspora.php:188
+msgid "Connected to"
+msgstr "Conectado a"
+
+#: wp-to-diaspora.php:196
+msgid "Couldn't connect to Diaspora*: invalid pod, username or password."
+msgstr ""
+"Não foi possível conectar à Diaspora*: pod, usuário ou senha inválidos."
+
+#: wp-to-diaspora.php:231
+msgid "Post to Diaspora*"
+msgstr "Postar no Diaspora*"
