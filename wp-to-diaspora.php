@@ -25,8 +25,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once dirname (__FILE__) . '/class-diaspora.php';
-require_once dirname( __FILE__) . '/HTML_To_Markdown.php';
+if(!class_exists('Diasphp')) require_once dirname (__FILE__) . '/class-diaspora.php';
+if(!class_exists('HTML_To_Markdown')) require_once dirname( __FILE__) . '/HTML_To_Markdown.php';
 
 
 function wp_to_diaspora_post($post_id) {
