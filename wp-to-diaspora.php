@@ -199,7 +199,7 @@ function wp_to_diaspora_options_page(  ) { ?>
                 add_settings_error( 
                         'wp_to_diaspora_settings',
                         'wp_to_diaspora_connected',
-                        __("Couldn't connect to Diaspora*: invalid pod, username or password.", 'wp_to_diaspora'),
+                        sprintf( __("Couldn't connect to %s: invalid pod, username or password.", 'wp_to_diaspora'), $options['pod']),
                         'error'
                 );
             }
