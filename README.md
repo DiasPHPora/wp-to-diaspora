@@ -11,9 +11,9 @@ Available:
 - Russian -- contributed by Vitalie Ciubotaru (@ciubotaru) - ciubotaru.tk
 - Japanese -- ""
 - Romanian -- ""
-- French -- contributed by Fabián Rodriguez from fabianrodriguez.com
+- French -- contributed by Fabián Rodriguez - fabianrodriguez.com
 
-Partially available (translators! needed)
+Partially available (translators needed!)
 - Spanish
 - German
 - Italian

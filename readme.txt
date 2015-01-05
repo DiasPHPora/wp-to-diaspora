@@ -19,10 +19,10 @@ Diaspora* is a decentralized social network. More about on https://diasporafound
 = i18n =
 Available:
 - Portuguese (Brazil)
-- Russian -- contributed by Vitalie Ciubotaru from ciubotaru.tk
+- Russian -- contributed by Vitalie Ciubotaru - ciubotaru.tk
 - Japanese -- ""
 - Romanian -- ""
-- French -- contributed by Fabián Rodriguez from fabianrodriguez.com
+- French -- contributed by Fabián Rodriguez - fabianrodriguez.com
 
 = Development =
 https://github.com/gutobenn/wp-to-diaspora
@@ -44,6 +44,7 @@ https://github.com/gutobenn/wp-to-diaspora
 = 1.2.2 =
 * New translations: Russian, Japanese, Romanian, French. Partially translated: Spanish, German, Italian (translators needed!)
 * Fixed conflict with plugins that use the_content filters
+* Fixed conflict with plugins using same libraries
 
 = 1.2.1 =
 * Connection test added
@@ -63,5 +64,5 @@ https://github.com/gutobenn/wp-to-diaspora
 * First version
 
 == Upgrade Notice ==
-New translations: Russian, Japanese, Romanian. Partially translated: French, Spanish, German, Italian (need translators!). 
-Minor bugs fixed.
+New translations: Russian, Japanese, Romanian, French. Partially translated: Spanish, German, Italian (need translators!). 
+Some bugs fixed.
