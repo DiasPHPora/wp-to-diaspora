@@ -191,7 +191,7 @@ function wp_to_diaspora_options_page(  ) { ?>
                 add_settings_error( 
                         'wp_to_diaspora_settings',
                         'wp_to_diaspora_connected',
-                        __("Connected to", 'wp_to_diaspora') . ' ' . $options['pod'],
+                        sprintf( __("Connected to %s", 'wp_to_diaspora'), $options['pod']),
                         'updated'
                 );
 
