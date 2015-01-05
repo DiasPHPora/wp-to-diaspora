@@ -1,1 +1,68 @@
-init
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: WP to Diaspora*\n"
+"Language: de\n"
+
+#: wp-to-diaspora.php:50
+msgid "Full entry on"
+msgstr ""
+
+#: wp-to-diaspora.php:78
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: wp-to-diaspora.php:105
+msgid "Diaspora* Pod"
+msgstr "Diaspora* Pod"
+
+#: wp-to-diaspora.php:113
+msgid "Username"
+msgstr "Benutzername"
+
+#: wp-to-diaspora.php:121
+msgid "Password"
+msgstr "Passwort"
+
+#: wp-to-diaspora.php:129
+msgid "Show \"Full entry on\" link?"
+msgstr ""
+
+#: wp-to-diaspora.php:167 wp-to-diaspora.php:269
+msgid "Yes"
+msgstr "Ja"
+
+#: wp-to-diaspora.php:168 wp-to-diaspora.php:270
+msgid "No"
+msgstr "Nein"
+
+#: wp-to-diaspora.php:194
+msgid "Connected to"
+msgstr ""
+
+#: wp-to-diaspora.php:202
+msgid "Couldn't connect to Diaspora*: invalid pod, username or password."
+msgstr ""
+
+#: wp-to-diaspora.php:237
+msgid "Post to Diaspora*"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+#: 
+msgid "WP to Diaspora*"
+msgstr "WP to Diaspora*"
+
+#. Plugin URI of the plugin/theme
+#: 
+msgid "https://github.com/gutobenn/wp-to-diaspora"
+msgstr "https://github.com/gutobenn/wp-to-diaspora"
+
+#. Description of the plugin/theme
+#: 
+msgid "Automatically share WordPress posts on Diaspora*"
+msgstr ""
+
