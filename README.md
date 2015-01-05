@@ -8,13 +8,13 @@ https://wordpress.org/plugins/wp-to-diaspora/
 ### Translations
 Available:
 - Portuguese (Brazil)
-- Russian -- contributed by Vitalie Ciubotaru (@cibotaru) - http://ciubotaru.tk/
+- Russian -- contributed by Vitalie Ciubotaru (@ciubotaru) - ciubotaru.tk
 - Japanese -- ""
 - Romanian -- ""
+- French -- contributed by Fabián Rodriguez from fabianrodriguez.com
 
-Partially available (need translators!)
+Partially available (translators! needed)
 - Spanish
-- French
 - German
 - Italian
 

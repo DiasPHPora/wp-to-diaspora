@@ -22,6 +22,7 @@ Available:
 - Russian -- contributed by Vitalie Ciubotaru from ciubotaru.tk
 - Japanese -- ""
 - Romanian -- ""
+- French -- contributed by Fabián Rodriguez from fabianrodriguez.com
 
 = Development =
 https://github.com/gutobenn/wp-to-diaspora
@@ -41,7 +42,7 @@ https://github.com/gutobenn/wp-to-diaspora
 == Changelog ==
 
 = 1.2.2 =
-* New translations: Russian, Japanese, Romanian. Partially translated: French, Spanish, German, Italian (need translators!)
+* New translations: Russian, Japanese, Romanian, French. Partially translated: Spanish, German, Italian (translators needed!)
 * Fixed conflict with plugins that use the_content filters
 
 = 1.2.1 =
