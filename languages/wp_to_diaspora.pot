@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP to Diaspora* 1.2.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-to-diaspora\n"
-"POT-Creation-Date: 2015-01-05 14:46-0300\n"
-"PO-Revision-Date: 2015-01-05 14:46-0300\n"
+"POT-Creation-Date: 2015-01-05 20:59-0300\n"
+"PO-Revision-Date: 2015-01-05 20:59-0300\n"
 "Last-Translator: Augusto Bennemann <gutobenn@gmail.com>\n"
 "Language-Team:  <gutobenn@gmail.com>\n"
 "Language: en\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 #: wp-to-diaspora.php:50
-msgid "Full entry on"
+msgid "This was originally posted at:"
 msgstr ""
 
 #: wp-to-diaspora.php:78
@@ -38,7 +38,7 @@ msgid "Password"
 msgstr ""
 
 #: wp-to-diaspora.php:129
-msgid "Show \"Full entry on\" link?"
+msgid "Show \"Posted at\" link?"
 msgstr ""
 
 #: wp-to-diaspora.php:167 wp-to-diaspora.php:269

@@ -47,7 +47,7 @@ function wp_to_diaspora_post($post_id) {
         $status_message .= apply_filters ("the_content", $post->post_content);
 
         if( $options['fullentrylink'] == 'yes' )
-            $status_message .= __( 'Full entry on', 'wp_to_diaspora' ) . ' [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
+            $status_message .= __( 'This was originally posted at:', 'wp_to_diaspora' ) . ' [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
 
         $status_markdown = new HTML_To_Markdown($status_message);
         $status_message = $status_markdown->output();
@@ -126,7 +126,7 @@ function wp_to_diaspora_settings_init(  ) {
 
     add_settings_field(
         'fullentrylink',
-        __( 'Show "Full entry on" link?', 'wp_to_diaspora' ),
+        __( 'Show "Posted at" link?', 'wp_to_diaspora' ),
         'wp_to_diaspora_fullentrylink_render',
         'pluginPage',
         'wp_to_diaspora_pluginPage_section'
