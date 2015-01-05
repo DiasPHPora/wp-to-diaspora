@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP to Diaspora*
  * Description: Post WordPress posts on Diaspora*
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Augusto Bennemann
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
  * License: GPL2
@@ -148,7 +148,7 @@ function wp_to_diaspora_pod_render(  ) {
 function wp_to_diaspora_user_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' );
     ?>
-    <input type='text' name='wp_to_diaspora_settings[user]' value='<?php echo $options['user']; ?>' placeholder="username" required>
+    <input type='text' name='wp_to_diaspora_settings[user]' value='<?php echo $options['user']; ?>' placeholder="<?php _e( 'Username', 'wp_to_diaspora' ); ?>" required>
     <?php
 }
 
@@ -156,7 +156,7 @@ function wp_to_diaspora_user_render(  ) {
 function wp_to_diaspora_password_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' ); ?>
 
-    <input type='password' name='wp_to_diaspora_settings[password]' value='<?php echo str_repeat( "*", strlen( $options['password'] ) );?>' placeholder="password" required>
+    <input type='password' name='wp_to_diaspora_settings[password]' value='<?php echo str_repeat( "*", strlen( $options['password'] ) );?>' placeholder="<?php _e( 'Password', 'wp_to_diaspora' ); ?>" required>
 
     <?php
 }

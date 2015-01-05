@@ -3,7 +3,7 @@ Contributors: gutobenn
 Tags: diaspora
 Requires at least: 3.6
 Tested up to: 4.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,9 +13,17 @@ Automatically share WordPress posts on Diaspora*
 
 Automatically share WordPress posts on Diaspora*
 
-**What's Diaspora*?** Diaspora* is a decentralized social network. More about on https://diasporafoundation.org/
+= What's Diaspora*? =
+Diaspora* is a decentralized social network. More about on https://diasporafoundation.org/
 
-**Development**
+= i18n =
+Available:
+- Portuguese (Brazil)
+- Russian -- contributed by Vitalie Ciubotaru from ciubotaru.tk
+- Japanese -- ""
+- Romanian -- ""
+
+= Development =
 https://github.com/gutobenn/wp-to-diaspora
 
 == Installation ==
@@ -31,6 +39,10 @@ https://github.com/gutobenn/wp-to-diaspora
 4. Example post on WordPress
 
 == Changelog ==
+
+= 1.2.2 =
+* New translations: Russian, Japanese, Romanian. Partially translated: French, Spanish, German, Italian (need translators!)
+* Fixed conflict with plugins that use the_content filters
 
 = 1.2.1 =
 * Connection test added
@@ -50,4 +62,5 @@ https://github.com/gutobenn/wp-to-diaspora
 * First version
 
 == Upgrade Notice ==
-Image support, better rendering, connection test ang possibility of disabling 'full entry on' link.
+New translations: Russian, Japanese, Romanian. Partially translated: French, Spanish, German, Italian (need translators!). 
+Minor bugs fixed.
