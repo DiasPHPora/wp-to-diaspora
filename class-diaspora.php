@@ -1,6 +1,6 @@
 <?php
 /**
-* Class from Friendica addon https://github.com/friendica/friendica-addons/tree/master/diaspora  -- Thanks, @annando!
+* Class from https://github.com/Faldrian/WP-diaspora-postwidget/blob/master/wp-diaspora-postwidget/diasphp.php  -- Thanks, Faldrian!
 *
 * Ein fies zusammengehackter PHP-Diaspory-Client, der direkt von diesem abgeschaut ist:
 * https://github.com/Javafant/diaspy/blob/master/client.py
