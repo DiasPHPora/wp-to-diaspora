@@ -96,7 +96,7 @@ function wp_to_diaspora_settings_init(  ) {
     add_settings_section(
         'wp_to_diaspora_pluginPage_section',
         '',
-        'wp_to_diaspora_settings_section_callback',
+        '',
         'pluginPage'
     );
 
@@ -169,13 +169,6 @@ function wp_to_diaspora_fullentrylink_render(  ) {
 
     <?php
 }
-
-
-function wp_to_diaspora_settings_section_callback(  ) {
-    echo __( '', 'wp_to_diaspora' );
-
-}
-
 
 function wp_to_diaspora_options_page(  ) { ?>
     <div class="wrap">
