@@ -95,7 +95,7 @@ function wp_to_diaspora_settings_init(  ) {
 
     add_settings_section(
         'wp_to_diaspora_pluginPage_section',
-        __( '', 'wp_to_diaspora' ),
+        '',
         'wp_to_diaspora_settings_section_callback',
         'pluginPage'
     );
