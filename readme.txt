@@ -18,11 +18,12 @@ Diaspora* is a decentralized social network. More about on https://diasporafound
 
 = i18n =
 Available:
-- Portuguese (Brazil)
-- Russian -- contributed by Vitalie Ciubotaru - ciubotaru.tk
-- Japanese -- ""
-- Romanian -- ""
-- French -- contributed by Fabián Rodriguez - fabianrodriguez.com
+
+* Portuguese (Brazil)
+* Russian -- contributed by Vitalie Ciubotaru - ciubotaru.tk
+* Japanese -- ""
+* Romanian -- ""
+* French -- contributed by Fabián Rodriguez - fabianrodriguez.com
 
 = Development =
 https://github.com/gutobenn/wp-to-diaspora
