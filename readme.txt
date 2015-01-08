@@ -1,7 +1,7 @@
 === WP to Diaspora ===
 Contributors: gutobenn
 Tags: diaspora
-Requires at least: 3.6
+Requires at least: 3.2.1
 Tested up to: 4.1
 Stable tag: 1.2.2
 License: GPLv2 or later
