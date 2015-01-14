@@ -12,7 +12,7 @@ Available:
 - Japanese -- ""
 - Romanian -- ""
 - French -- contributed by [Fabián Rodriguez](http://fabianrodriguez.com)
-- German -- contributed by Katrin
+- German -- contributed by [Katrin Leinweber](http://www.konscience.de)
 
 Partially available (translators needed!)
 - Spanish
