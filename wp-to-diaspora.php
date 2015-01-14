@@ -164,8 +164,7 @@ function wp_to_diaspora_password_render(  ) {
 function wp_to_diaspora_fullentrylink_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' ); ?>
     
-    <input type="radio" name="wp_to_diaspora_settings[fullentrylink]" value="yes" <?php checked( $options['fullentrylink'], 'yes' );?> ><?php _e( 'Yes', 'wp_to_diaspora' );?><br>
-    <input type="radio" name="wp_to_diaspora_settings[fullentrylink]" value="no" <?php checked( $options['fullentrylink'], 'no' ); ?> ><?php _e( 'No', 'wp_to_diaspora' ); ?><br>
+    <input type="checkbox" name="wp_to_diaspora_settings[fullentrylink]" value="yes" <?php checked( $options['fullentrylink'], 'yes' );?> ><?php _e( 'Yes', 'wp_to_diaspora' );?>
 
     <?php
 }
