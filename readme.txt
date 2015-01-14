@@ -3,7 +3,7 @@ Contributors: gutobenn
 Tags: diaspora
 Requires at least: 3.2.1
 Tested up to: 4.1
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,10 +20,11 @@ Diaspora* is a decentralized social network. More about on https://diasporafound
 Available:
 
 * Portuguese (Brazil)
-* Russian -- contributed by Vitalie Ciubotaru - ciubotaru.tk
+* Russian -- contributed by [Vitalie Ciubotaru](http://ciubotaru.tk)
 * Japanese -- ""
 * Romanian -- ""
-* French -- contributed by Fabián Rodriguez - fabianrodriguez.com
+* French -- contributed by [Fabián Rodriguez](http://fabianrodriguez.com)
+* German -- contributed by Katrin
 
 = Development =
 https://github.com/gutobenn/wp-to-diaspora
@@ -41,6 +42,10 @@ https://github.com/gutobenn/wp-to-diaspora
 4. Example post on WordPress
 
 == Changelog ==
+
+= 1.2.3 =
+* Support servers with safe_mode enabled
+* German translation
 
 = 1.2.2 =
 * New translations: Russian, Japanese, Romanian, French. Partially translated: Spanish, German, Italian (translators needed!)
@@ -65,5 +70,4 @@ https://github.com/gutobenn/wp-to-diaspora
 * First version
 
 == Upgrade Notice ==
-New translations: Russian, Japanese, Romanian, French. Partially translated: Spanish, German, Italian (need translators!). 
-Some bugs fixed.
+This version supports servers with safe_mode enabled. If this plugin wasn't posting to diaspora* from your website, please upgrade it.
