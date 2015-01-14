@@ -28,4 +28,3 @@ If you want to contribute a translation, check out https://poeditor.com/join/pro
 - Show an admin notice if plugin isn't configured
 - Remove data on plugin deactivation / Define default data on activation
 - Possibility of choosing diaspora aspect
-- Possibility of choosing 'full post' or 'excerpt'

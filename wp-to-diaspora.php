@@ -32,19 +32,27 @@ if(!class_exists('HTML_To_Markdown')) require_once dirname( __FILE__) . '/HTML_T
 function wp_to_diaspora_post($post_id) {
     $post = get_post($post_id);
     $value = get_post_meta( $post_id, '_wp_to_diaspora_checked', true );
+    $postformat = get_post_meta( $post_id, '_wp_to_diaspora_postformat', true );
 
 
     if($value == 'yes' && get_post_status($post_id) == "publish" && empty($post->post_password)) {
         $options = get_option( 'wp_to_diaspora_settings' );
 
-        // disallow all filters and then enable only defaults. that's for preventing additional filters from being posted to diaspora
-        remove_all_filters('the_content');
-        foreach ( array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment' ) as $filter )
-            add_filter( 'the_content', $filter );
-        
-
         $status_message = "<p><b><a href='" . get_permalink($post_id) . "'>{$post->post_title}</a></b></p>";
-        $status_message .= apply_filters ("the_content", $post->post_content);
+
+        if( $postformat == "full" ){
+
+            // disable all filters and then enable only defaults. that's for preventing additional filters from being posted to diaspora
+            remove_all_filters('the_content');
+            foreach ( array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment' ) as $filter )
+                add_filter( 'the_content', $filter );
+        
+            $status_message .= apply_filters ("the_content", $post->post_content);
+
+        } else {
+            $excerpt = !empty($post->post_excerpt)? $post->post_excerpt : wp_trim_words( $post->post_content, 42, '[...]' );
+            $status_message .= '<p>' . $excerpt . '</p>';
+        }
 
         if( $options['fullentrylink'] == 'yes' )
             $status_message .= __( 'This was originally posted at:', 'wp_to_diaspora' ) . ' [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
@@ -132,6 +140,14 @@ function wp_to_diaspora_settings_init(  ) {
         'wp_to_diaspora_pluginPage_section'
     );
 
+    add_settings_field(
+        'postformat',
+        __( 'Post Format', 'wp_to_diaspora' ),
+        'wp_to_diaspora_postformat_render',
+        'pluginPage',
+        'wp_to_diaspora_pluginPage_section'
+    );
+
 }
 
 
@@ -165,6 +181,15 @@ function wp_to_diaspora_fullentrylink_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' ); ?>
     
     <input type="checkbox" name="wp_to_diaspora_settings[fullentrylink]" value="yes" <?php checked( $options['fullentrylink'], 'yes' );?> ><?php _e( 'Yes', 'wp_to_diaspora' );?>
+
+    <?php
+}
+
+function wp_to_diaspora_postformat_render(  ) {
+    $options = get_option( 'wp_to_diaspora_settings' ); ?>
+    
+    <input type="radio" name="wp_to_diaspora_settings[postformat]" value="full" <?php checked( $options['postformat'], 'full' );?> ><?php _e( 'Full Post', 'wp_to_diaspora' );?><br>
+    <input type="radio" name="wp_to_diaspora_settings[postformat]" value="excerpt" <?php checked( $options['postformat'], 'excerpt' );?> ><?php _e( 'Excerpt', 'wp_to_diaspora' );?>
 
     <?php
 }
