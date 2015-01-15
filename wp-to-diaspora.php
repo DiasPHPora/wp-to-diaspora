@@ -55,7 +55,7 @@ function wp_to_diaspora_post($post_id) {
         }
 
         if( $options['fullentrylink'] == 'yes' )
-            $status_message .= __( 'This was originally posted at:', 'wp_to_diaspora' ) . ' [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
+            $status_message .= __( 'This was originally posted at', 'wp_to_diaspora' ) . ' [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
 
         $status_markdown = new HTML_To_Markdown($status_message);
         $status_message = $status_markdown->output();
