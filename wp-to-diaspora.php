@@ -39,7 +39,7 @@ function wp_to_diaspora_init() {
 add_action( 'init', 'wp_to_diaspora_init' );
 
 
-function wp_to_diaspora_activate(){
+function wp_to_diaspora_upgrade(){
 
     $defaults = array(
             'fullentrylink' => 'yes',
@@ -58,7 +58,7 @@ function wp_to_diaspora_activate(){
     }
 
 }
-register_activation_hook( __FILE__, 'wp_to_diaspora_activate' );
+add_action( 'admin_init', 'wp_to_diaspora_upgrade' );
 
 
 function wp_to_diaspora_post($post_id) {
