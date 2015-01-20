@@ -3,18 +3,18 @@ Contributors: gutobenn
 Tags: diaspora
 Requires at least: 3.2.1
 Tested up to: 4.1
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically share WordPress posts on Diaspora*
+Automatically shares WordPress posts on Diaspora*
 
 == Description ==
 
-Automatically share WordPress posts on Diaspora*
+Automatically shares WordPress posts on Diaspora*
 
-= What's Diaspora*? =
-Diaspora* is a decentralized social network. More about on https://diasporafoundation.org/
+= What's diaspora*? =
+diaspora* is a decentralized social network. More about on https://diasporafoundation.org/
 
 = i18n =
 Available:
@@ -43,6 +43,11 @@ https://github.com/gutobenn/wp-to-diaspora
 
 == Changelog ==
 
+= 1.2.4 =
+* Possibility of choosing to post between 'full post' and 'excerpt'
+* Fixed bug: password overwritten when updating settings
+* Translation term fixed
+
 = 1.2.3 =
 * Support servers with safe_mode enabled
 * German translation
@@ -70,4 +75,4 @@ https://github.com/gutobenn/wp-to-diaspora
 * First version
 
 == Upgrade Notice ==
-This version supports servers with safe_mode enabled. If this plugin wasn't posting to diaspora* from your website, please upgrade it.
+Now it is possible to share only post excerpt on diaspora*.

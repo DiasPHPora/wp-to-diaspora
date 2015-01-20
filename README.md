@@ -26,5 +26,4 @@ If you want to contribute a translation, check out https://poeditor.com/join/pro
 - Admin notice (success or error) after posting with link to it
 - Possibility of editing post title style ([link]<b>[title]</b>[/link] or similar) [what should be default option?]
 - Show an admin notice if plugin isn't configured
-- Remove data on plugin deactivation / Define default data on activation
 - Possibility of choosing diaspora aspect

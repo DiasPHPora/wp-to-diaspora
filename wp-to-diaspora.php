@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP to Diaspora*
  * Description: Post WordPress posts on Diaspora*
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author: Augusto Bennemann
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
  * License: GPL2
