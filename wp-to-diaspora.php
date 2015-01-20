@@ -53,6 +53,7 @@ function wp_to_diaspora_upgrade(){
 
     } elseif ( $options = get_option('wp_to_diaspora_settings') && ($options['version'] != WP_TO_DIASPORA_VERSION) ){
         // Saved options exist, but versions differ. Probably a fresh update. Need to save updated options.
+        $options = get_option('wp_to_diaspora_settings');
         $options = array_merge($defaults, $options);
         update_option('wp_to_diaspora_settings', $options);
     }
