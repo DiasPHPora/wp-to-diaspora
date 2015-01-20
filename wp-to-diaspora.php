@@ -65,15 +65,15 @@ add_action( 'admin_init', 'wp_to_diaspora_upgrade' );
 function wp_to_diaspora_post($post_id) {
     $post = get_post($post_id);
     $value = get_post_meta( $post_id, '_wp_to_diaspora_checked', true );
-    $display = get_post_meta( $post_id, '_wp_to_diaspora_display', true );
+    $options = get_option( 'wp_to_diaspora_settings' );
 
 
     if($value == 'yes' && get_post_status($post_id) == "publish" && empty($post->post_password)) {
-        $options = get_option( 'wp_to_diaspora_settings' );
+        
 
         $status_message = "<p><b><a href='" . get_permalink($post_id) . "'>{$post->post_title}</a></b></p>";
 
-        if( $display == "full" ){
+        if( $options['display'] == "full" ){
 
             // disable all filters and then enable only defaults. that's for preventing additional filters from being posted to diaspora
             remove_all_filters('the_content');
