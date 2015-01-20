@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP to Diaspora*
- * Description: Post WordPress posts on Diaspora*
+ * Description: Automatically shares WordPress posts on Diaspora*
  * Version: 1.2.4
  * Author: Augusto Bennemann
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
@@ -40,7 +40,7 @@ add_action( 'init', 'wp_to_diaspora_init' );
 function wp_to_diaspora_activate(){
 
     if ( get_option( 'wp_to_diaspora_settings' ) === false ) // Nothing yet saved
-        update_option( 'wp_to_diaspora_settings', array('fullentrylink' => 'yes', 'postformat' => 'full') );    
+        update_option( 'wp_to_diaspora_settings', array('fullentrylink' => 'yes', 'display' => 'full') );    
 
 }
 register_activation_hook( __FILE__, 'wp_to_diaspora_activate' );
@@ -49,7 +49,7 @@ register_activation_hook( __FILE__, 'wp_to_diaspora_activate' );
 function wp_to_diaspora_post($post_id) {
     $post = get_post($post_id);
     $value = get_post_meta( $post_id, '_wp_to_diaspora_checked', true );
-    $postformat = get_post_meta( $post_id, '_wp_to_diaspora_postformat', true );
+    $display = get_post_meta( $post_id, '_wp_to_diaspora_display', true );
 
 
     if($value == 'yes' && get_post_status($post_id) == "publish" && empty($post->post_password)) {
@@ -57,7 +57,7 @@ function wp_to_diaspora_post($post_id) {
 
         $status_message = "<p><b><a href='" . get_permalink($post_id) . "'>{$post->post_title}</a></b></p>";
 
-        if( $postformat == "full" ){
+        if( $display == "full" ){
 
             // disable all filters and then enable only defaults. that's for preventing additional filters from being posted to diaspora
             remove_all_filters('the_content');
@@ -158,9 +158,9 @@ function wp_to_diaspora_settings_init(  ) {
     );
 
     add_settings_field(
-        'postformat',
-        __( 'Post Format', 'wp_to_diaspora' ),
-        'wp_to_diaspora_postformat_render',
+        'display',
+        __( 'Display', 'wp_to_diaspora' ),
+        'wp_to_diaspora_display_render',
         'pluginPage',
         'wp_to_diaspora_pluginPage_section'
     );
@@ -202,11 +202,11 @@ function wp_to_diaspora_fullentrylink_render(  ) {
     <?php
 }
 
-function wp_to_diaspora_postformat_render(  ) {
+function wp_to_diaspora_display_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' ); ?>
     
-    <input type="radio" name="wp_to_diaspora_settings[postformat]" value="full" <?php checked( $options['postformat'], 'full' );?> ><?php _e( 'Full Post', 'wp_to_diaspora' );?><br>
-    <input type="radio" name="wp_to_diaspora_settings[postformat]" value="excerpt" <?php checked( $options['postformat'], 'excerpt' );?> ><?php _e( 'Excerpt', 'wp_to_diaspora' );?>
+    <input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $options['display'], 'full' );?> ><?php _e( 'Full Post', 'wp_to_diaspora' );?><br>
+    <input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $options['display'], 'excerpt' );?> ><?php _e( 'Excerpt', 'wp_to_diaspora' );?>
 
     <?php
 }
