@@ -16,7 +16,7 @@ class Diasphp {
 
     function _fetch_token() {
         $ch = curl_init();
-	$max_redirects = 10;
+	    $max_redirects = 10;
 
         curl_setopt ($ch, CURLOPT_URL, $this->pod . "/stream");
         curl_setopt ($ch, CURLOPT_COOKIEFILE, $this->cookiejar);
@@ -37,7 +37,6 @@ class Diasphp {
 			curl_setopt($rcurl, CURLOPT_HEADER, true);
 			curl_setopt($rcurl, CURLOPT_NOBODY, true);
 			curl_setopt($rcurl, CURLOPT_FORBID_REUSE, false);
-			curl_setopt($rcurl, CURLOPT_RETURNTRANSFER, true);
 			do {
 				curl_setopt($rcurl, CURLOPT_URL, $newurl);
 				$header = curl_exec($rcurl);
