@@ -8,7 +8,7 @@
  * License: GPL2
  */
 
-/*  Copyright 2014 Augusto Bennemann (email: gutobenn at gmail.com)
+/*  Copyright 2014-2015 Augusto Bennemann (email: gutobenn at gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+define( 'WP_TO_DIASPORA_VERSION', '1.2.4' );
+
 if(!class_exists('Diasphp')) require_once dirname (__FILE__) . '/class-diaspora.php';
 if(!class_exists('HTML_To_Markdown')) require_once dirname( __FILE__) . '/HTML_To_Markdown.php';
 
@@ -39,8 +41,21 @@ add_action( 'init', 'wp_to_diaspora_init' );
 
 function wp_to_diaspora_activate(){
 
-    if ( get_option( 'wp_to_diaspora_settings' ) === false ) // Nothing yet saved
-        update_option( 'wp_to_diaspora_settings', array('fullentrylink' => 'yes', 'display' => 'full') );    
+    $defaults = array(
+            'fullentrylink' => 'yes',
+            'display' => 'full',
+            'version' => WP_TO_DIASPORA_VERSION
+        );
+
+    if ( !get_option('wp_to_diaspora_settings') ) {
+        // No saved options. Probably a fresh install.
+        add_option('wp_to_diaspora_settings', $defaults);
+
+    } elseif ( $options = get_option('wp_to_diaspora_settings') && ($options['version'] != WP_TO_DIASPORA_VERSION) ){
+        // Saved options exist, but versions differ. Probably a fresh update. Need to save updated options.
+        $options = array_merge($defaults, $options);
+        update_option('wp_to_diaspora_settings', $options);
+    }
 
 }
 register_activation_hook( __FILE__, 'wp_to_diaspora_activate' );
