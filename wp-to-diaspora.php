@@ -96,7 +96,7 @@ function wp_to_diaspora_post($post_id) {
         try {
             $conn = new Diasphp( 'https://' . $options['pod'] );
             $conn->login( $options['user'], $options['password'] );
-            $conn->post($status_message, 'wp-to-diaspora');
+            $conn->post($status_message, 'WP to diaspora*');
         } catch (Exception $e) {
             echo '<div class="error">WP to Diaspora*: Send ' . $post->post_title . ' failed: ' . $e->getMessage() . '</div>';
         }
