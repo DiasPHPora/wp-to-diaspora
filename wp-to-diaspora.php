@@ -241,6 +241,22 @@ add_action( 'admin_menu', 'wp_to_diaspora_add_admin_menu' );
 add_action( 'admin_init', 'wp_to_diaspora_settings_init' );
 
 
+function wp_to_diaspora_update_field_settings( $new_value, $old_value ) {
+    $options = get_option( 'wp_to_diaspora_settings' );
+    
+    if (preg_match('/^(.)\**$/', $new_value['password'])) // if password only contains '*' [it means password wasn't changed]
+        $new_value['password'] = $options['password'];
+
+    return $new_value;
+}
+
+function wp_to_diaspora_init() {
+    add_filter( 'pre_update_option_wp_to_diaspora_settings', 'wp_to_diaspora_update_field_settings', 10, 2 );
+}
+
+add_action( 'init', 'wp_to_diaspora_init' );
+
+
 
 /* META BOX */
 
