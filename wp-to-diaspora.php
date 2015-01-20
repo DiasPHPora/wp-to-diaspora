@@ -29,6 +29,23 @@ if(!class_exists('Diasphp')) require_once dirname (__FILE__) . '/class-diaspora.
 if(!class_exists('HTML_To_Markdown')) require_once dirname( __FILE__) . '/HTML_To_Markdown.php';
 
 
+function wp_to_diaspora_init() {
+
+    add_filter( 'pre_update_option_wp_to_diaspora_settings', 'wp_to_diaspora_update_field_settings', 10, 2 );
+
+}
+add_action( 'init', 'wp_to_diaspora_init' );
+
+
+function wp_to_diaspora_activate(){
+
+    if ( get_option( 'wp_to_diaspora_settings' ) === false ) // Nothing yet saved
+        update_option( 'wp_to_diaspora_settings', array('fullentrylink' => 'yes', 'postformat' => 'full') );    
+
+}
+register_activation_hook( __FILE__, 'wp_to_diaspora_activate' );
+
+
 function wp_to_diaspora_post($post_id) {
     $post = get_post($post_id);
     $value = get_post_meta( $post_id, '_wp_to_diaspora_checked', true );
@@ -250,12 +267,6 @@ function wp_to_diaspora_update_field_settings( $new_value, $old_value ) {
     return $new_value;
 }
 
-function wp_to_diaspora_init() {
-    add_filter( 'pre_update_option_wp_to_diaspora_settings', 'wp_to_diaspora_update_field_settings', 10, 2 );
-}
-
-add_action( 'init', 'wp_to_diaspora_init' );
-
 
 
 /* META BOX */
@@ -363,5 +374,3 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
 
 }
 add_action( 'save_post', 'wp_to_diaspora_save_meta_box_data' );
-
-?>
