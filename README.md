@@ -15,11 +15,6 @@ Available:
 - German -- contributed by [Katrin Leinweber](http://www.konscience.de)
 - Italian -- contributed by [Giulio Roberti](http://www.viroproject.com)
 
-Partially available (translators needed!)
-- Spanish
-- Italian
-- Esperanto
-
 If you want to contribute a translation, check out https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a
 
 
