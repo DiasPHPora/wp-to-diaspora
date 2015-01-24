@@ -25,6 +25,7 @@ Available:
 * Romanian -- ""
 * French -- contributed by [Fabián Rodriguez](http://fabianrodriguez.com)
 * German -- contributed by [Katrin Leinweber](http://www.konscience.de)
+* Italian -- contributed by [Giulio Roberti](http://www.viroproject.com)
 
 = Development =
 https://github.com/gutobenn/wp-to-diaspora
