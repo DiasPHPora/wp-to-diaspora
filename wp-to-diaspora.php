@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP to Diaspora*
  * Description: Automatically shares WordPress posts on Diaspora*
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: Augusto Bennemann
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
  * License: GPL2
@@ -25,7 +25,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define( 'WP_TO_DIASPORA_VERSION', '1.2.4' );
+define( 'WP_TO_DIASPORA_VERSION', '1.2.5' );
 
 if(!class_exists('Diasphp')) require_once dirname (__FILE__) . '/class-diaspora.php';
 if(!class_exists('HTML_To_Markdown')) require_once dirname( __FILE__) . '/HTML_To_Markdown.php';
@@ -42,7 +42,7 @@ add_action( 'init', 'wp_to_diaspora_init' );
 function wp_to_diaspora_upgrade(){
 
     $defaults = array(
-            'fullentrylink' => 'yes',
+            'fullentrylink' => '1',
             'display' => 'full',
             'version' => WP_TO_DIASPORA_VERSION
         );
@@ -50,10 +50,10 @@ function wp_to_diaspora_upgrade(){
     if ( !get_option('wp_to_diaspora_settings') ) {
         // No saved options. Probably a fresh install.
         add_option('wp_to_diaspora_settings', $defaults);
+        echo "entrou no primeiro"; die();
 
-    } elseif ( $options = get_option('wp_to_diaspora_settings') && ($options['version'] != WP_TO_DIASPORA_VERSION) ){
+    } elseif ( ($options = get_option('wp_to_diaspora_settings')) && ($options['version'] != WP_TO_DIASPORA_VERSION) ) {
         // Saved options exist, but versions differ. Probably a fresh update. Need to save updated options.
-        $options = get_option('wp_to_diaspora_settings');
         $options = array_merge($defaults, $options);
         update_option('wp_to_diaspora_settings', $options);
     }
@@ -85,7 +85,7 @@ function wp_to_diaspora_post($post_id) {
             $status_message .= '<p>' . $excerpt . '</p>';
         }
 
-        if( $options['fullentrylink'] == 'yes' )
+        if( $options['fullentrylink'] )
             $status_message .= __( 'This was originally posted at', 'wp_to_diaspora' ) . ' [' . get_permalink($post_id) . '](' . get_permalink($post_id) . '"' . $post->post_title . '")';
 
         $status_markdown = new HTML_To_Markdown($status_message);
@@ -210,8 +210,8 @@ function wp_to_diaspora_password_render(  ) {
 
 function wp_to_diaspora_fullentrylink_render(  ) {
     $options = get_option( 'wp_to_diaspora_settings' ); ?>
-    
-    <input type="checkbox" name="wp_to_diaspora_settings[fullentrylink]" value="yes" <?php checked( $options['fullentrylink'], 'yes' );?> ><?php _e( 'Yes', 'wp_to_diaspora' );?>
+
+    <input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1" <?php checked( $options['fullentrylink'], 1 );?> ><?php _e( 'Yes', 'wp_to_diaspora' );?>
 
     <?php
 }
@@ -277,6 +277,9 @@ function wp_to_diaspora_update_field_settings( $new_value, $old_value ) {
     
     if (preg_match('/^(.)\**$/', $new_value['password'])) // if password only contains '*' [it means password wasn't changed]
         $new_value['password'] = $options['password'];
+
+    if (!isset($new_value['version']))
+        $new_value['version'] = $old_value['version'];
 
     return $new_value;
 }
