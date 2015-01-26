@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP to Diaspora*
  * Description: Automatically shares WordPress posts on Diaspora*
- * Version: 1.2.5
+ * Version: 1.2.5.2
  * Author: Augusto Bennemann
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
  * License: GPL2
@@ -25,7 +25,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define( 'WP_TO_DIASPORA_VERSION', '1.2.5' );
+define( 'WP_TO_DIASPORA_VERSION', '1.2.5.2' );
 
 if(!class_exists('Diasphp')) require_once dirname (__FILE__) . '/class-diaspora.php';
 if(!class_exists('HTML_To_Markdown')) require_once dirname( __FILE__) . '/HTML_To_Markdown.php';
@@ -53,6 +53,7 @@ function wp_to_diaspora_upgrade(){
 
     } elseif ( ($options = get_option('wp_to_diaspora_settings')) && ($options['version'] != WP_TO_DIASPORA_VERSION) ) {
         // Saved options exist, but versions differ. Probably a fresh update. Need to save updated options.
+        unset($options['version']);
         $options = array_merge($defaults, $options);
         update_option('wp_to_diaspora_settings', $options);
     }
