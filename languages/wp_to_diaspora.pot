@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP to Diaspora* 1.2.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-to-diaspora\n"
-"POT-Creation-Date: 2015-01-05 20:59-0300\n"
-"PO-Revision-Date: 2015-01-05 20:59-0300\n"
+"POT-Creation-Date: 2015-01-26 02:02-0300\n"
+"PO-Revision-Date: 2015-01-26 02:02-0300\n"
 "Last-Translator: Augusto Bennemann <gutobenn@gmail.com>\n"
 "Language-Team:  <gutobenn@gmail.com>\n"
 "Language: en\n"
@@ -17,61 +17,60 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: wp-to-diaspora.php:50
-msgid "This was originally posted at:"
+#: wp-to-diaspora.php:89
+msgid "This was originally posted at"
 msgstr ""
 
-#: wp-to-diaspora.php:78
+#: wp-to-diaspora.php:117
 msgid "Settings"
 msgstr ""
 
-#: wp-to-diaspora.php:105
+#: wp-to-diaspora.php:144
 msgid "Diaspora* Pod"
 msgstr ""
 
-#: wp-to-diaspora.php:113 wp-to-diaspora.php:151
+#: wp-to-diaspora.php:152 wp-to-diaspora.php:198
 msgid "Username"
 msgstr ""
 
-#: wp-to-diaspora.php:121 wp-to-diaspora.php:159
+#: wp-to-diaspora.php:160 wp-to-diaspora.php:206
 msgid "Password"
 msgstr ""
 
-#: wp-to-diaspora.php:129
+#: wp-to-diaspora.php:168
 msgid "Show \"Posted at\" link?"
 msgstr ""
 
-#: wp-to-diaspora.php:167 wp-to-diaspora.php:269
+#: wp-to-diaspora.php:176
+msgid "Display"
+msgstr ""
+
+#: wp-to-diaspora.php:214 wp-to-diaspora.php:327
 msgid "Yes"
 msgstr ""
 
-#: wp-to-diaspora.php:168 wp-to-diaspora.php:270
-msgid "No"
+#: wp-to-diaspora.php:222
+msgid "Full Post"
 msgstr ""
 
-#: wp-to-diaspora.php:194
+#: wp-to-diaspora.php:223
+msgid "Excerpt"
+msgstr ""
+
+#: wp-to-diaspora.php:242
 #, php-format
 msgid "Connected to %s"
 msgstr ""
 
-#: wp-to-diaspora.php:202
+#: wp-to-diaspora.php:250
 #, php-format
 msgid "Couldn't connect to %s: invalid pod, username or password."
 msgstr ""
 
-#: wp-to-diaspora.php:237
+#: wp-to-diaspora.php:295
 msgid "Post to Diaspora*"
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-msgid "WP to Diaspora*"
+#: wp-to-diaspora.php:328
+msgid "No"
 msgstr ""
-
-#. Plugin URI of the plugin/theme
-msgid "https://github.com/gutobenn/wp-to-diaspora"
-msgstr ""
-
-#. Description of the plugin/theme
-msgid "Automatically share WordPress posts on Diaspora*"
-msgstr ""
-
