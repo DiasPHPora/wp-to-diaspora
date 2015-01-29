@@ -322,7 +322,7 @@ function wp_to_diaspora_settings_validate( $new_values ) {
   $new_values['fullentrylink'] = isset( $new_values['fullentrylink'] );
 
   if ( ! in_array( $new_values['display'], array( 'full', 'excerpt' ) ) ) {
-    $new_values['effect'] = $options['display'];
+    $new_values['display'] = $options['display'];
   }
 
   // If password only contains '*', the password hasn't been changed.
