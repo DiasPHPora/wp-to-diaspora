@@ -7,140 +7,166 @@
 */
 
 class Diasphp {
-    function __construct($pod) {
-        $this->token_regex = '/content="(.*?)" name="csrf-token/';
+  function __construct( $pod ) {
+    $this->token_regex = '/content="(.*?)" name="csrf-token/';
+    $this->pod = $pod;
+    $this->cookiejar = tempnam( sys_get_temp_dir(), 'cookies' );
+  }
 
-        $this->pod = $pod;
-        $this->cookiejar = tempnam(sys_get_temp_dir(), 'cookies');
-    }
+  /**
+   * Fetch the secure token from Diaspora.
+   * @return string The fetched token.
+   */
+  function _fetch_token() {
+    // Define maximum redirects.
+    $max_redirects = 10;
 
-    function _fetch_token() {
-        $ch = curl_init();
-	    $max_redirects = 10;
+    // Call address via cURL.
+    $ch = curl_init();
 
-        curl_setopt ($ch, CURLOPT_URL, $this->pod . "/stream");
-        curl_setopt ($ch, CURLOPT_COOKIEFILE, $this->cookiejar);
-        curl_setopt ($ch, CURLOPT_COOKIEJAR, $this->cookiejar);
-        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+    // Set up cURL options.
+    curl_setopt( $ch, CURLOPT_URL, $this->pod . '/stream' );
+    curl_setopt( $ch, CURLOPT_COOKIEFILE, $this->cookiejar );
+    curl_setopt( $ch, CURLOPT_COOKIEJAR, $this->cookiejar );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
-	if (ini_get('open_basedir') === '' && ini_get('safe_mode' === 'Off')) {
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_MAXREDIRS, $max_redirects);
-		$output = curl_exec($ch);
-	} else {
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-		$mr = $max_redirects;
-		if ($mr > 0) {
-			$newurl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-	
-			$rcurl = curl_copy_handle($ch);
-			curl_setopt($rcurl, CURLOPT_HEADER, true);
-			curl_setopt($rcurl, CURLOPT_NOBODY, true);
-			curl_setopt($rcurl, CURLOPT_FORBID_REUSE, false);
-			do {
-				curl_setopt($rcurl, CURLOPT_URL, $newurl);
-				$header = curl_exec($rcurl);
-				if (curl_errno($rcurl)) {
-					$code = 0;
-				} else {
-					$code = curl_getinfo($rcurl, CURLINFO_HTTP_CODE);
-					if ($code == 301 || $code == 302) {
-						preg_match('/Location:(.*?)\n/', $header, $matches);
-						$newurl = trim(array_pop($matches));
-					} else {
-						$code = 0;
-					}
-				}
-			} while ($code && --$mr);
-			curl_close($rcurl);
-			if ($mr > 0) {
-				curl_setopt($ch, CURLOPT_URL, $newurl);
-			}
-		}
+    // Check if the call can safely be made.
+    if ( '' === ini_get( 'open_basedir' ) && 'off' === strtolower( ini_get( 'safe_mode' ) ) ) {
+      // Set up cURL options.
+      curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
+      curl_setopt( $ch, CURLOPT_MAXREDIRS, $max_redirects );
+      $output = curl_exec( $ch );
+    } else {
+      curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
+      $mr = $max_redirects;
+      if ( $mr > 0 ) {
+        $newurl = curl_getinfo( $ch, CURLINFO_EFFECTIVE_URL );
 
-		if($mr == 0 && $max_redirects > 0) {
-			$output = false;
-		} else {
-			$output = curl_exec($ch);
-		}
-	}
-        curl_close($ch);
+        $rcurl = curl_copy_handle( $ch );
 
-        // Token holen und zurückgeben
-        preg_match($this->token_regex, $output, $matches);
-        return $matches[1];
-    }
+        // Set up cURL options.
+        curl_setopt( $rcurl, CURLOPT_HEADER, true );
+        curl_setopt( $rcurl, CURLOPT_NOBODY, true );
+        curl_setopt( $rcurl, CURLOPT_FORBID_REUSE, false );
 
-    function login($username, $password) {
-        $datatopost = array(
-            'user[username]' => $username,
-            'user[password]' => $password,
-            'authenticity_token' => $this->_fetch_token()
-        );
+        do {
+          curl_setopt( $rcurl, CURLOPT_URL, $newurl );
+          $header = curl_exec( $rcurl );
+          if ( curl_errno( $rcurl ) ) {
+            $code = 0;
+          } else {
+            $code = curl_getinfo( $rcurl, CURLINFO_HTTP_CODE );
+            if ( 301 == $code || 302 == $code ) {
+              preg_match( '/Location:(.*?)\n/', $header, $matches );
+              $newurl = trim( array_pop( $matches ) );
+            } else {
+              $code = 0;
+            }
+          }
+        } while ( $code && --$mr );
 
-        $poststr = http_build_query($datatopost);
-
-        // Adresse per cURL abrufen
-        $ch = curl_init();
-
-        curl_setopt ($ch, CURLOPT_URL, $this->pod . "/users/sign_in");
-        curl_setopt ($ch, CURLOPT_COOKIEFILE, $this->cookiejar);
-        curl_setopt ($ch, CURLOPT_COOKIEJAR, $this->cookiejar);
-        curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, false);
-        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt ($ch, CURLOPT_POST, true);
-        curl_setopt ($ch, CURLOPT_POSTFIELDS, $poststr);
-
-        curl_exec ($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
-
-        if($info['http_code'] != 302) {
-            throw new Exception('Login error '.print_r($info, true));
+        curl_close( $rcurl );
+        if ( $mr > 0 ) {
+          curl_setopt( $ch, CURLOPT_URL, $newurl );
         }
+      }
 
-        // Das Objekt zurückgeben, damit man Aurufe verketten kann.
-        return $this;
+      $output = ( 0 == $mr && $max_redirects > 0 ) ? false : curl_exec( $ch );
+    }
+    curl_close( $ch );
+
+    // Fetch and return the found token.
+    preg_match( $this->token_regex, $output, $matches );
+    return $matches[1];
+  }
+
+  /**
+   * Log in to Diaspora.
+   * @param  string  $username Username used for login.
+   * @param  string  $password Password used for login.
+   * @return Diasphp           Return this object for method chaining if successfully logged in, else throw an exception.
+   */
+  function login( $username, $password ) {
+    // Set up the login parameters passed to cURL.
+    $datatopost = array(
+      'user[username]' => $username,
+      'user[password]' => $password,
+      'authenticity_token' => $this->_fetch_token()
+    );
+    $poststr = http_build_query( $datatopost );
+
+    // Call address via cURL.
+    $ch = curl_init();
+
+    // Set up cURL options.
+    curl_setopt( $ch, CURLOPT_URL, $this->pod . '/users/sign_in' );
+    curl_setopt( $ch, CURLOPT_COOKIEFILE, $this->cookiejar );
+    curl_setopt( $ch, CURLOPT_COOKIEJAR, $this->cookiejar );
+    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt( $ch, CURLOPT_POST, true );
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $poststr );
+
+    curl_exec( $ch );
+    $info = curl_getinfo( $ch );
+    curl_close( $ch );
+
+    if ( 302 != $info['http_code'] ) {
+      throw new Exception( 'Login error ' . print_r( $info, true ) );
     }
 
-    function post($text, $provider = "diasphp") {
-        // post-daten vorbereiten
-        $datatopost = json_encode(array(
-                'aspect_ids' => 'public',
-                'status_message' => array('text' => $text,
-                            'provider_display_name' => $provider)
-        ));
+    // Return the object to provide method chaining.
+    return $this;
+  }
 
-        // header vorbereiten
-        $headers = array(
-            'Content-Type: application/json',
-            'accept: application/json',
-            'x-csrf-token: '.$this->_fetch_token()
-        );
+  /**
+   * Post to Diaspora.
+   * @param  string $text     The text to post.
+   * @param  string $provider The provider name to display.
+   * @return bool             Return true if successfully posted, else throw an exception.
+   */
+  function post( $text, $provider = 'diasphp' ) {
+    // Prepare post data.
+    $datatopost = json_encode( array(
+      'aspect_ids'     => 'public',
+      'status_message' => array(
+        'text' => $text,
+        'provider_display_name' => $provider
+      )
+    ));
 
-        // Adresse per cURL abrufen
-        $ch = curl_init();
+    // Prepare headers.
+    $headers = array(
+      'Content-Type: application/json',
+      'accept: application/json',
+      'x-csrf-token: ' . $this->_fetch_token()
+    );
 
-        curl_setopt ($ch, CURLOPT_URL, $this->pod . "/status_messages");
-        curl_setopt ($ch, CURLOPT_COOKIEFILE, $this->cookiejar);
-        curl_setopt ($ch, CURLOPT_COOKIEJAR, $this->cookiejar);
-        curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, false);
-        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt ($ch, CURLOPT_POST, true);
-        curl_setopt ($ch, CURLOPT_POSTFIELDS, $datatopost);
-        curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
+    // Call address via cURL.
+    $ch = curl_init();
 
-        curl_exec ($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
+    // Set up cURL options.
+    curl_setopt( $ch, CURLOPT_URL, $this->pod . '/status_messages' );
+    curl_setopt( $ch, CURLOPT_COOKIEFILE, $this->cookiejar );
+    curl_setopt( $ch, CURLOPT_COOKIEJAR, $this->cookiejar );
+    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt( $ch, CURLOPT_POST, true );
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $datatopost );
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 
-        if($info['http_code'] != 201) {
-            throw new Exception('Post error '.print_r($info, true));
-        }
+    curl_exec( $ch );
+    $info = curl_getinfo( $ch );
+    curl_close( $ch );
 
-        // Ende der möglichen Kette, gib mal "true" zurück.
-        return true;
+
+    if ( 201 != $info['http_code'] ) {
+      throw new Exception( 'Post error ' . print_r( $info, true ) );
     }
+
+    // End of chaining, return "true".
+    return true;
+  }
 }
 
 ?>
