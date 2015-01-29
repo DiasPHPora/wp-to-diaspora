@@ -1,5 +1,6 @@
 === WP to Diaspora ===
 Contributors: gutobenn
+Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora
 Requires at least: 3.2.1
 Tested up to: 4.1
