@@ -81,9 +81,11 @@ function wp_to_diaspora_post( $post_id, $post ) {
     if ( 'full' === $options['display'] ) {
       // Disable all filters and then enable only defaults. This prevents additional filters from being posted to Diaspora*.
       remove_all_filters( 'the_content' );
-      foreach ( array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment' ) as $filter ) {
+      foreach ( array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', 'wp_to_diaspora_embed_remove' ) as $filter ) {
         add_filter( 'the_content', $filter );
       }
+      // Extract URLs from [embed] shortcodes
+      add_filter( 'embed_oembed_html', 'wp_to_diaspora_embed_url' , 10, 4 );
 
       $status_message .= apply_filters( 'the_content', $post->post_content );
     } else {
@@ -116,6 +118,18 @@ function wp_to_diaspora_post( $post_id, $post ) {
   }
 }
 add_action( 'save_post', 'wp_to_diaspora_post', 20, 2 );
+
+// Return URL from [embed] shortcode instead of generated iframe
+function wp_to_diaspora_embed_url( $html, $url, $attr, $post_ID ) {
+  return $url;
+}
+
+// Removes '[embed]' and '[/embed]' left by wp_to_diaspora_embed_url
+// TODO: it would be great to fix it using only one filter. It's happening because embed filter is being removed by remove_all_filters('the_content') on wp_to_diaspora_post().
+function wp_to_diaspora_embed_remove( $content ){
+  $content = str_replace( '[embed]', '<p>', $content );
+  return str_replace( '[/embed]', '</p>', $content );
+}
 
 /**
  * Set up i18n.
