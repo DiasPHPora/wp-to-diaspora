@@ -425,12 +425,7 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
   // OK, it's safe for us to save the data now.
 
   // Make sure that we are posting to Diaspora*.
-  if ( ! isset( $_POST['wp_to_diaspora_check'] ) ) {
-    return;
-  }
-
-  // Sanitize user input.
-  $to_diaspora = sanitize_text_field( $_POST['wp_to_diaspora_check'] );
+  $to_diaspora = isset( $_POST['wp_to_diaspora_check'] );
 
   // Update the meta field in the database.
   update_post_meta( $post_id, '_wp_to_diaspora_checked', $to_diaspora );
