@@ -69,7 +69,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
 
   // Make sure we're posting to Diaspora* and the post isn't password protected.
   // TODO: Maybe somebody wants to share a password protected post to a closed aspect.
-  if ( 'yes' == $value && 'publish' == $post->post_status && '' == $post->post_password ) {
+  if ( $value && 'publish' == $post->post_status && '' == $post->post_password ) {
 
     $options = get_option( 'wp_to_diaspora_settings' );
     $status_message = sprintf( '<p><b><a href="%1$s">%2$s</a></b></p>',
@@ -362,7 +362,7 @@ function wp_to_diaspora_settings_validate( $new_values ) {
 function wp_to_diaspora_add_meta_box() {
   add_meta_box(
     'wp_to_diaspora_sectionid',
-    __( 'Post to Diaspora*', 'wp_to_diaspora' ),
+    __( 'WP to Diaspora*', 'wp_to_diaspora' ),
     'wp_to_diaspora_meta_box_callback',
     'post',
     'side',
@@ -392,8 +392,7 @@ function wp_to_diaspora_meta_box_callback( $post ) {
   }
   ?>
 
-  <label><input type="radio" name="wp_to_diaspora_check" value="yes" <?php checked( $value, 'yes' ); ?>><?php _e( 'Yes', 'wp_to_diaspora' );?></label><br />
-  <label><input type="radio" name="wp_to_diaspora_check" value="no" <?php checked( $value, 'no' ); ?>><?php _e( 'No', 'wp_to_diaspora' ); ?></label>
+  <label><input type="checkbox" name="wp_to_diaspora_check" value="1" <?php checked( $value, '1' ); ?>><?php _e( 'Post to Diaspora*', 'wp_to_diaspora' );?></label>
 
   <?php
 }
