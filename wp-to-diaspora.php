@@ -113,9 +113,8 @@ function wp_to_diaspora_post( $post_id, $post ) {
       $conn = new Diasphp( 'https://' . $options['pod'] );
       $conn->login( $options['user'], $options['password'] );
 
-      $posted_via = ( isset( $options['posted_via'] ) && '' !== $options['posted_via'] ) ? $options['posted_via'] : __( 'WP to Diaspora*', 'wp_to_diaspora' );
-
-      $conn->post( $status_message, $posted_via );
+      // NOTE: Leave "via" as a static value, to promote plugin!
+      $conn->post( $status_message, 'WP to Diaspora*' );
     } catch ( Exception $e ) {
       printf( '<div class="error">' . __( 'WP to Diaspora*: Sending "%1$s" failed with error: %2$s' ) . '</div>',
         $post->post_title,
@@ -228,15 +227,6 @@ function wp_to_diaspora_setup_section_cb() {
     'wp_to_diaspora_settings',
     'wp_to_diaspora_setup_section'
   );
-
-  // Posted via entry field.
-  add_settings_field(
-    'posted_via',
-    __( 'Posted via', 'wp_to_diaspora' ),
-    'wp_to_diaspora_posted_via_render',
-    'wp_to_diaspora_settings',
-    'wp_to_diaspora_setup_section'
-  );
 }
 
 /**
@@ -273,17 +263,6 @@ function wp_to_diaspora_password_render() {
   <?php if ( $has_password ) : ?>
     <p class="description"><?php _e( 'If you would like to change the password type a new one. Otherwise leave this blank.', 'wp_to_diaspora' ); ?></p>
   <?php endif;
-}
-
-/**
- * Render the "Posted via" field.
- */
-function wp_to_diaspora_posted_via_render() {
-  $options = get_option( 'wp_to_diaspora_settings' );
-  ?>
-  <input type="text" name="wp_to_diaspora_settings[posted_via]" value="<?php echo $options['posted_via']; ?>" placeholder="<?php _e( 'WP to Diaspora*', 'wp_to_diaspora' ); ?>">
-  <p class="description"><?php _e( 'This text is displayed as the "via" on your Diaspora* post.', 'wp_to_diaspora' ); ?></p>
-  <?php
 }
 
 /**
@@ -409,11 +388,9 @@ function wp_to_diaspora_settings_validate( $new_values ) {
   $options = get_option( 'wp_to_diaspora_settings' );
 
   // Validate all settings before saving to the database.
-  $new_values['pod']        = sanitize_text_field( $new_values['pod'] );
-  $new_values['user']       = sanitize_text_field( $new_values['user'] );
-  $new_values['password']   = sanitize_text_field( $new_values['password'] );
-  //wp_die($new_values['password']);
-  $new_values['posted_via'] = sanitize_text_field( $new_values['posted_via'] );
+  $new_values['pod']      = sanitize_text_field( $new_values['pod'] );
+  $new_values['user']     = sanitize_text_field( $new_values['user'] );
+  $new_values['password'] = sanitize_text_field( $new_values['password'] );
 
   $new_values['post_to_diaspora'] = isset( $new_values['post_to_diaspora'] );
   $new_values['fullentrylink']    = isset( $new_values['fullentrylink'] );
