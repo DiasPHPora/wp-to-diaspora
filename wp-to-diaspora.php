@@ -38,9 +38,10 @@ if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once dirname( __FILE__ ) . '
 function wp_to_diaspora_upgrade(){
   // Define the default options.
   $defaults = array(
-    'fullentrylink' => '1',
-    'display' => 'full',
-    'version' => WP_TO_DIASPORA_VERSION
+    'post_to_diaspora' => true,
+    'fullentrylink'    => true,
+    'display'          => 'full',
+    'version'          => WP_TO_DIASPORA_VERSION
   );
 
   // Get the current options.
@@ -64,12 +65,14 @@ add_action( 'admin_init', 'wp_to_diaspora_upgrade' );
  * @param  integer $post_id ID of the post being saved.
  */
 function wp_to_diaspora_post( $post_id, $post ) {
-  // Get the post object and make sure we're posting to Diaspora*.
-  $value = get_post_meta( $post_id, '_wp_to_diaspora_checked', true );
+  // Get the post's meta data.
+  $post_to_diaspora = ! empty( get_post_meta( $post_id, '_wp_to_diaspora_post_to_diaspora', true ) );
+  $fullentrylink    = ! empty( get_post_meta( $post_id, '_wp_to_diaspora_fullentrylink', true ) );
+  $display          = get_post_meta( $post_id, '_wp_to_diaspora_display', true );
 
   // Make sure we're posting to Diaspora* and the post isn't password protected.
   // TODO: Maybe somebody wants to share a password protected post to a closed aspect.
-  if ( $value && 'publish' == $post->post_status && '' == $post->post_password ) {
+  if ( $post_to_diaspora && 'publish' === $post->post_status && '' === $post->post_password ) {
 
     $options = get_option( 'wp_to_diaspora_settings' );
     $status_message = sprintf( '<p><b><a href="%1$s" title="permalink to %2$s">%2$s</a></b></p>',
@@ -78,7 +81,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
     );
 
     // Post the full post text or just the excerpt?
-    if ( 'full' === $options['display'] ) {
+    if ( 'full' === $display ) {
       // Disable all filters and then enable only defaults. This prevents additional filters from being posted to Diaspora*.
       remove_all_filters( 'the_content' );
       foreach ( array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', 'wp_to_diaspora_embed_remove' ) as $filter ) {
@@ -94,7 +97,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
     }
 
     // Add the original entry link to the post?
-    if ( $options['fullentrylink'] ) {
+    if ( $fullentrylink ) {
       $status_message .= sprintf( '%1$s [%2$s](%2$s "%3$s")',
         __( 'Originally posted at:', 'wp_to_diaspora' ),
         get_permalink( $post_id ),
@@ -106,9 +109,13 @@ function wp_to_diaspora_post( $post_id, $post ) {
     $status_message  = $status_markdown->output();
 
     try {
+      // Initialise a new connection to post to Diaspora*.
       $conn = new Diasphp( 'https://' . $options['pod'] );
       $conn->login( $options['user'], $options['password'] );
-      $conn->post( $status_message, 'WP to Diaspora*' );
+
+      $posted_via = ( isset( $options['posted_via'] ) && '' !== $options['posted_via'] ) ? $options['posted_via'] : __( 'WP to Diaspora*', 'wp_to_diaspora' );
+
+      $conn->post( $status_message, $posted_via );
     } catch ( Exception $e ) {
       printf( '<div class="error">' . __( 'WP to Diaspora*: Sending "%1$s" failed with error: %2$s' ) . '</div>',
         $post->post_title,
@@ -171,13 +178,29 @@ add_action( 'admin_menu', 'wp_to_diaspora_add_admin_menu' );
 function wp_to_diaspora_settings_init() {
   register_setting( 'wp_to_diaspora_settings', 'wp_to_diaspora_settings', 'wp_to_diaspora_settings_validate' );
 
-  // Add a general section that contains all the fields.
+  // Add a "Setup" section that contains the Pod domain, Username and Password.
   add_settings_section(
-      'wp_to_diaspora_general_section',
-      '',
-      '',
-      'wp_to_diaspora_settings'
+    'wp_to_diaspora_setup_section',
+    __( 'Diaspora* Setup', 'wp_to_diaspora' ),
+    'wp_to_diaspora_setup_section_cb',
+    'wp_to_diaspora_settings'
   );
+
+  // Add a "Defaults" section that contains the Pod domain, Username and Password.
+  add_settings_section(
+    'wp_to_diaspora_defaults_section',
+    __( 'Posting Defaults', 'wp_to_diaspora' ),
+    'wp_to_diaspora_defaults_section_cb',
+    'wp_to_diaspora_settings'
+  );
+}
+add_action( 'admin_init', 'wp_to_diaspora_settings_init' );
+
+/**
+ * Callback for the "Setup" section.
+ */
+function wp_to_diaspora_setup_section_cb() {
+  _e( 'Set up the connection to your Diaspora* account.', 'wp_to_diaspora' );
 
   // Pod entry field.
   add_settings_field(
@@ -185,7 +208,7 @@ function wp_to_diaspora_settings_init() {
     __( 'Diaspora* Pod', 'wp_to_diaspora' ),
     'wp_to_diaspora_pod_render',
     'wp_to_diaspora_settings',
-    'wp_to_diaspora_general_section'
+    'wp_to_diaspora_setup_section'
   );
 
   // Username entry field.
@@ -194,7 +217,7 @@ function wp_to_diaspora_settings_init() {
     __( 'Username', 'wp_to_diaspora' ),
     'wp_to_diaspora_user_render',
     'wp_to_diaspora_settings',
-    'wp_to_diaspora_general_section'
+    'wp_to_diaspora_setup_section'
   );
 
   // Password entry field.
@@ -203,28 +226,18 @@ function wp_to_diaspora_settings_init() {
     __( 'Password', 'wp_to_diaspora' ),
     'wp_to_diaspora_password_render',
     'wp_to_diaspora_settings',
-    'wp_to_diaspora_general_section'
+    'wp_to_diaspora_setup_section'
   );
 
-  // Full entry link checkbox.
+  // Posted via entry field.
   add_settings_field(
-    'fullentrylink',
-    __( 'Show "Posted at" link?', 'wp_to_diaspora' ),
-    'wp_to_diaspora_fullentrylink_render',
+    'posted_via',
+    __( 'Posted via', 'wp_to_diaspora' ),
+    'wp_to_diaspora_posted_via_render',
     'wp_to_diaspora_settings',
-    'wp_to_diaspora_general_section'
-  );
-
-  // Full text or excerpt radio buttons.
-  add_settings_field(
-    'display',
-    __( 'Display', 'wp_to_diaspora' ),
-    'wp_to_diaspora_display_render',
-    'wp_to_diaspora_settings',
-    'wp_to_diaspora_general_section'
+    'wp_to_diaspora_setup_section'
   );
 }
-add_action( 'admin_init', 'wp_to_diaspora_settings_init' );
 
 /**
  * Render the "Pod" field.
@@ -232,7 +245,7 @@ add_action( 'admin_init', 'wp_to_diaspora_settings_init' );
 function wp_to_diaspora_pod_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
-  <input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo $options['pod']; ?>" placeholder="e.g. joindiaspora.com" required>
+  https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo $options['pod']; ?>" placeholder="e.g. joindiaspora.com" required>
   <?php
 }
 
@@ -251,8 +264,69 @@ function wp_to_diaspora_user_render() {
  */
 function wp_to_diaspora_password_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
+  // Special case if we already have a password.
+  $has_password = ( isset( $options['password'] ) && '' !== $options['password'] );
+  $placeholder  = ( $has_password ) ? __( 'Password already set', 'wp_to_diaspora' ) : __( 'Password', 'wp_to_diaspora' );
+  $required     = ( $has_password ) ? '' : 'required';
   ?>
-  <input type="password" name="wp_to_diaspora_settings[password]" value="****************" placeholder="<?php _e( 'Password', 'wp_to_diaspora' ); ?>" required>
+  <input type="password" name="wp_to_diaspora_settings[password]" value="" placeholder="<?php echo $placeholder; ?>" <?php echo $required; ?>>
+  <?php if ( $has_password ) : ?>
+    <p class="description"><?php _e( 'If you would like to change the password type a new one. Otherwise leave this blank.', 'wp_to_diaspora' ); ?></p>
+  <?php endif;
+}
+
+/**
+ * Render the "Posted via" field.
+ */
+function wp_to_diaspora_posted_via_render() {
+  $options = get_option( 'wp_to_diaspora_settings' );
+  ?>
+  <input type="text" name="wp_to_diaspora_settings[posted_via]" value="<?php echo $options['posted_via']; ?>" placeholder="<?php _e( 'WP to Diaspora*', 'wp_to_diaspora' ); ?>">
+  <p class="description"><?php _e( 'This text is displayed as the "via" on your Diaspora* post.', 'wp_to_diaspora' ); ?></p>
+  <?php
+}
+
+/**
+ * Callback for the "Defaults" section.
+ */
+function wp_to_diaspora_defaults_section_cb() {
+  _e( 'Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the "WP to Diaspora*" meta box, which gets displayed in your post edit screen.', 'wp_to_diaspora' );
+
+  // Post to Diaspora* checkbox.
+  add_settings_field(
+    'post_to_diaspora',
+    __( 'Post to Diaspora*', 'wp_to_diaspora' ),
+    'wp_to_diaspora_post_to_diaspora_render',
+    'wp_to_diaspora_settings',
+    'wp_to_diaspora_defaults_section'
+  );
+
+  // Full entry link checkbox.
+  add_settings_field(
+    'fullentrylink',
+    __( 'Show "Posted at" link?', 'wp_to_diaspora' ),
+    'wp_to_diaspora_fullentrylink_render',
+    'wp_to_diaspora_settings',
+    'wp_to_diaspora_defaults_section'
+  );
+
+  // Full text or excerpt radio buttons.
+  add_settings_field(
+    'display',
+    __( 'Display', 'wp_to_diaspora' ),
+    'wp_to_diaspora_display_render',
+    'wp_to_diaspora_settings',
+    'wp_to_diaspora_defaults_section'
+  );
+}
+
+/**
+ * Render the "Post to Diaspora*" checkbox.
+ */
+function wp_to_diaspora_post_to_diaspora_render() {
+  $options = get_option( 'wp_to_diaspora_settings' );
+  ?>
+  <label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_settings[post_to_diaspora]" value="1" <?php checked( $options['post_to_diaspora'] ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
   <?php
 }
 
@@ -263,6 +337,7 @@ function wp_to_diaspora_fullentrylink_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
   <label><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1" <?php checked( $options['fullentrylink'], 1 ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
+  <p class="description"><?php _e( 'Include a link back to your original post.', 'wp_to_diaspora' ); ?></p>
   <?php
 }
 
@@ -333,15 +408,22 @@ function wp_to_diaspora_options_page() {
 function wp_to_diaspora_settings_validate( $new_values ) {
   $options = get_option( 'wp_to_diaspora_settings' );
 
-  $new_values['fullentrylink'] = isset( $new_values['fullentrylink'] );
+  // Validate all settings before saving to the database.
+  $new_values['pod']        = sanitize_text_field( $new_values['pod'] );
+  $new_values['user']       = sanitize_text_field( $new_values['user'] );
+  $new_values['password']   = sanitize_text_field( $new_values['password'] );
+  //wp_die($new_values['password']);
+  $new_values['posted_via'] = sanitize_text_field( $new_values['posted_via'] );
+
+  $new_values['post_to_diaspora'] = isset( $new_values['post_to_diaspora'] );
+  $new_values['fullentrylink']    = isset( $new_values['fullentrylink'] );
 
   if ( ! in_array( $new_values['display'], array( 'full', 'excerpt' ) ) ) {
     $new_values['display'] = $options['display'];
   }
 
-  // If password only contains '*', the password hasn't been changed.
-  // TODO: What if the user's password is only asterisks, e.g. '********'?
-  if ( preg_match( '/^(.)\**$/', $new_values['password'] ) ) {
+  // If password is blank, it hasn't been changed.
+  if ( '' === $new_values['password'] ) {
     $new_values['password'] = $options['password'];
   }
 
@@ -380,20 +462,25 @@ function wp_to_diaspora_meta_box_callback( $post ) {
   // Add an nonce field so we can check for it later.
   wp_nonce_field( 'wp_to_diaspora_meta_box', 'wp_to_diaspora_meta_box_nonce' );
 
-  /*
-   * Use get_post_meta() to retrieve an existing value
-   * from the database and use the value for the form.
-   */
-  $value = get_post_meta( $post->ID, '_wp_to_diaspora_checked', true );
+  // Get the default values to use, but give priority to the meta data already set.
+  $defaults = get_option( 'wp_to_diaspora_settings' );
+  $post_meta = get_post_meta( $post->ID );
 
-  // If already posted, do not post again.
-  if ( 'publish' === get_post_status( $post->ID ) ) {
-    $value = 'no';
+  // Go through all default values and use the default if no meta data is set yet.
+  foreach ( $defaults as $key => $default ) {
+    $key = '_wp_to_diaspora_' . $key;
+    $post_meta[ $key ] = ( isset( $post_meta[ $key ] ) && is_array( $post_meta[ $key ] ) ) ? array_shift( $post_meta[ $key ] ) : $default;
   }
+
+  // If this post is already published, don't post again to Diaspora*.
+  $post_to_diaspora = ( 'publish' === get_post_status( $post->ID ) ) ? false : $post_meta['_wp_to_diaspora_post_to_diaspora'];
   ?>
+  <label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_post_to_diaspora" value="1" <?php checked( $post_to_diaspora ); ?>><?php _e( 'Post to Diaspora*', 'wp_to_diaspora' ); ?></label><br />
 
-  <label><input type="checkbox" name="wp_to_diaspora_check" value="1" <?php checked( $value, '1' ); ?>><?php _e( 'Post to Diaspora*', 'wp_to_diaspora' );?></label>
+  <label title="<?php _e( 'Include a link back to your original post.', 'wp_to_diaspora' ); ?>"><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_fullentrylink" value="1" <?php checked( $post_meta['_wp_to_diaspora_fullentrylink'] ); ?>><?php _e( 'Show "Posted at" link?', 'wp_to_diaspora' ); ?></label><br />
 
+  <label><input type="radio" name="wp_to_diaspora_display" value="full" <?php checked( $post_meta['_wp_to_diaspora_display'], 'full' ); ?>><?php _e( 'Full Post', 'wp_to_diaspora' ); ?></label>&nbsp;
+  <label><input type="radio" name="wp_to_diaspora_display" value="excerpt" <?php checked( $post_meta['_wp_to_diaspora_display'], 'excerpt' ); ?>><?php _e( 'Excerpt', 'wp_to_diaspora' ); ?></label>
   <?php
 }
 
@@ -424,10 +511,9 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
 
   // OK, it's safe for us to save the data now.
 
-  // Make sure that we are posting to Diaspora*.
-  $to_diaspora = isset( $_POST['wp_to_diaspora_check'] );
-
-  // Update the meta field in the database.
-  update_post_meta( $post_id, '_wp_to_diaspora_checked', $to_diaspora );
+  // Update the meta fields in the database.
+  update_post_meta( $post_id, '_wp_to_diaspora_post_to_diaspora', isset( $_POST['wp_to_diaspora_post_to_diaspora'] ) );
+  update_post_meta( $post_id, '_wp_to_diaspora_fullentrylink',    isset( $_POST['wp_to_diaspora_fullentrylink'] ) );
+  update_post_meta( $post_id, '_wp_to_diaspora_display',          sanitize_text_field( $_POST['wp_to_diaspora_display'] ) );
 }
 add_action( 'save_post', 'wp_to_diaspora_save_meta_box_data', 10 );
