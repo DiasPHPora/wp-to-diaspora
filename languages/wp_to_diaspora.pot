@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP to Diaspora* 1.2.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-to-diaspora\n"
-"POT-Creation-Date: 2015-01-26 02:02-0300\n"
-"PO-Revision-Date: 2015-01-26 02:02-0300\n"
+"POT-Creation-Date: 2015-02-04 20:57-0300\n"
+"PO-Revision-Date: 2015-02-04 20:58-0300\n"
 "Last-Translator: Augusto Bennemann <gutobenn@gmail.com>\n"
 "Language-Team:  <gutobenn@gmail.com>\n"
 "Language: en\n"
@@ -17,60 +17,98 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: wp-to-diaspora.php:89
-msgid "This was originally posted at"
+#: wp-to-diaspora.php:102
+msgid "Originally posted at:"
 msgstr ""
 
-#: wp-to-diaspora.php:117
+#: wp-to-diaspora.php:119
+#, php-format
+msgid "WP to Diaspora*: Sending \"%1$s\" failed with error: %2$s"
+msgstr ""
+
+#: wp-to-diaspora.php:157
 msgid "Settings"
 msgstr ""
 
-#: wp-to-diaspora.php:144
+#: wp-to-diaspora.php:183
+msgid "Diaspora* Setup"
+msgstr ""
+
+#: wp-to-diaspora.php:191
+msgid "Posting Defaults"
+msgstr ""
+
+#: wp-to-diaspora.php:202
+msgid "Set up the connection to your Diaspora* account."
+msgstr ""
+
+#: wp-to-diaspora.php:207
 msgid "Diaspora* Pod"
 msgstr ""
 
-#: wp-to-diaspora.php:152 wp-to-diaspora.php:198
+#: wp-to-diaspora.php:216 wp-to-diaspora.php:248
 msgid "Username"
 msgstr ""
 
-#: wp-to-diaspora.php:160 wp-to-diaspora.php:206
+#: wp-to-diaspora.php:225 wp-to-diaspora.php:259
 msgid "Password"
 msgstr ""
 
-#: wp-to-diaspora.php:168
+#: wp-to-diaspora.php:259
+msgid "Password already set"
+msgstr ""
+
+#: wp-to-diaspora.php:264
+msgid ""
+"If you would like to change the password type a new one. Otherwise leave "
+"this blank."
+msgstr ""
+
+#: wp-to-diaspora.php:272
+msgid ""
+"Define the default posting behaviour for all posts here. These settings can "
+"be modified for each post individually, by changing the values in the \"WP "
+"to Diaspora*\" meta box, which gets displayed in your post edit screen."
+msgstr ""
+
+#: wp-to-diaspora.php:277 wp-to-diaspora.php:455
+msgid "Post to Diaspora*"
+msgstr ""
+
+#: wp-to-diaspora.php:286 wp-to-diaspora.php:457
 msgid "Show \"Posted at\" link?"
 msgstr ""
 
-#: wp-to-diaspora.php:176
+#: wp-to-diaspora.php:295
 msgid "Display"
 msgstr ""
 
-#: wp-to-diaspora.php:214 wp-to-diaspora.php:327
+#: wp-to-diaspora.php:308 wp-to-diaspora.php:318
 msgid "Yes"
 msgstr ""
 
-#: wp-to-diaspora.php:222
+#: wp-to-diaspora.php:319 wp-to-diaspora.php:457
+msgid "Include a link back to your original post."
+msgstr ""
+
+#: wp-to-diaspora.php:329 wp-to-diaspora.php:459
 msgid "Full Post"
 msgstr ""
 
-#: wp-to-diaspora.php:223
+#: wp-to-diaspora.php:330 wp-to-diaspora.php:460
 msgid "Excerpt"
 msgstr ""
 
-#: wp-to-diaspora.php:242
+#: wp-to-diaspora.php:353
 #, php-format
 msgid "Connected to %s"
 msgstr ""
 
-#: wp-to-diaspora.php:250
+#: wp-to-diaspora.php:361
 #, php-format
-msgid "Couldn't connect to %s: invalid pod, username or password."
+msgid "Couldn't connect to %s: Invalid pod, username or password."
 msgstr ""
 
-#: wp-to-diaspora.php:295
-msgid "Post to Diaspora*"
-msgstr ""
-
-#: wp-to-diaspora.php:328
-msgid "No"
+#: wp-to-diaspora.php:424
+msgid "WP to Diaspora*"
 msgstr ""
