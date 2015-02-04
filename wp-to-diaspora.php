@@ -72,7 +72,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
   if ( $value && 'publish' == $post->post_status && '' == $post->post_password ) {
 
     $options = get_option( 'wp_to_diaspora_settings' );
-    $status_message = sprintf( '<p><b><a href="%1$s">%2$s</a></b></p>',
+    $status_message = sprintf( '<p><b><a href="%1$s" title="permalink to %2$s">%2$s</a></b></p>',
       get_permalink( $post_id ),
       $post->post_title
     );
