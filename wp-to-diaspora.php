@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP to Diaspora*
  * Description: Automatically shares WordPress posts on Diaspora*
- * Version: 1.2.5.2
+ * Version: 1.2.6
  * Author: Augusto Bennemann (gutobenn), Armando Lüscher (noplanman)
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
  * License: GPL2
@@ -25,7 +25,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define( 'WP_TO_DIASPORA_VERSION', '1.2.5.2' );
+define( 'WP_TO_DIASPORA_VERSION', '1.2.6' );
 
 // Include necessary classes.
 if ( ! class_exists( 'Diasphp' ) )          require_once dirname( __FILE__ ) . '/class-diaspora.php';
