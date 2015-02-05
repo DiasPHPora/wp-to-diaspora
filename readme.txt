@@ -1,5 +1,5 @@
 === WP to Diaspora ===
-Contributors: gutobenn
+Contributors: gutobenn, noplanman
 Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora
 Requires at least: 3.2.1
@@ -85,4 +85,4 @@ https://github.com/gutobenn/wp-to-diaspora
 * First version
 
 == Upgrade Notice ==
-Now it is possible to share only post excerpt on diaspora*.
+Videos support and global configuration added. Many interface improvements and a few bug fixes.

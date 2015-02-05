@@ -3,7 +3,8 @@
  * Plugin Name: WP to Diaspora*
  * Description: Automatically shares WordPress posts on Diaspora*
  * Version: 1.2.6
- * Author: Augusto Bennemann (gutobenn), Armando Lüscher (noplanman)
+ * Author: Augusto Bennemann
+ * Author URI: https://github.com/gutobenn
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
  * License: GPL2
  */
