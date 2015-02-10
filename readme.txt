@@ -27,6 +27,7 @@ Available:
 * French -- contributed by [Fabián Rodriguez](http://fabianrodriguez.com)
 * German -- contributed by [Katrin Leinweber](http://www.konscience.de)
 * Italian -- contributed by [Giulio Roberti](http://www.viroproject.com)
+* Spanish -- contributed by [Armando Lüscher](http://www.noplanman.ch)
 
 = Development =
 https://github.com/gutobenn/wp-to-diaspora
@@ -47,6 +48,7 @@ https://github.com/gutobenn/wp-to-diaspora
 
 = 1.2.6 =
 * Added support for videos embedding using [embed] shortcode
+* Hashtags support
 * Posting Defaults configuration
 * Interface improvements and some bug fixed
 

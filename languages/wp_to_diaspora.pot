@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP to Diaspora* 1.2.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-to-diaspora\n"
-"POT-Creation-Date: 2015-02-04 20:57-0300\n"
-"PO-Revision-Date: 2015-02-04 20:58-0300\n"
+"POT-Creation-Date: 2015-02-10 13:56-0300\n"
+"PO-Revision-Date: 2015-02-10 13:56-0300\n"
 "Last-Translator: Augusto Bennemann <gutobenn@gmail.com>\n"
 "Language-Team:  <gutobenn@gmail.com>\n"
 "Language: en\n"
@@ -17,98 +17,150 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: wp-to-diaspora.php:102
+#: wp-to-diaspora.php:136
 msgid "Originally posted at:"
 msgstr ""
 
-#: wp-to-diaspora.php:119
+#: wp-to-diaspora.php:153
 #, php-format
 msgid "WP to Diaspora*: Sending \"%1$s\" failed with error: %2$s"
 msgstr ""
 
-#: wp-to-diaspora.php:157
+#: wp-to-diaspora.php:191
 msgid "Settings"
 msgstr ""
 
-#: wp-to-diaspora.php:183
+#: wp-to-diaspora.php:231
 msgid "Diaspora* Setup"
 msgstr ""
 
-#: wp-to-diaspora.php:191
+#: wp-to-diaspora.php:239
 msgid "Posting Defaults"
 msgstr ""
 
-#: wp-to-diaspora.php:202
+#: wp-to-diaspora.php:250
 msgid "Set up the connection to your Diaspora* account."
 msgstr ""
 
-#: wp-to-diaspora.php:207
+#: wp-to-diaspora.php:255
 msgid "Diaspora* Pod"
 msgstr ""
 
-#: wp-to-diaspora.php:216 wp-to-diaspora.php:248
+#: wp-to-diaspora.php:264 wp-to-diaspora.php:296
 msgid "Username"
 msgstr ""
 
-#: wp-to-diaspora.php:225 wp-to-diaspora.php:259
+#: wp-to-diaspora.php:273 wp-to-diaspora.php:307
 msgid "Password"
 msgstr ""
 
-#: wp-to-diaspora.php:259
+#: wp-to-diaspora.php:307
 msgid "Password already set"
 msgstr ""
 
-#: wp-to-diaspora.php:264
+#: wp-to-diaspora.php:312
 msgid ""
 "If you would like to change the password type a new one. Otherwise leave "
 "this blank."
 msgstr ""
 
-#: wp-to-diaspora.php:272
+#: wp-to-diaspora.php:320
 msgid ""
 "Define the default posting behaviour for all posts here. These settings can "
 "be modified for each post individually, by changing the values in the \"WP "
 "to Diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr ""
 
-#: wp-to-diaspora.php:277 wp-to-diaspora.php:455
+#: wp-to-diaspora.php:325 wp-to-diaspora.php:565
 msgid "Post to Diaspora*"
 msgstr ""
 
-#: wp-to-diaspora.php:286 wp-to-diaspora.php:457
+#: wp-to-diaspora.php:334 wp-to-diaspora.php:566
 msgid "Show \"Posted at\" link?"
 msgstr ""
 
-#: wp-to-diaspora.php:295
+#: wp-to-diaspora.php:343
 msgid "Display"
 msgstr ""
 
-#: wp-to-diaspora.php:308 wp-to-diaspora.php:318
+#: wp-to-diaspora.php:352 wp-to-diaspora.php:575
+msgid "Tags to post"
+msgstr ""
+
+#: wp-to-diaspora.php:361 wp-to-diaspora.php:425
+msgid "Global tags"
+msgstr ""
+
+#: wp-to-diaspora.php:374 wp-to-diaspora.php:384
 msgid "Yes"
 msgstr ""
 
-#: wp-to-diaspora.php:319 wp-to-diaspora.php:457
+#: wp-to-diaspora.php:385 wp-to-diaspora.php:566
 msgid "Include a link back to your original post."
 msgstr ""
 
-#: wp-to-diaspora.php:329 wp-to-diaspora.php:459
+#: wp-to-diaspora.php:395 wp-to-diaspora.php:569
 msgid "Full Post"
 msgstr ""
 
-#: wp-to-diaspora.php:330 wp-to-diaspora.php:460
+#: wp-to-diaspora.php:396 wp-to-diaspora.php:570
 msgid "Excerpt"
 msgstr ""
 
-#: wp-to-diaspora.php:353
+#: wp-to-diaspora.php:408 wp-to-diaspora.php:577
+msgid "All tags (global, custom and post tags)"
+msgstr ""
+
+#: wp-to-diaspora.php:409 wp-to-diaspora.php:578
+msgid "Global and custom tags"
+msgstr ""
+
+#: wp-to-diaspora.php:410 wp-to-diaspora.php:579
+msgid "Global and post tags"
+msgstr ""
+
+#: wp-to-diaspora.php:411 wp-to-diaspora.php:580
+msgid "Only custom tags"
+msgstr ""
+
+#: wp-to-diaspora.php:412 wp-to-diaspora.php:581
+msgid "Only post tags"
+msgstr ""
+
+#: wp-to-diaspora.php:413 wp-to-diaspora.php:582
+msgid "No tags"
+msgstr ""
+
+#: wp-to-diaspora.php:415 wp-to-diaspora.php:574
+msgid "Choose which tags should be posted to Diaspora*."
+msgstr ""
+
+#: wp-to-diaspora.php:426
+msgid "Custom tags to add to all posts being posted to Diaspora*."
+msgstr ""
+
+#: wp-to-diaspora.php:426 wp-to-diaspora.php:592
+msgid "Separate tags with commas."
+msgstr ""
+
+#: wp-to-diaspora.php:449
 #, php-format
 msgid "Connected to %s"
 msgstr ""
 
-#: wp-to-diaspora.php:361
+#: wp-to-diaspora.php:457
 #, php-format
 msgid "Couldn't connect to %s: Invalid pod, username or password."
 msgstr ""
 
-#: wp-to-diaspora.php:424
+#: wp-to-diaspora.php:532
 msgid "WP to Diaspora*"
+msgstr ""
+
+#: wp-to-diaspora.php:588
+msgid "Custom tags to add to this post when it's posted to Diaspora*."
+msgstr ""
+
+#: wp-to-diaspora.php:589
+msgid "Custom tags"
 msgstr ""
