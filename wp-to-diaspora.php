@@ -67,13 +67,18 @@ add_action( 'admin_init', 'wp_to_diaspora_upgrade' );
  */
 function wp_to_diaspora_post( $post_id, $post ) {
   // Get the post's meta data.
-  $post_to_diaspora = ! empty( get_post_meta( $post_id, '_wp_to_diaspora_post_to_diaspora', true ) );
-  $fullentrylink    = ! empty( get_post_meta( $post_id, '_wp_to_diaspora_fullentrylink', true ) );
-  $display          = get_post_meta( $post_id, '_wp_to_diaspora_display', true );
+  $wp_to_diaspora_meta = get_post_meta( $post_id, '_wp_to_diaspora', true );
+  $post_to_diaspora = ! empty( $wp_to_diaspora_meta['post_to_diaspora'] );
 
   // Make sure we're posting to Diaspora* and the post isn't password protected.
   // TODO: Maybe somebody wants to share a password protected post to a closed aspect.
   if ( $post_to_diaspora && 'publish' === $post->post_status && '' === $post->post_password ) {
+
+    // Get the rest of the meta data.
+    $fullentrylink = ! empty( $wp_to_diaspora_meta['fullentrylink'] );
+    $display       = $wp_to_diaspora_meta['display'];
+    $tags_to_post  = $wp_to_diaspora_meta['tags_to_post'];
+    $custom_tags   = $wp_to_diaspora_meta['custom_tags'];
 
     $options = get_option( 'wp_to_diaspora_settings' );
     $status_message = sprintf( '<p><b><a href="%1$s" title="permalink to %2$s">%2$s</a></b></p>',
@@ -88,13 +93,41 @@ function wp_to_diaspora_post( $post_id, $post ) {
       foreach ( array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', 'wp_to_diaspora_embed_remove' ) as $filter ) {
         add_filter( 'the_content', $filter );
       }
-      // Extract URLs from [embed] shortcodes
+      // Extract URLs from [embed] shortcodes.
       add_filter( 'embed_oembed_html', 'wp_to_diaspora_embed_url' , 10, 4 );
 
       $status_message .= apply_filters( 'the_content', $post->post_content );
     } else {
       $excerpt = ( '' != $post->post_excerpt ) ? $post->post_excerpt : wp_trim_words( $post->post_content, 42, '[...]' );
       $status_message .= '<p>' . $excerpt . '</p>';
+    }
+
+    // Add any Diaspora* tags?
+    if ( false === strpos( $tags_to_post, 'n' ) ) {
+      // The Diaspora* tags to add to the post.
+      $diaspora_tags = array();
+      // Add global tags?
+      if ( false !== strpos( $tags_to_post, 'g' ) ) {
+        $diaspora_tags += array_flip( explode( ',', $options['global_tags'] ) );
+      }
+      // Add custom tags?
+      if ( false !== strpos( $tags_to_post, 'c' ) ) {
+        $diaspora_tags += array_flip( explode( ',', $custom_tags ) );
+      }
+      // Add post tags?
+      if ( false !== strpos( $tags_to_post, 'p' ) ) {
+        // Clean up the post tags.
+        $diaspora_tags += array_flip( wp_get_post_tags( $post_id, array( 'fields' => 'slugs' ) ) );
+      }
+
+      // Get all the tags and list them all nicely in a row.
+      $diaspora_tags_clean = array();
+      foreach ( array_map( 'wp_to_diaspora_clean_tag', array_keys( $diaspora_tags ) ) as $tag ) {
+        $diaspora_tags_clean[] = '#' . $tag;
+      }
+
+      // Add all the found tags.
+      $status_message .= implode( ' ', $diaspora_tags_clean ) . '<br />';
     }
 
     // Add the original entry link to the post?
@@ -161,6 +194,20 @@ function wp_to_diaspora_settings_link ( $links ) {
 }
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_to_diaspora_settings_link' );
 
+
+/* HELPERS */
+
+/**
+ * Clean up the passed tag. Keep only alphanumeric, hyphen and unserscore characters.
+ *
+ * @todo   What about eastern characters? (chinese, indian, etc.)
+ *
+ * @param  string $tag Tag to be cleaned.
+ * @return string      The clean tag.
+ */
+function wp_to_diaspora_clean_tag( $tag ) {
+  return preg_replace( '/[^\w $\-]/u', '', str_replace( ' ', '-', trim( $tag ) ) );
+}
 
 /* OPTIONS PAGE */
 
@@ -298,6 +345,24 @@ function wp_to_diaspora_defaults_section_cb() {
     'wp_to_diaspora_settings',
     'wp_to_diaspora_defaults_section'
   );
+
+  // Tags to post dropdown.
+  add_settings_field(
+    'tags_to_post',
+    __( 'Tags to post', 'wp_to_diaspora' ),
+    'wp_to_diaspora_tags_to_post_render',
+    'wp_to_diaspora_settings',
+    'wp_to_diaspora_defaults_section'
+  );
+
+  // Global tags field.
+  add_settings_field(
+    'global_tags',
+    __( 'Global tags', 'wp_to_diaspora' ),
+    'wp_to_diaspora_global_tags_render',
+    'wp_to_diaspora_settings',
+    'wp_to_diaspora_defaults_section'
+  );
 }
 
 /**
@@ -329,6 +394,36 @@ function wp_to_diaspora_display_render() {
   ?>
   <label><input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $options['display'], 'full' ); ?>><?php _e( 'Full Post', 'wp_to_diaspora' ); ?></label><br />
   <label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $options['display'], 'excerpt' ); ?>><?php _e( 'Excerpt', 'wp_to_diaspora' ); ?></label>
+  <?php
+}
+
+/**
+ * Render the "Tags to post" field.
+ */
+function wp_to_diaspora_tags_to_post_render() {
+  $options = get_option( 'wp_to_diaspora_settings' );
+  $tags_to_post = isset( $options['tags_to_post'] ) ? $options['tags_to_post'] : 'gc';
+  ?>
+  <select id="tags_to_post" name="wp_to_diaspora_settings[tags_to_post]">
+    <option value="gcp" <?php selected( $tags_to_post, 'gcp' ); ?>><?php _e( 'All tags (global, custom and post tags)', 'wp_to_diaspora' ); ?></option>
+    <option value="gc" <?php  selected( $tags_to_post, 'gc' );  ?>><?php _e( 'Global and custom tags', 'wp_to_diaspora' ); ?></option>
+    <option value="gp" <?php  selected( $tags_to_post, 'gp' );  ?>><?php _e( 'Global and post tags', 'wp_to_diaspora' ); ?></option>
+    <option value="c" <?php   selected( $tags_to_post, 'c' );   ?>><?php _e( 'Only custom tags', 'wp_to_diaspora' ); ?></option>
+    <option value="p" <?php   selected( $tags_to_post, 'p' );   ?>><?php _e( 'Only post tags', 'wp_to_diaspora' ); ?></option>
+    <option value="n" <?php   selected( $tags_to_post, 'n' );   ?>><?php _e( 'No tags', 'wp_to_diaspora' ); ?></option>
+  </select>
+  <p class="description"><?php _e( 'Choose which tags should be posted to Diaspora*.', 'wp_to_diaspora' ); ?></p>
+  <?php
+}
+
+/**
+ * Render the "Global tags" field.
+ */
+function wp_to_diaspora_global_tags_render() {
+  $options = get_option( 'wp_to_diaspora_settings' );
+  ?>
+  <input type="text" name="wp_to_diaspora_settings[global_tags]" value="<?php echo $options['global_tags']; ?>" placeholder="<?php _e( 'Global tags', 'wp_to_diaspora' ); ?>" class="regular-text">
+  <p class="description"><?php _e( 'Custom tags to add to all posts being posted to Diaspora*.', 'wp_to_diaspora' ); ?> <?php _e( 'Separate tags with commas.', 'wp_to_diaspora' ); ?></p>
   <?php
 }
 
@@ -393,6 +488,11 @@ function wp_to_diaspora_settings_validate( $new_values ) {
   $new_values['user']     = sanitize_text_field( $new_values['user'] );
   $new_values['password'] = sanitize_text_field( $new_values['password'] );
 
+  // If password is blank, it hasn't been changed.
+  if ( '' === $new_values['password'] ) {
+    $new_values['password'] = $options['password'];
+  }
+
   $new_values['post_to_diaspora'] = isset( $new_values['post_to_diaspora'] );
   $new_values['fullentrylink']    = isset( $new_values['fullentrylink'] );
 
@@ -400,10 +500,17 @@ function wp_to_diaspora_settings_validate( $new_values ) {
     $new_values['display'] = $options['display'];
   }
 
-  // If password is blank, it hasn't been changed.
-  if ( '' === $new_values['password'] ) {
-    $new_values['password'] = $options['password'];
+  if ( ! in_array( $new_values['tags_to_post'], array( 'gcp', 'gc', 'gp', 'c', 'p', 'n' ) ) ) {
+    $new_values['tags_to_post'] = $options['tags_to_post'];
   }
+
+  $global_tags_clean = array();
+  foreach ( explode( ',', $new_values['global_tags'] ) as $tag ) {
+    // Keep only alphanumeric, dash and unserscore.
+    // TODO: What about eastern characters?
+    $global_tags_clean[] = wp_to_diaspora_clean_tag( $tag );
+  }
+  $new_values['global_tags'] = implode( ', ', array_unique( $global_tags_clean ) );
 
   // TODO: What for? The version will never be set, as $new_values['version'] is always null.
   if ( ! isset( $new_values['version'] ) ) {
@@ -441,24 +548,50 @@ function wp_to_diaspora_meta_box_callback( $post ) {
   wp_nonce_field( 'wp_to_diaspora_meta_box', 'wp_to_diaspora_meta_box_nonce' );
 
   // Get the default values to use, but give priority to the meta data already set.
-  $defaults = get_option( 'wp_to_diaspora_settings' );
-  $post_meta = get_post_meta( $post->ID );
+  $defaults  = get_option( 'wp_to_diaspora_settings' );
+  $post_meta = get_post_meta( $post->ID, '_wp_to_diaspora', true );
 
   // Go through all default values and use the default if no meta data is set yet.
   foreach ( $defaults as $key => $default ) {
-    $key = '_wp_to_diaspora_' . $key;
-    $post_meta[ $key ] = ( isset( $post_meta[ $key ] ) && is_array( $post_meta[ $key ] ) ) ? array_shift( $post_meta[ $key ] ) : $default;
+    $post_meta[ $key ] = ( isset( $post_meta[ $key ] ) ) ? $post_meta[ $key ] : $default;
   }
 
   // If this post is already published, don't post again to Diaspora*.
   $post_to_diaspora = ( 'publish' === get_post_status( $post->ID ) ) ? false : $post_meta['_wp_to_diaspora_post_to_diaspora'];
+  $display      = $post_meta['display'];
+  $tags_to_post = $post_meta['tags_to_post'];
+  $custom_tags  = $post_meta['custom_tags'];
   ?>
-  <label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_post_to_diaspora" value="1" <?php checked( $post_to_diaspora ); ?>><?php _e( 'Post to Diaspora*', 'wp_to_diaspora' ); ?></label><br />
+  <p><label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_post_to_diaspora" value="1" <?php checked( $post_to_diaspora ); ?>><?php _e( 'Post to Diaspora*', 'wp_to_diaspora' ); ?></label></p>
+  <p><label title="<?php _e( 'Include a link back to your original post.', 'wp_to_diaspora' ); ?>"><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_fullentrylink" value="1" <?php checked( $post_meta['fullentrylink'] ); ?>><?php _e( 'Show "Posted at" link?', 'wp_to_diaspora' ); ?></label></p>
 
-  <label title="<?php _e( 'Include a link back to your original post.', 'wp_to_diaspora' ); ?>"><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_fullentrylink" value="1" <?php checked( $post_meta['_wp_to_diaspora_fullentrylink'] ); ?>><?php _e( 'Show "Posted at" link?', 'wp_to_diaspora' ); ?></label><br />
+  <p>
+    <label><input type="radio" name="wp_to_diaspora_display" value="full" <?php checked( $display, 'full' ); ?>><?php _e( 'Full Post', 'wp_to_diaspora' ); ?></label>&nbsp;
+    <label><input type="radio" name="wp_to_diaspora_display" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php _e( 'Excerpt', 'wp_to_diaspora' ); ?></label>
+  </p>
 
-  <label><input type="radio" name="wp_to_diaspora_display" value="full" <?php checked( $post_meta['_wp_to_diaspora_display'], 'full' ); ?>><?php _e( 'Full Post', 'wp_to_diaspora' ); ?></label>&nbsp;
-  <label><input type="radio" name="wp_to_diaspora_display" value="excerpt" <?php checked( $post_meta['_wp_to_diaspora_display'], 'excerpt' ); ?>><?php _e( 'Excerpt', 'wp_to_diaspora' ); ?></label>
+  <p>
+    <label title="<?php _e( 'Choose which tags should be posted to Diaspora*.', 'wp_to_diaspora' ); ?>">
+      <?php _e( 'Tags to post', 'wp_to_diaspora' ); ?>
+      <select id="tags_to_post" name="wp_to_diaspora_tags_to_post">
+        <option value="gcp" <?php selected( $tags_to_post, 'gcp' ); ?>><?php _e( 'All tags (global, custom and post tags)', 'wp_to_diaspora' ); ?></option>
+        <option value="gc" <?php  selected( $tags_to_post, 'gc' );  ?>><?php _e( 'Global and custom tags', 'wp_to_diaspora' ); ?></option>
+        <option value="gp" <?php  selected( $tags_to_post, 'gp' );  ?>><?php _e( 'Global and post tags', 'wp_to_diaspora' ); ?></option>
+        <option value="c" <?php   selected( $tags_to_post, 'c' );   ?>><?php _e( 'Only custom tags', 'wp_to_diaspora' ); ?></option>
+        <option value="p" <?php   selected( $tags_to_post, 'p' );   ?>><?php _e( 'Only post tags', 'wp_to_diaspora' ); ?></option>
+        <option value="n" <?php   selected( $tags_to_post, 'n' );   ?>><?php _e( 'No tags', 'wp_to_diaspora' ); ?></option>
+      </select>
+    </label>
+  </p>
+
+  <p>
+    <label title="<?php _e( 'Custom tags to add to this post when it\'s posted to Diaspora*.', 'wp_to_diaspora' ); ?>">
+      <?php _e( 'Custom tags', 'wp_to_diaspora' ); ?>
+      <input type="text" name="wp_to_diaspora_custom_tags" value="<?php echo $custom_tags; ?>" class="widefat">
+    </label>
+    <p class="howto"><?php _e( 'Separate tags with commas.', 'wp_to_diaspora' ); ?></p>
+  </p>
+
   <?php
 }
 
@@ -489,9 +622,24 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
 
   // OK, it's safe for us to save the data now.
 
-  // Update the meta fields in the database.
-  update_post_meta( $post_id, '_wp_to_diaspora_post_to_diaspora', isset( $_POST['wp_to_diaspora_post_to_diaspora'] ) );
-  update_post_meta( $post_id, '_wp_to_diaspora_fullentrylink',    isset( $_POST['wp_to_diaspora_fullentrylink'] ) );
-  update_post_meta( $post_id, '_wp_to_diaspora_display',          sanitize_text_field( $_POST['wp_to_diaspora_display'] ) );
+  // Meta data to save.
+  $wp_to_diaspora_meta = array(
+    'post_to_diaspora' => isset( $_POST['wp_to_diaspora_post_to_diaspora'] ),
+    'fullentrylink'    => isset( $_POST['wp_to_diaspora_fullentrylink'] ),
+    'display'          => sanitize_text_field( $_POST['wp_to_diaspora_display'] )
+  );
+
+  if ( in_array( $_POST['wp_to_diaspora_tags_to_post'], array( 'gcp', 'gc', 'gp', 'c', 'p', 'n' ) ) ) {
+    $wp_to_diaspora_meta['tags_to_post'] = $_POST['wp_to_diaspora_tags_to_post'];
+  }
+
+  $custom_tags_clean = array();
+  foreach ( explode( ',', $_POST['wp_to_diaspora_custom_tags'] ) as $tag ) {
+    $custom_tags_clean[] = wp_to_diaspora_clean_tag( $tag );
+  }
+  $wp_to_diaspora_meta['custom_tags'] = implode( ', ', array_unique( $custom_tags_clean ) );
+
+  // Update the meta data in the database.
+  update_post_meta( $post_id, '_wp_to_diaspora', $wp_to_diaspora_meta );
 }
 add_action( 'save_post', 'wp_to_diaspora_save_meta_box_data', 10 );
