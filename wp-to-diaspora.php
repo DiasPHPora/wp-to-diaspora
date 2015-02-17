@@ -123,7 +123,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
 
       // Get all the tags and list them all nicely in a row.
       $diaspora_tags_clean = array();
-      foreach ( array_map( 'wp_to_diaspora_clean_tag', array_keys( $diaspora_tags ) ) as $tag ) {
+      foreach ( array_map( 'wp_to_diaspora_clean_tag', array_keys( array_filter( $diaspora_tags ) ) ) as $tag ) {
         $diaspora_tags_clean[] = '#' . $tag;
       }
 
