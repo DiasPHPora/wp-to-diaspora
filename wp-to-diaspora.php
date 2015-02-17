@@ -202,13 +202,10 @@ add_action( 'plugins_loaded', 'wp_to_diaspora_plugins_loaded' );
  * Load scripts and styles for Settings page
  */
 function wp_to_diaspora_admin_loadscripts() {
-  wp_register_style( 'wp-to-diaspora-css', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
-  wp_enqueue_style( 'wp-to-diaspora-css' );
-
-  wp_register_script( 'wp-to-diaspora-js', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ) );
-  wp_enqueue_script( 'wp-to-diaspora-js' );
+  wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
+  wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), array( 'jquery' ), false, true );
 }
-add_action( 'admin_print_scripts-settings_page_wp_to_diaspora', 'wp_to_diaspora_admin_loadscripts' );
+add_action( 'admin_print_styles-settings_page_wp_to_diaspora', 'wp_to_diaspora_admin_loadscripts' );
 
 /**
  * Add the "Settings" link to the plugins page.
