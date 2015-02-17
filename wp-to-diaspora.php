@@ -123,7 +123,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
 
       // Get all the tags and list them all nicely in a row.
       $diaspora_tags_clean = array();
-      foreach ( array_map( 'wp_to_diaspora_clean_tag', array_keys( $diaspora_tags ) ) as $tag ) {
+      foreach ( array_map( 'wp_to_diaspora_clean_tag', array_keys( array_filter( $diaspora_tags ) ) ) as $tag ) {
         $diaspora_tags_clean[] = '#' . $tag;
       }
 
@@ -637,7 +637,7 @@ function wp_to_diaspora_meta_box_callback( $post ) {
   }
 
   // If this post is already published, don't post again to Diaspora*.
-  $post_to_diaspora = ( 'publish' === get_post_status( $post->ID ) ) ? false : $post_meta['_wp_to_diaspora_post_to_diaspora'];
+  $post_to_diaspora = ( 'publish' === get_post_status( $post->ID ) ) ? false : $post_meta['post_to_diaspora'];
   $display      = $post_meta['display'];
   $tags_to_post = $post_meta['tags_to_post'];
   $custom_tags  = $post_meta['custom_tags'];
