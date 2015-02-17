@@ -207,7 +207,7 @@ function wp_to_diaspora_admin_loadscripts() {
   wp_register_script( 'wp-to-diaspora-js', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ) );
   wp_enqueue_script( 'wp-to-diaspora-js' );
 }
-add_action( 'admin_enqueue_scripts', 'wp_to_diaspora_admin_loadscripts' );
+add_action( 'admin_print_scripts-settings_page_wp_to_diaspora', 'wp_to_diaspora_admin_loadscripts' );
 
 /**
  * Add the "Settings" link to the plugins page.
@@ -422,7 +422,7 @@ function wp_to_diaspora_post_types_render() {
     $name     = $type->labels->name;
     $slug     = $type->name;
     $checked = in_array( $slug, $options['enabled_post_types'] ) ? "checked='checked'" : "";
-    
+
     $tabs .= "<li class='tab-link' data-tab='tab-$slug'>$name</li>";
     $contents .= "<div id='tab-$slug' class='tab-content'>
                     <p><label><input type='checkbox' name='wp_to_diaspora_settings[enabled_post_types][]' value='$slug' $checked>" .
