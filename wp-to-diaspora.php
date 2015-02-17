@@ -39,11 +39,12 @@ if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once dirname( __FILE__ ) . '
 function wp_to_diaspora_upgrade(){
   // Define the default options.
   $defaults = array(
-    'post_to_diaspora' => true,
+    'pod_list'           => array(),
+    'post_to_diaspora'   => true,
     'enabled_post_types' => array ( 'post' ),
-    'fullentrylink'    => true,
-    'display'          => 'full',
-    'version'          => WP_TO_DIASPORA_VERSION
+    'fullentrylink'      => true,
+    'display'            => 'full',
+    'version'            => WP_TO_DIASPORA_VERSION
   );
 
   // Get the current options.
@@ -554,6 +555,11 @@ function wp_to_diaspora_settings_validate( $new_values ) {
 
   // Validate all settings before saving to the database.
   $new_values['pod']      = sanitize_text_field( $new_values['pod'] );
+  // If we are saving the settings via the form, the pod list won't be set,
+  // so get the pod list from the options.
+  if ( ! isset( $new_values['pod_list'] ) ) {
+    $new_values['pod_list'] = $options['pod_list'];
+  }
   $new_values['user']     = sanitize_text_field( $new_values['user'] );
   $new_values['password'] = sanitize_text_field( $new_values['password'] );
 
@@ -776,3 +782,39 @@ function wp_to_diaspora_ignore_post_error() {
 }
 add_action( 'admin_init', 'wp_to_diaspora_ignore_post_error' );
 
+
+/**
+ * Fetch the updated list of pods from podupti.me and save it to the settings.
+ * @return array The list of pods.
+ */
+function wp_to_diaspora_update_pod_list() {
+  // API url to fetch pos list from podupti.me.
+  $pod_list_url = 'http://podupti.me/api.php?format=json&key=4r45tg';
+
+  $pods = array();
+  if ( $json = file_get_contents( $pod_list_url ) ) {
+    $pod_list = json_decode( $json );
+    if ( isset( $pod_list->pods ) ) {
+      foreach ( $pod_list->pods as $pod ) {
+        if ( 'no' === $pod->hidden ) {
+          $pods[] = array(
+            'secure' => $pod->secure,
+            'domain' => $pod->domain
+          );
+        }
+      }
+      $options = get_option( 'wp_to_diaspora_settings' );
+      $options['pod_list'] = $pods;
+      update_option( 'wp_to_diaspora_settings', $options );
+    }
+  }
+  return $pods;
+}
+
+/**
+ * Update the list of pods and return them for use with AJAX.
+ */
+function wp_to_diaspora_update_pod_list_callback() {
+  wp_send_json( wp_to_diaspora_update_pod_list() );
+}
+add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', 'wp_to_diaspora_update_pod_list_callback' );
