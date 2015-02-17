@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP to Diaspora*
  * Description: Automatically shares WordPress posts on Diaspora*
- * Version: 1.2.6
+ * Version: 1.2.7
  * Author: Augusto Bennemann
  * Author URI: https://github.com/gutobenn
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
@@ -26,7 +26,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define( 'WP_TO_DIASPORA_VERSION', '1.2.6' );
+define( 'WP_TO_DIASPORA_VERSION', '1.2.7' );
 
 // Include necessary classes.
 if ( ! class_exists( 'Diasphp' ) )          require_once dirname( __FILE__ ) . '/class-diaspora.php';
@@ -40,6 +40,7 @@ function wp_to_diaspora_upgrade(){
   // Define the default options.
   $defaults = array(
     'post_to_diaspora' => true,
+    'enabled_post_types' => array ( 'post' ),
     'fullentrylink'    => true,
     'display'          => 'full',
     'version'          => WP_TO_DIASPORA_VERSION
@@ -196,6 +197,17 @@ function wp_to_diaspora_plugins_loaded() {
 }
 add_action( 'plugins_loaded', 'wp_to_diaspora_plugins_loaded' );
 
+/**
+ * Load scripts and styles for Settings page
+ */
+function wp_to_diaspora_admin_loadscripts() {
+  wp_register_style( 'wp-to-diaspora-css', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
+  wp_enqueue_style( 'wp-to-diaspora-css' );
+
+  wp_register_script( 'wp-to-diaspora-js', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ) );
+  wp_enqueue_script( 'wp-to-diaspora-js' );
+}
+add_action( 'admin_enqueue_scripts', 'wp_to_diaspora_admin_loadscripts' );
 
 /**
  * Add the "Settings" link to the plugins page.
@@ -215,7 +227,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_to_diaspor
 /* HELPERS */
 
 /**
- * Clean up the passed tag. Keep only alphanumeric, hyphen and unserscore characters.
+ * Clean up the passed tag. Keep only alphanumeric, hyphen and underscore characters.
  *
  * @todo   What about eastern characters? (chinese, indian, etc.)
  *
@@ -336,13 +348,22 @@ function wp_to_diaspora_password_render() {
 function wp_to_diaspora_defaults_section_cb() {
   _e( 'Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the "WP to Diaspora*" meta box, which gets displayed in your post edit screen.', 'wp_to_diaspora' );
 
-  // Post to Diaspora* checkbox.
+  // Post types field.
   add_settings_field(
-    'post_to_diaspora',
-    __( 'Post to Diaspora*', 'wp_to_diaspora' ),
-    'wp_to_diaspora_post_to_diaspora_render',
+    'enabled_post_types',
+    __( 'Post types', 'wp_to_diaspora' ),
+    'wp_to_diaspora_post_types_render',
     'wp_to_diaspora_settings',
     'wp_to_diaspora_defaults_section'
+  );
+
+   // Post to Diaspora* checkbox.
+  add_settings_field(
+  'post_to_diaspora',
+  __( 'Post to Diaspora*', 'wp_to_diaspora' ),
+  'wp_to_diaspora_post_to_diaspora_render',
+  'wp_to_diaspora_settings',
+  'wp_to_diaspora_defaults_section'
   );
 
   // Full entry link checkbox.
@@ -380,16 +401,47 @@ function wp_to_diaspora_defaults_section_cb() {
     'wp_to_diaspora_settings',
     'wp_to_diaspora_defaults_section'
   );
+
 }
 
 /**
- * Render the "Post to Diaspora*" checkbox.
+ * Render the "Post types" field.
  */
-function wp_to_diaspora_post_to_diaspora_render() {
+function wp_to_diaspora_post_types_render() {
+
   $options = get_option( 'wp_to_diaspora_settings' );
-  ?>
-  <label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_settings[post_to_diaspora]" value="1" <?php checked( $options['post_to_diaspora'] ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
-  <?php
+  $post_types = get_post_types( array( 'public' => true ), 'objects' );
+
+  $excluded_post_types = array( 'attachment', 'nav_menu_item', 'revision' );
+
+  foreach ( $excluded_post_types as $excluded ) {
+    unset( $post_types[$excluded] );
+  }
+
+  foreach ( $post_types as $type ) {
+    $name     = $type->labels->name;
+    $slug     = $type->name;
+    $checked = in_array( $slug, $options['enabled_post_types'] ) ? "checked='checked'" : "";
+    
+    $tabs .= "<li class='tab-link' data-tab='tab-$slug'>$name</li>";
+    $contents .= "<div id='tab-$slug' class='tab-content'>
+                    <p><label><input type='checkbox' name='wp_to_diaspora_settings[enabled_post_types][]' value='$slug' $checked>" .
+                      sprintf( __( 'Enable WP to Diaspora* on %s', 'wp_to_diaspora' ), $name ) .
+                    "</label></p>
+                  </div>";
+  }
+
+  printf( '<div class="container wp-to-diaspora-settings"><ul class="tabs">' . $tabs . '</ul>' . $contents . '</div>' );
+}
+
+/**
+* Render the "Post to Diaspora*" checkbox.
+*/
+function wp_to_diaspora_post_to_diaspora_render() {
+$options = get_option( 'wp_to_diaspora_settings' );
+?>
+<label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_settings[post_to_diaspora]" value="1" <?php checked( $options['post_to_diaspora'] ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
+<?php
 }
 
 /**
@@ -510,6 +562,10 @@ function wp_to_diaspora_settings_validate( $new_values ) {
     $new_values['password'] = $options['password'];
   }
 
+  if ( ! isset( $new_values['enabled_post_types'] ) ) {
+    $new_values['enabled_post_types'] = array();
+  }
+
   $new_values['post_to_diaspora'] = isset( $new_values['post_to_diaspora'] );
   $new_values['fullentrylink']    = isset( $new_values['fullentrylink'] );
 
@@ -544,14 +600,21 @@ function wp_to_diaspora_settings_validate( $new_values ) {
  * Adds a box to the main column on the Post and Page edit screens.
  */
 function wp_to_diaspora_add_meta_box() {
-  add_meta_box(
-    'wp_to_diaspora_sectionid',
-    __( 'WP to Diaspora*', 'wp_to_diaspora' ),
-    'wp_to_diaspora_meta_box_callback',
-    'post',
-    'side',
-    'high'
-  );
+
+  $options = get_option( 'wp_to_diaspora_settings' );
+
+  foreach ( $options['enabled_post_types'] as $post_type ) {
+
+    add_meta_box(
+      'wp_to_diaspora_sectionid',
+      __( 'WP to Diaspora*', 'wp_to_diaspora' ),
+      'wp_to_diaspora_meta_box_callback',
+      $post_type,
+      'side',
+      'high'
+    );
+
+  }
 }
 add_action( 'add_meta_boxes', 'wp_to_diaspora_add_meta_box' );
 

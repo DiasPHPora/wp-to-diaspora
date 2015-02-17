@@ -1,0 +1,35 @@
+.wp-to-diaspora-settings ul.tabs{
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.wp-to-diaspora-settings ul.tabs li{
+  background: none;
+  color: #222;
+  display: inline-block;
+  padding: 10px 15px;
+  margin-bottom:0px;
+  cursor: pointer;
+}
+
+.wp-to-diaspora-settings ul.tabs li.current{
+  background: #ededed;
+  color: #222;
+}
+
+.wp-to-diaspora-settings ul.tabs li.current a, ul.tabs li a:focus {
+  color: #124964;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.wp-to-diaspora-settings .tab-content{
+  display: none;
+  background: #ededed;
+  padding: 15px;
+}
+
+.wp-to-diaspora-settings .tab-content.current{
+  display: inherit;
+}
