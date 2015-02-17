@@ -144,16 +144,33 @@ function wp_to_diaspora_post( $post_id, $post ) {
 
     try {
       // Initialise a new connection to post to Diaspora*.
-      $conn = new Diasphp( 'https://' . $options['pod'] );
+      $pod_url = 'https://' . $options['pod'];
+      $conn = new Diasphp( $pod_url );
       $conn->login( $options['user'], $options['password'] );
 
       // NOTE: Leave "via" as a static value, to promote plugin!
-      $conn->post( $status_message, 'WP to Diaspora*' );
+      $response = $conn->post( $status_message, 'WP to Diaspora*' );
+
+      // Save certain Diaspora* post data as meta data.
+      if ( isset( $response ) ) {
+        $diaspora_post_history = get_post_meta( $post_id, '_wp_to_diaspora_post_history', true );
+        if ( empty( $diaspora_post_history ) ) {
+          $diaspora_post_history = array();
+        }
+        // Add a new entry to the history.
+        $diaspora_post_history[] = array(
+          'id'         => $response->id,
+          'guid'       => $response->guid,
+          'created_at' => $post->post_modified,
+          'aspects'    => 'public',
+          'nsfw'       => $response->nsfw,
+          'post_url'   => $pod_url . '/posts/' . $response->guid,
+        );
+        update_post_meta( $post_id, '_wp_to_diaspora_post_history', $diaspora_post_history );
+        delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
+      }
     } catch ( Exception $e ) {
-      printf( '<div class="error">' . __( 'WP to Diaspora*: Sending "%1$s" failed with error: %2$s' ) . '</div>',
-        $post->post_title,
-        $e->getMessage()
-      );
+      update_post_meta( $post_id, '_wp_to_diaspora_post_error', $e->getMessage() );
     }
   }
 }
@@ -561,6 +578,14 @@ function wp_to_diaspora_meta_box_callback( $post ) {
   $display      = $post_meta['display'];
   $tags_to_post = $post_meta['tags_to_post'];
   $custom_tags  = $post_meta['custom_tags'];
+
+  // Have we already posted on Diaspora*?
+  if ( ( $diaspora_post_history = get_post_meta( $post->ID, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
+    $latest_post = end( $diaspora_post_history );
+  ?>
+    <p><a href="<?php echo $latest_post['post_url']; ?>" target="_blank"><?php _e( 'Already posted to Diaspora*', 'wp_to_diaspora' ); ?></a></p>
+  <?php
+  }
   ?>
   <p><label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_post_to_diaspora" value="1" <?php checked( $post_to_diaspora ); ?>><?php _e( 'Post to Diaspora*', 'wp_to_diaspora' ); ?></label></p>
   <p><label title="<?php _e( 'Include a link back to your original post.', 'wp_to_diaspora' ); ?>"><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_fullentrylink" value="1" <?php checked( $post_meta['fullentrylink'] ); ?>><?php _e( 'Show "Posted at" link?', 'wp_to_diaspora' ); ?></label></p>
@@ -643,3 +668,48 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
   update_post_meta( $post_id, '_wp_to_diaspora', $wp_to_diaspora_meta );
 }
 add_action( 'save_post', 'wp_to_diaspora_save_meta_box_data', 10 );
+
+
+/**
+ * Add admin notices when a post gets displayed.
+ */
+function wp_to_diaspora_admin_notices() {
+  global $post, $pagenow;
+  if ( ! $post || $pagenow != 'post.php' ) {
+    return;
+  }
+
+  if ( $error = get_post_meta( $post->ID, '_wp_to_diaspora_post_error', true ) ) {
+    // This notice will only be shown if posting to Diaspora* has failed.
+    printf( '<div class="error"><p>%1$s: %2$s <a href="%3$s">%4$s</a></p></div>',
+      __( 'Failed to post to Diaspora*', 'wp_to_diaspora' ),
+      $error,
+      add_query_arg( 'wp_to_diaspora_ignore_post_error', 'yes' ),
+      __( 'Ignore', 'wp_to_diaspora' )
+    );
+  } elseif ( ( $diaspora_post_history = get_post_meta( $post->ID, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
+    $latest_post = end( $diaspora_post_history );
+
+    // Only show if this post is showing a message and the post is a fresh share.
+    if ( isset( $_GET['message'] ) && $post->post_modified == $latest_post['created_at'] ) {
+      printf( '<div class="updated"><p>%1$s <a href="%2$s" target="_blank">%3$s</a></p></div>',
+        __( 'Successfully posted to Diaspora*.', 'wp_to_diaspora' ),
+        $latest_post['post_url'],
+        __( 'View Post', 'wp_to_diaspora' )
+      );
+    }
+  }
+}
+add_action( 'admin_notices', 'wp_to_diaspora_admin_notices' );
+
+/**
+ * Delete the error post meta data if it gets ignored.
+ */
+function wp_to_diaspora_ignore_post_error() {
+  // If "Ignore" link has been clicked, delete the post error meta data.
+  if ( isset( $_GET['wp_to_diaspora_ignore_post_error'], $_GET['post'] ) && 'yes' == $_GET['wp_to_diaspora_ignore_post_error'] ) {
+    delete_post_meta( $_GET['post'], '_wp_to_diaspora_post_error' );
+  }
+}
+add_action( 'admin_init', 'wp_to_diaspora_ignore_post_error' );
+
