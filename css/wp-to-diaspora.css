@@ -33,3 +33,10 @@
 .wp-to-diaspora-settings .tab-content.current{
   display: inherit;
 }
+
+.settings_page_wp_to_diaspora .spinner {
+  display: inline-block;
+  margin: 0;
+  float: none;
+  vertical-align: middle;
+}

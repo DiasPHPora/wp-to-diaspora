@@ -313,7 +313,12 @@ function wp_to_diaspora_setup_section_cb() {
 function wp_to_diaspora_pod_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
-  https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo $options['pod']; ?>" placeholder="e.g. joindiaspora.com" required>
+  https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo $options['pod']; ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="wp_to_diaspora_pod_list" required> <a id="refresh_pod_list" class="button"><?php _e( 'Refresh pod list', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span>
+  <datalist id="wp_to_diaspora_pod_list">
+  <?php foreach ( $options['pod_list'] as $pod ) : ?>
+    <option data-secure="<?php echo $pod['secure']; ?>" value="<?php echo $pod['domain']; ?>"></option>
+  <?php endforeach; ?>
+  </datalist>
   <?php
 }
 
