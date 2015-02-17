@@ -112,7 +112,7 @@ class Diasphp {
     curl_close( $ch );
 
     if ( 302 != $info['http_code'] ) {
-      throw new Exception( 'Login error ' . print_r( $info, true ) );
+      throw new Exception( 'Login error.' );
     }
 
     // Return the object to provide method chaining.
@@ -155,17 +155,17 @@ class Diasphp {
     curl_setopt( $ch, CURLOPT_POSTFIELDS, $datatopost );
     curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 
-    curl_exec( $ch );
+    $response = curl_exec( $ch );
     $info = curl_getinfo( $ch );
     curl_close( $ch );
 
 
     if ( 201 != $info['http_code'] ) {
-      throw new Exception( 'Post error ' . print_r( $info, true ) );
+      throw new Exception( 'Post error.' );
     }
 
-    // End of chaining, return "true".
-    return true;
+    // End of chaining, return response data as an object.
+    return json_decode( $response );
   }
 }
 
