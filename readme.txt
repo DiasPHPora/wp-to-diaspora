@@ -4,7 +4,7 @@ Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora
 Requires at least: 3.2.1
 Tested up to: 4.1
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,6 +45,9 @@ https://github.com/gutobenn/wp-to-diaspora
 4. Example post on WordPress
 
 == Changelog ==
+
+= 1.2.7 =
+* Custom post types support
 
 = 1.2.6 =
 * Added support for videos embedding using [embed] shortcode
@@ -87,4 +90,4 @@ https://github.com/gutobenn/wp-to-diaspora
 * First version
 
 == Upgrade Notice ==
-Videos support and global configuration added. Many interface improvements and a few bug fixes.
+Custom post types support
