@@ -40,14 +40,18 @@ https://github.com/gutobenn/wp-to-diaspora
 == Screenshots ==
 
 1. Configuration page
-2. Select to post or not to Diaspora*
+2. Meta box on post editor page
 3. Example post on Diaspora*
 4. Example post on WordPress
 
 == Changelog ==
 
 = 1.2.7 =
-* Custom post types support
+* Custom post types support added
+* Posting to specific aspects is now possible
+* Password encryption
+* Prepopulated list of pods
+* Admin notices after posting
 
 = 1.2.6 =
 * Added support for videos embedding using [embed] shortcode
@@ -90,4 +94,4 @@ https://github.com/gutobenn/wp-to-diaspora
 * First version
 
 == Upgrade Notice ==
-Custom post types support
+What's new: Custom post types support; Posting to specific aspects is now possible; There's a prepopulated list of pods; Password is now encrypted on database; Admin notices are displayed after posting.
