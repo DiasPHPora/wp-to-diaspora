@@ -621,7 +621,7 @@ function wp_to_diaspora_add_meta_box() {
   foreach ( $options['enabled_post_types'] as $post_type ) {
 
     add_meta_box(
-      'wp_to_diaspora_sectionid',
+      'wp_to_diaspora_meta_box',
       __( 'WP to Diaspora*', 'wp_to_diaspora' ),
       'wp_to_diaspora_meta_box_callback',
       $post_type,
