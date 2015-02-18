@@ -154,9 +154,8 @@ function wp_to_diaspora_post( $post_id, $post ) {
     try {
       // Initialise a new connection to post to Diaspora*.
       $pod_url = 'https://' . $options['pod'];
-      $password = wp_to_diaspora_decrypt( $options['password'] );
       $conn = new Diasphp( $pod_url );
-      $conn->login( $options['user'], $password );
+      $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) );
 
       // NOTE: Leave "via" as a static value, to promote plugin!
       $response = $conn->post( $status_message, 'WP to Diaspora*', $aspects );
@@ -586,8 +585,7 @@ function wp_to_diaspora_options_page() {
 
       try {
         $conn = new Diasphp( 'https://' . $options['pod'] );
-        $password = wp_to_diaspora_decrypt( $options['password'] );
-        $conn->login( $options['user'], $password );
+        $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) );
 
         // Show success message if connected successfully.
         add_settings_error(
@@ -948,7 +946,7 @@ function wp_to_diaspora_update_aspects_list() {
     // Initialise a new connection to post to Diaspora*.
     $pod_url = 'https://' . $options['pod'];
     $conn = new Diasphp( $pod_url );
-    $conn->login( $options['user'], $options['password'] );
+    $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) );
 
     // Do we have a list of aspects?
     if ( $aspects_raw = $conn->get_aspects() ) {
