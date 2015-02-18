@@ -827,3 +827,44 @@ function wp_to_diaspora_update_pod_list_callback() {
   wp_send_json( wp_to_diaspora_update_pod_list() );
 }
 add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', 'wp_to_diaspora_update_pod_list_callback' );
+
+
+/**
+ * Fetch the list of aspects and save them to the settings.
+ * @return array The list of aspects. (id => name pairs)
+ */
+function wp_to_diaspora_update_aspects_list() {
+  $options = get_option( 'wp_to_diaspora_settings' );
+  $aspects = ( isset( $options['aspects_list'] ) ) ? $options['aspects_list'] : array( 'public' => 'Public' );
+
+  try {
+    // Initialise a new connection to post to Diaspora*.
+    $pod_url = 'https://' . $options['pod'];
+    $conn = new Diasphp( $pod_url );
+    $conn->login( $options['user'], $options['password'] );
+
+    // Do we have a list of aspects?
+    if ( $aspects_raw = $conn->get_aspects() ) {
+      // Add the 'public' aspect, as it's global and not user specific.
+      $aspects = array( 'public' => 'Public' );
+
+      // Create an array of all the aspects and save them to the settings.
+      foreach ( $aspects_raw as $aspect ) {
+        $aspects[ $aspect->id ] = $aspect->name;
+      }
+      $options = get_option( 'wp_to_diaspora_settings' );
+      $options['aspects_list'] = $aspects;
+      update_option( 'wp_to_diaspora_settings', $options );
+    }
+  } catch ( Exception $e ) { }
+
+  return $aspects;
+}
+
+/**
+ * Update the list of aspects and return them for use with AJAX.
+ */
+function wp_to_diaspora_update_aspects_list_callback() {
+  wp_send_json( wp_to_diaspora_update_aspects_list() );
+}
+add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', 'wp_to_diaspora_update_aspects_list_callback' );
