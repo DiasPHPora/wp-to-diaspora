@@ -641,8 +641,9 @@ function wp_to_diaspora_settings_validate( $new_values ) {
   $new_values['user']     = sanitize_text_field( $new_values['user'] );
   $new_values['password'] = sanitize_text_field( $new_values['password'] );
 
-  // If password is blank, it hasn't been changed.
-  if ( '' === $new_values['password'] ) {
+  // If password is blank, it hasn't been changed. 
+  // If new password is equal to the encrypted password already saved, it was just passed again. It happens everytime update_option('wp_to_diaspora_settings') is called.
+  if ( '' === $new_values['password'] || $options['password'] === $new_values['password'] ) {
     $new_values['password'] = $options['password'];
   } else {
     $new_values['password'] = wp_to_diaspora_encrypt( $new_values['password'] );
