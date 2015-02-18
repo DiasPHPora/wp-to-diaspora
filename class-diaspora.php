@@ -9,6 +9,7 @@
 class Diasphp {
   function __construct( $pod ) {
     $this->token_regex = '/content="(.*?)" name="csrf-token/';
+    $this->aspects_regex = '/"aspects"\:(\[.+?\])/';
     $this->pod = $pod;
     $this->cookiejar = tempnam( sys_get_temp_dir(), 'cookies' );
   }
@@ -166,6 +167,73 @@ class Diasphp {
 
     // End of chaining, return response data as an object.
     return json_decode( $response );
+  }
+
+  /**
+   * Get the list of aspects.
+   * @return array Array of aspect objects.
+   */
+  function aspects() {
+    // Define maximum redirects.
+    $max_redirects = 10;
+
+    // Call address via cURL.
+    $ch = curl_init();
+
+    // Set up cURL options.
+    curl_setopt( $ch, CURLOPT_URL, $this->pod . '/bookmarklet' );
+    curl_setopt( $ch, CURLOPT_COOKIEFILE, $this->cookiejar );
+    curl_setopt( $ch, CURLOPT_COOKIEJAR, $this->cookiejar );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+    // Check if the call can safely be made.
+    if ( '' === ini_get( 'open_basedir' ) && 'off' === strtolower( ini_get( 'safe_mode' ) ) ) {
+      // Set up cURL options.
+      curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
+      curl_setopt( $ch, CURLOPT_MAXREDIRS, $max_redirects );
+      $response = curl_exec( $ch );
+    } else {
+      curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
+      $mr = $max_redirects;
+      if ( $mr > 0 ) {
+        $newurl = curl_getinfo( $ch, CURLINFO_EFFECTIVE_URL );
+
+        $rcurl = curl_copy_handle( $ch );
+
+        // Set up cURL options.
+        curl_setopt( $rcurl, CURLOPT_HEADER, true );
+        curl_setopt( $rcurl, CURLOPT_NOBODY, true );
+        curl_setopt( $rcurl, CURLOPT_FORBID_REUSE, false );
+
+        do {
+          curl_setopt( $rcurl, CURLOPT_URL, $newurl );
+          $header = curl_exec( $rcurl );
+          if ( curl_errno( $rcurl ) ) {
+            $code = 0;
+          } else {
+            $code = curl_getinfo( $rcurl, CURLINFO_HTTP_CODE );
+            if ( 301 == $code || 302 == $code ) {
+              preg_match( '/Location:(.*?)\n/', $header, $matches );
+              $newurl = trim( array_pop( $matches ) );
+            } else {
+              $code = 0;
+            }
+          }
+        } while ( $code && --$mr );
+
+        curl_close( $rcurl );
+        if ( $mr > 0 ) {
+          curl_setopt( $ch, CURLOPT_URL, $newurl );
+        }
+      }
+
+      $response = ( 0 == $mr && $max_redirects > 0 ) ? false : curl_exec( $ch );
+    }
+    curl_close( $ch );
+
+    // Fetch and return the found aspects.
+    preg_match( $this->aspects_regex, $response, $matches );
+    return json_decode( $matches[1] );
   }
 }
 
