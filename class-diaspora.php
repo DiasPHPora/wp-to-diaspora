@@ -26,7 +26,7 @@ class Diasphp {
     $ch = curl_init();
 
     // Set up cURL options.
-    curl_setopt( $ch, CURLOPT_URL, $this->pod . '/stream' );
+    curl_setopt( $ch, CURLOPT_URL, $this->pod . '/bookmarklet' );
     curl_setopt( $ch, CURLOPT_COOKIEFILE, $this->cookiejar );
     curl_setopt( $ch, CURLOPT_COOKIEJAR, $this->cookiejar );
     curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -36,7 +36,7 @@ class Diasphp {
       // Set up cURL options.
       curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
       curl_setopt( $ch, CURLOPT_MAXREDIRS, $max_redirects );
-      $output = curl_exec( $ch );
+      $response = curl_exec( $ch );
     } else {
       curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
       $mr = $max_redirects;
@@ -72,12 +72,12 @@ class Diasphp {
         }
       }
 
-      $output = ( 0 == $mr && $max_redirects > 0 ) ? false : curl_exec( $ch );
+      $response = ( 0 == $mr && $max_redirects > 0 ) ? false : curl_exec( $ch );
     }
     curl_close( $ch );
 
     // Fetch and return the found token.
-    preg_match( $this->token_regex, $output, $matches );
+    preg_match( $this->token_regex, $response, $matches );
     return $matches[1];
   }
 
