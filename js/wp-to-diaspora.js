@@ -29,4 +29,66 @@ jQuery(document).ready(function ($) {
       $refreshButton.show();
     });
   });
+
+
+  /**
+   * Make the aspect checkboxes clever, giving the 'public' aspect the power to disable all others.
+   */
+  function smartAspectSelection() {
+    $allAspectCheckboxes = $('#aspects-container input[type="checkbox"]');
+    var setDisabledAttrs = function() {
+      var disabled = ( $allAspectCheckboxes.filter('[value="public"]').removeAttr('disabled').is(':checked') ) ? 'disabled' : null;
+      $allAspectCheckboxes.not('[value="public"]').attr('disabled', disabled);
+      // We only have a 'Public' checkbox, so it can't be unchecked.
+      if ( 1 === $allAspectCheckboxes.length ) {
+        $allAspectCheckboxes.attr( 'checked', 'checked' );
+      }
+    };
+    $allAspectCheckboxes.change(setDisabledAttrs);
+    setDisabledAttrs();
+  }
+  smartAspectSelection();
+
+  // Refresh the list of aspects and update the checkboxes.
+  $('#refresh-aspects-list').click(function() {
+    var $refreshButton = $(this).hide();
+    var $spinner = $refreshButton.next('.spinner').show();
+    var $aspectsContainer = $('#aspects-container');
+
+    // Before loading the new checkboxes, disable all the current ones.
+    var $aspectsCheckboxes = $aspectsContainer.find('input[type="checkbox"]').attr('disabled', 'disabled');
+
+    $.post(ajaxurl, { 'action': 'wp_to_diaspora_update_aspects_list' }, function(aspects) {
+      // Remember the selected aspects and clear the list.
+      $aspectsContainer.empty();
+      var aspectsSelected = [];
+      if ( $aspectsCheckboxes.length ) {
+        $aspectsCheckboxes.each(function() {
+          if ( this.checked ) {
+            aspectsSelected.push(this.value);
+          }
+        });
+        $aspectsContainer.data('aspects-selected', aspectsSelected.join(','));
+      } else {
+        aspectsSelected = $aspectsContainer.data('aspects-selected').split(',');
+      }
+
+      // Add fresh checkboxes.
+      for(var id in aspects) {
+        if(aspects.hasOwnProperty(id)) {
+          var checked = ( -1 !== $.inArray( id, aspectsSelected ) ) ? ' checked="checked"' : '';
+          $aspectsContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="' + id + '"' + checked + '>' + aspects[id] + '</label> ' )
+        }
+      }
+      smartAspectSelection();
+
+      $spinner.hide();
+      $refreshButton.show();
+    });
+  });
+
+  // Enable all checkboxes on save, as disabled ones don't get saved.
+  $('#submit, #save-post, #publish').click(function() {
+    $('#aspects-container input[type="checkbox"]').removeAttr('disabled');
+  });
 });

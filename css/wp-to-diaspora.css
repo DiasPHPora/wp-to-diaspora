@@ -28,7 +28,8 @@
   display: inherit;
 }
 
-.settings_page_wp_to_diaspora .spinner {
+.settings_page_wp_to_diaspora .spinner,
+#wp_to_diaspora_meta_box .spinner {
   display: inline-block;
   margin: 0;
   float: none;

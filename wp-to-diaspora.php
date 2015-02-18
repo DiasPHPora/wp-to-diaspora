@@ -40,6 +40,7 @@ function wp_to_diaspora_upgrade(){
   // Define the default options.
   $defaults = array(
     'pod_list'           => array(),
+    'aspects_list'       => array(),
     'post_to_diaspora'   => true,
     'enabled_post_types' => array ( 'post' ),
     'fullentrylink'      => true,
@@ -81,6 +82,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
     $display       = $wp_to_diaspora_meta['display'];
     $tags_to_post  = $wp_to_diaspora_meta['tags_to_post'];
     $custom_tags   = $wp_to_diaspora_meta['custom_tags'];
+    $aspects       = $wp_to_diaspora_meta['aspects'];
 
     $options = get_option( 'wp_to_diaspora_settings' );
     $status_message = sprintf( '<p><b><a href="%1$s" title="permalink to %2$s">%2$s</a></b></p>',
@@ -151,7 +153,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
       $conn->login( $options['user'], $options['password'] );
 
       // NOTE: Leave "via" as a static value, to promote plugin!
-      $response = $conn->post( $status_message, 'WP to Diaspora*' );
+      $response = $conn->post( $status_message, 'WP to Diaspora*', $aspects );
 
       // Save certain Diaspora* post data as meta data.
       if ( isset( $response ) ) {
@@ -164,7 +166,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
           'id'         => $response->id,
           'guid'       => $response->guid,
           'created_at' => $post->post_modified,
-          'aspects'    => 'public',
+          'aspects'    => $aspects,
           'nsfw'       => $response->nsfw,
           'post_url'   => $pod_url . '/posts/' . $response->guid,
         );
@@ -412,6 +414,14 @@ function wp_to_diaspora_defaults_section_cb() {
     'wp_to_diaspora_defaults_section'
   );
 
+  // Aspects checkboxes.
+  add_settings_field(
+    'aspects',
+    __( 'Aspects', 'wp_to_diaspora' ),
+    'wp_to_diaspora_aspects_render',
+    'wp_to_diaspora_settings',
+    'wp_to_diaspora_defaults_section'
+  );
 }
 
 /**
@@ -507,6 +517,33 @@ function wp_to_diaspora_global_tags_render() {
 }
 
 /**
+ * Render the "Aspects" field.
+ */
+function wp_to_diaspora_aspects_render() {
+  $options = get_option( 'wp_to_diaspora_settings' );
+  $aspects_selected = ( ! empty( $options['aspects'] ) && is_array( $options['aspects'] ) ) ? $options['aspects'] : array();
+  ?>
+  <div id="aspects-container" data-aspects-selected="<?php echo implode( ',', $aspects_selected ); ?>">
+    <?php
+    if ( $aspects_list = $options['aspects_list'] ) {
+      foreach ( $aspects_list as $aspect_id => $aspect_name ) {
+        ?>
+        <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="<?php echo $aspect_id; ?>" <?php checked( in_array( $aspect_id, $aspects_selected ) ); ?>><?php echo $aspect_name; ?></label>
+        <?php
+      }
+    } else {
+      // Just add the default "Public" aspect.
+      ?>
+      <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>>Public</label>
+      <?php
+    }
+    ?>
+  </div>
+  <p class="description"><?php _e( 'Choose which aspects to share to.', 'wp_to_diaspora' ); ?> <a id="refresh-aspects-list" class="button"><?php _e( 'Refresh Aspects', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span></p>
+  <?php
+}
+
+/**
  * Output the options page.
  */
 function wp_to_diaspora_options_page() {
@@ -564,10 +601,13 @@ function wp_to_diaspora_settings_validate( $new_values ) {
 
   // Validate all settings before saving to the database.
   $new_values['pod']      = sanitize_text_field( $new_values['pod'] );
-  // If we are saving the settings via the form, the pod list won't be set,
-  // so get the pod list from the options.
+  // If we are saving the settings via the form, the pod and aspects list won't be set,
+  // so get those from the options.
   if ( ! isset( $new_values['pod_list'] ) ) {
     $new_values['pod_list'] = $options['pod_list'];
+  }
+  if ( ! isset( $new_values['aspects_list'] ) ) {
+    $new_values['aspects_list'] = $options['aspects_list'];
   }
   $new_values['user']     = sanitize_text_field( $new_values['user'] );
   $new_values['password'] = sanitize_text_field( $new_values['password'] );
@@ -599,6 +639,12 @@ function wp_to_diaspora_settings_validate( $new_values ) {
     $global_tags_clean[] = wp_to_diaspora_clean_tag( $tag );
   }
   $new_values['global_tags'] = implode( ', ', array_unique( $global_tags_clean ) );
+
+  // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
+  if ( empty( $new_values['aspects'] ) ) {
+    $new_values['aspects'] = array( 'public' );
+  }
+  $new_values['aspects'] = array_map( 'sanitize_text_field', $new_values['aspects'] );
 
   // TODO: What for? The version will never be set, as $new_values['version'] is always null.
   if ( ! isset( $new_values['version'] ) ) {
@@ -653,9 +699,10 @@ function wp_to_diaspora_meta_box_callback( $post ) {
 
   // If this post is already published, don't post again to Diaspora*.
   $post_to_diaspora = ( 'publish' === get_post_status( $post->ID ) ) ? false : $post_meta['post_to_diaspora'];
-  $display      = $post_meta['display'];
-  $tags_to_post = $post_meta['tags_to_post'];
-  $custom_tags  = $post_meta['custom_tags'];
+  $display          = $post_meta['display'];
+  $tags_to_post     = $post_meta['tags_to_post'];
+  $custom_tags      = $post_meta['custom_tags'];
+  $aspects_selected = ( ! empty( $post_meta['aspects'] ) && is_array( $post_meta['aspects'] ) ) ? $post_meta['aspects'] : array();
 
   // Have we already posted on Diaspora*?
   if ( ( $diaspora_post_history = get_post_meta( $post->ID, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
@@ -693,6 +740,27 @@ function wp_to_diaspora_meta_box_callback( $post ) {
       <input type="text" name="wp_to_diaspora_custom_tags" value="<?php echo $custom_tags; ?>" class="widefat">
     </label>
     <p class="howto"><?php _e( 'Separate tags with commas.', 'wp_to_diaspora' ); ?></p>
+  </p>
+
+  <p>
+    <?php _e( 'Choose which aspects to share to.', 'wp_to_diaspora' ); ?>
+    <div id="aspects-container" data-aspects-selected="<?php echo implode( ',', $aspects_selected ); ?>">
+      <?php
+      if ( $aspects_list = $post_meta['aspects_list'] ) {
+        foreach ( $aspects_list as $aspect_id => $aspect_name ) {
+          ?>
+          <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="<?php echo $aspect_id; ?>" <?php checked( in_array( $aspect_id, $aspects_selected ) ); ?>><?php echo $aspect_name; ?></label>
+          <?php
+        }
+      } else {
+        // Just add the default "Public" aspect.
+        ?>
+        <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>>Public</label>
+        <?php
+      }
+      ?>
+    </div>
+    <p class="howto"><a id="refresh-aspects-list" class="button"><?php _e( 'Refresh Aspects', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span></p>
   </p>
 
   <?php
@@ -741,6 +809,12 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
     $custom_tags_clean[] = wp_to_diaspora_clean_tag( $tag );
   }
   $wp_to_diaspora_meta['custom_tags'] = implode( ', ', array_unique( $custom_tags_clean ) );
+
+  // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
+  if ( ! isset( $_POST['wp_to_diaspora_settings']['aspects'] ) || empty( $_POST['wp_to_diaspora_settings']['aspects'] ) ) {
+    $wp_to_diaspora_meta['aspects'] = array( 'public' );
+  }
+  $wp_to_diaspora_meta['aspects'] = array_map( 'sanitize_text_field', $_POST['wp_to_diaspora_settings']['aspects'] );
 
   // Update the meta data in the database.
   update_post_meta( $post_id, '_wp_to_diaspora', $wp_to_diaspora_meta );
