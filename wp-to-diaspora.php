@@ -818,8 +818,14 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
   }
 
   // Check the user's permissions.
-  if ( ! current_user_can( 'edit_post', $post_id ) ) {
-    return;
+  if ( isset( $_POST['post_type'] ) && 'page' === $_POST['post_type'] ) {
+    if ( ! current_user_can( 'edit_pages', $post_id ) ) {
+      return;
+    }
+  } else {
+    if ( ! current_user_can( 'edit_posts', $post_id ) ) {
+      return;
+    }
   }
 
   // OK, it's safe for us to save the data now.
