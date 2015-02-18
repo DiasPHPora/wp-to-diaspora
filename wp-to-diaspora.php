@@ -56,6 +56,11 @@ function wp_to_diaspora_upgrade(){
   } elseif ( WP_TO_DIASPORA_VERSION != $options['version'] ) {
     // Saved options exist, but versions differ. Probably a fresh update. Need to save updated options.
     unset( $options['version'] );
+
+    // TODO: remove this check on v1.2.8!
+    // Password is stored encrypted since version 1.2.7. When upgrading to it, the plain text password is encrypted and saved again.
+    $options['password'] = wp_to_diaspora_encrypt( $options['password'] );
+
     $options = array_merge( $defaults, $options );
     update_option( 'wp_to_diaspora_settings', $options );
   }
@@ -147,8 +152,9 @@ function wp_to_diaspora_post( $post_id, $post ) {
     try {
       // Initialise a new connection to post to Diaspora*.
       $pod_url = 'https://' . $options['pod'];
+      $password = wp_to_diaspora_decrypt( $options['password'] );
       $conn = new Diasphp( $pod_url );
-      $conn->login( $options['user'], $options['password'] );
+      $conn->login( $options['user'], $password );
 
       // NOTE: Leave "via" as a static value, to promote plugin!
       $response = $conn->post( $status_message, 'WP to Diaspora*' );
@@ -237,6 +243,30 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_to_diaspor
  */
 function wp_to_diaspora_clean_tag( $tag ) {
   return preg_replace( '/[^\w $\-]/u', '', str_replace( ' ', '-', trim( $tag ) ) );
+}
+
+/**
+ * Encrypt the passed string with the passed key
+ *
+ * @param string $input_string String to be encrypted
+ * @param string $key The key
+ * @return string The encrypted string.
+ */
+function wp_to_diaspora_encrypt( $input_string, $key = AUTH_KEY ) {
+  global $wpdb;
+  return base64_encode( $wpdb->get_var( $wpdb->prepare( "SELECT AES_ENCRYPT(%s,%s)", $input_string, $key ) ) );
+}
+
+/**
+ * Decrypt the passed string with the passed key
+ *
+ * @param string $input_string String to be decrypted
+ * @param string $key The key
+ * @return string The decrypted string.
+ */
+function wp_to_diaspora_decrypt( $encrypted_string, $key = AUTH_KEY ) {
+  global $wpdb;
+  return $wpdb->get_var( $wpdb->prepare( "SELECT AES_DECRYPT(%s,%s)", base64_decode( $encrypted_string ), $key ) );
 }
 
 /* OPTIONS PAGE */
@@ -515,7 +545,8 @@ function wp_to_diaspora_options_page() {
 
       try {
         $conn = new Diasphp( 'https://' . $options['pod'] );
-        $conn->login( $options['user'], $options['password'] );
+        $password = wp_to_diaspora_decrypt( $options['password'] );
+        $conn->login( $options['user'], $password );
 
         // Show success message if connected successfully.
         add_settings_error(
@@ -571,6 +602,8 @@ function wp_to_diaspora_settings_validate( $new_values ) {
   // If password is blank, it hasn't been changed.
   if ( '' === $new_values['password'] ) {
     $new_values['password'] = $options['password'];
+  } else {
+    $new_values['password'] = wp_to_diaspora_encrypt( $new_values['password'] );
   }
 
   if ( ! isset( $new_values['enabled_post_types'] ) ) {
