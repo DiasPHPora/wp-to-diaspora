@@ -190,11 +190,11 @@ function wp_to_diaspora_embed_url( $html, $url, $attr, $post_ID ) {
   return $url;
 }
 
-// Removes '[embed]' and '[/embed]' left by wp_to_diaspora_embed_url
-// TODO: it would be great to fix it using only one filter. It's happening because embed filter is being removed by remove_all_filters('the_content') on wp_to_diaspora_post().
-function wp_to_diaspora_embed_remove( $content ){
-  $content = str_replace( '[embed]', '<p>', $content );
-  return str_replace( '[/embed]', '</p>', $content );
+// Removes '[embed]' and '[/embed]' left by wp_to_diaspora_embed_url.
+// TODO: It would be great to fix it using only one filter.
+//       It's happening because embed filter is being removed by remove_all_filters('the_content') on wp_to_diaspora_post().
+function wp_to_diaspora_embed_remove( $content ) {
+  return str_replace( array( '[embed]', '[/embed]' ), array( '<p>', '</p>' ), $content );
 }
 
 /**
