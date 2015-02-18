@@ -786,7 +786,7 @@ function wp_to_diaspora_meta_box_callback( $post ) {
       } else {
         // Just add the default "Public" aspect.
         ?>
-        <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>>Public</label>
+        <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>><?php _e( 'Public', 'wp_to_diaspora' ); ?></label>
         <?php
       }
       ?>
@@ -940,7 +940,7 @@ add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', 'wp_to_diaspora_update_pod
  */
 function wp_to_diaspora_update_aspects_list() {
   $options = get_option( 'wp_to_diaspora_settings' );
-  $aspects = ( isset( $options['aspects_list'] ) ) ? $options['aspects_list'] : array( 'public' => 'Public' );
+  $aspects = ( isset( $options['aspects_list'] ) ) ? $options['aspects_list'] : array( 'public' => __( 'Public', 'wp_to_diaspora' ) );
 
   try {
     // Initialise a new connection to post to Diaspora*.
@@ -951,7 +951,7 @@ function wp_to_diaspora_update_aspects_list() {
     // Do we have a list of aspects?
     if ( $aspects_raw = $conn->get_aspects() ) {
       // Add the 'public' aspect, as it's global and not user specific.
-      $aspects = array( 'public' => 'Public' );
+      $aspects = array( 'public' => __( 'Public', 'wp_to_diaspora' ) );
 
       // Create an array of all the aspects and save them to the settings.
       foreach ( $aspects_raw as $aspect ) {
