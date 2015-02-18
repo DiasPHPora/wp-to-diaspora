@@ -452,33 +452,37 @@ function wp_to_diaspora_defaults_section_cb() {
 }
 
 /**
- * Render the "Post types" field.
+ * Render the "Post types" checkboxes.
  */
 function wp_to_diaspora_post_types_render() {
-
   $options = get_option( 'wp_to_diaspora_settings' );
   $post_types = get_post_types( array( 'public' => true ), 'objects' );
 
+  // Remove excluded post types from the list.
   $excluded_post_types = array( 'attachment', 'nav_menu_item', 'revision' );
-
   foreach ( $excluded_post_types as $excluded ) {
-    unset( $post_types[$excluded] );
+    unset( $post_types[ $excluded ] );
   }
 
+  // Set up the tabs and content boxes.
+  $tabs     = '';
+  $contents = '';
   foreach ( $post_types as $type ) {
-    $name     = $type->labels->name;
-    $slug     = $type->name;
-    $checked = in_array( $slug, $options['enabled_post_types'] ) ? "checked='checked'" : "";
+    $name = $type->label;
+    $slug = $type->name;
 
-    $tabs .= "<li class='tab-link' data-tab='tab-$slug'>$name</li>";
-    $contents .= "<div id='tab-$slug' class='tab-content'>
-                    <p><label><input type='checkbox' name='wp_to_diaspora_settings[enabled_post_types][]' value='$slug' $checked>" .
-                      sprintf( __( 'Enable WP to Diaspora* on %s', 'wp_to_diaspora' ), $name ) .
-                    "</label></p>
-                  </div>";
+    $tabs .= '<li class="tab-link" data-tab="tab-' . $slug . '">' . $name . '</li>';
+    $contents .= sprintf('
+      <div id="tab-%1$s" class="tab-content">
+        <label><input type="checkbox" name="wp_to_diaspora_settings[enabled_post_types][]" value="%1$s" %2$s>%3$s</label>
+      </div>',
+      $slug,
+      checked( in_array( $slug, $options['enabled_post_types'] ), true, false ),
+      sprintf( __( 'Enable WP to Diaspora* on %s', 'wp_to_diaspora' ), $name )
+    );
   }
 
-  printf( '<div class="container wp-to-diaspora-settings"><ul class="tabs">' . $tabs . '</ul>' . $contents . '</div>' );
+  echo '<div class="post-types-container"><ul class="tabs">' . $tabs . '</ul>' . $contents . '</div>';
 }
 
 /**
@@ -688,23 +692,20 @@ function wp_to_diaspora_settings_validate( $new_values ) {
 /* META BOX */
 
 /**
- * Adds a box to the main column on the Post and Page edit screens.
+ * Adds a meta box to the main column on the enabled Post Types' edit screens.
  */
 function wp_to_diaspora_add_meta_box() {
-
   $options = get_option( 'wp_to_diaspora_settings' );
 
   foreach ( $options['enabled_post_types'] as $post_type ) {
-
     add_meta_box(
       'wp_to_diaspora_meta_box',
-      __( 'WP to Diaspora*', 'wp_to_diaspora' ),
+      'WP to Diaspora*',
       'wp_to_diaspora_meta_box_callback',
       $post_type,
       'side',
       'high'
     );
-
   }
 }
 add_action( 'add_meta_boxes', 'wp_to_diaspora_add_meta_box' );

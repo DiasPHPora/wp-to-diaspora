@@ -1,10 +1,10 @@
-.wp-to-diaspora-settings ul.tabs{
+.settings_page_wp_to_diaspora .post-types-container ul.tabs{
   margin: 0px;
   padding: 0px;
   list-style: none;
 }
 
-.wp-to-diaspora-settings ul.tabs li{
+.settings_page_wp_to_diaspora .post-types-container ul.tabs li{
   background: none;
   color: #222;
   display: inline-block;
@@ -13,18 +13,18 @@
   cursor: pointer;
 }
 
-.wp-to-diaspora-settings ul.tabs li.current{
+.settings_page_wp_to_diaspora .post-types-container ul.tabs li.current{
   background: #ededed;
   color: #222;
 }
 
-.wp-to-diaspora-settings .tab-content{
+.settings_page_wp_to_diaspora .post-types-container .tab-content{
   display: none;
   background: #ededed;
   padding: 15px;
 }
 
-.wp-to-diaspora-settings .tab-content.current{
+.settings_page_wp_to_diaspora .post-types-container .tab-content.current{
   display: inherit;
 }
 
