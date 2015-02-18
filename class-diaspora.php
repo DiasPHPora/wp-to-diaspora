@@ -122,14 +122,24 @@ class Diasphp {
 
   /**
    * Post to Diaspora.
-   * @param  string $text     The text to post.
-   * @param  string $provider The provider name to display.
-   * @return bool             Return true if successfully posted, else throw an exception.
+   * @param  string       $text     The text to post.
+   * @param  string       $provider The provider name to display.
+   * @param  string|array $aspects  The aspects to post to. (Array or comma seperated ids)
+   * @return object                 Return the response data of the new Diaspora* post if successfully posted, else throw an exception.
    */
-  function post( $text, $provider = 'diasphp' ) {
+  function post( $text, $provider = 'diasphp', $aspects = 'public' ) {
+    // Put the aspects into an array.
+    if ( isset( $aspects ) && ! is_array( $aspects ) ) {
+      $aspects = array_filter( explode( ',', $aspects ) );
+    }
+    // If no aspects have been selected or the public one is also included, choose public only.
+    if ( empty( $aspects ) || in_array( 'public', $aspects ) ) {
+      $aspects = 'public';
+    }
+
     // Prepare post data.
     $datatopost = json_encode( array(
-      'aspect_ids'     => 'public',
+      'aspect_ids'     => $aspects,
       'status_message' => array(
         'text' => $text,
         'provider_display_name' => $provider
@@ -173,7 +183,7 @@ class Diasphp {
    * Get the list of aspects.
    * @return array Array of aspect objects.
    */
-  function aspects() {
+  function get_aspects() {
     // Define maximum redirects.
     $max_redirects = 10;
 
