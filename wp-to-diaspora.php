@@ -228,10 +228,8 @@ add_action( 'admin_enqueue_scripts', 'wp_to_diaspora_admin_loadscripts' );
  * @return array        Links to display for plugin on plugins page.
  */
 function wp_to_diaspora_settings_link ( $links ) {
-  $mylinks = array(
-    '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings', 'wp_to_diaspora' ) . '</a>',
-  );
-  return array_merge( $links, $mylinks );
+  $links[] = '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings', 'wp_to_diaspora' ) . '</a>';
+  return $links;
 }
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_to_diaspora_settings_link' );
 
