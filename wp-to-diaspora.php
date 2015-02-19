@@ -72,7 +72,8 @@ add_action( 'admin_init', 'wp_to_diaspora_upgrade' );
 /**
  * Post to Diaspora when saving a post.
  *
- * @param  integer $post_id ID of the post being saved.
+ * @param integer $post_id ID of the post being saved.
+ * @param WP_Post $post    Post object being saved.
  */
 function wp_to_diaspora_post( $post_id, $post ) {
   // Get the post's meta data.
@@ -161,12 +162,14 @@ function wp_to_diaspora_post( $post_id, $post ) {
       // NOTE: Leave "via" as a static value, to promote plugin!
       $response = $conn->post( $status_message, 'WP to Diaspora*', $aspects );
 
-      // Save certain Diaspora* post data as meta data.
+      // Save certain Diaspora* post data as meta data for future reference.
       if ( isset( $response ) ) {
+        // Get the existing post history.
         $diaspora_post_history = get_post_meta( $post_id, '_wp_to_diaspora_post_history', true );
         if ( empty( $diaspora_post_history ) ) {
           $diaspora_post_history = array();
         }
+
         // Add a new entry to the history.
         $diaspora_post_history[] = array(
           'id'         => $response->id,
@@ -174,28 +177,31 @@ function wp_to_diaspora_post( $post_id, $post ) {
           'created_at' => $post->post_modified,
           'aspects'    => $aspects,
           'nsfw'       => $response->nsfw,
-          'post_url'   => $pod_url . '/posts/' . $response->guid,
+          'post_url'   => $pod_url . '/posts/' . $response->guid
         );
         update_post_meta( $post_id, '_wp_to_diaspora_post_history', $diaspora_post_history );
+
+        // If there is still a previous post error around, remove it.
         delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
       }
     } catch ( Exception $e ) {
+      // Save the post error as post meta data, so we can display it to the user.
       update_post_meta( $post_id, '_wp_to_diaspora_post_error', $e->getMessage() );
     }
   }
 }
 add_action( 'save_post', 'wp_to_diaspora_post', 20, 2 );
 
-// Return URL from [embed] shortcode instead of generated iframe
+// Return URL from [embed] shortcode instead of generated iframe.
 function wp_to_diaspora_embed_url( $html, $url, $attr, $post_ID ) {
   return $url;
 }
 
-// Removes '[embed]' and '[/embed]' left by wp_to_diaspora_embed_url
-// TODO: it would be great to fix it using only one filter. It's happening because embed filter is being removed by remove_all_filters('the_content') on wp_to_diaspora_post().
-function wp_to_diaspora_embed_remove( $content ){
-  $content = str_replace( '[embed]', '<p>', $content );
-  return str_replace( '[/embed]', '</p>', $content );
+// Removes '[embed]' and '[/embed]' left by wp_to_diaspora_embed_url.
+// TODO: It would be great to fix it using only one filter.
+//       It's happening because embed filter is being removed by remove_all_filters('the_content') on wp_to_diaspora_post().
+function wp_to_diaspora_embed_remove( $content ) {
+  return str_replace( array( '[embed]', '[/embed]' ), array( '<p>', '</p>' ), $content );
 }
 
 /**
@@ -207,16 +213,18 @@ function wp_to_diaspora_plugins_loaded() {
 add_action( 'plugins_loaded', 'wp_to_diaspora_plugins_loaded' );
 
 /**
- * Load scripts and styles for Settings page
+ * Load scripts and styles for Settings and Post pages of allowed post types.
  */
 function wp_to_diaspora_admin_loadscripts() {
   $options = get_option( 'wp_to_diaspora_settings' );
   $valid_post_types = ( isset( $options['enabled_post_types'] ) ) ? $options['enabled_post_types'] : array();
+
+  // Get the screen to find out where we are.
   $screen = get_current_screen();
 
   // Only load the styles and scripts on the settings page and the allowed post types.
   if ( 'settings_page_wp_to_diaspora' === $screen->id || ( in_array( $screen->post_type, $valid_post_types ) && 'post' === $screen->base ) ) {
-    wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
+    wp_enqueue_style(  'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
     wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), array( 'jquery' ), false, true );
   }
 }
@@ -229,10 +237,8 @@ add_action( 'admin_enqueue_scripts', 'wp_to_diaspora_admin_loadscripts' );
  * @return array        Links to display for plugin on plugins page.
  */
 function wp_to_diaspora_settings_link ( $links ) {
-  $mylinks = array(
-    '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings', 'wp_to_diaspora' ) . '</a>',
-  );
-  return array_merge( $links, $mylinks );
+  $links[] = '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings', 'wp_to_diaspora' ) . '</a>';
+  return $links;
 }
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_to_diaspora_settings_link' );
 
@@ -252,11 +258,11 @@ function wp_to_diaspora_clean_tag( $tag ) {
 }
 
 /**
- * Encrypt the passed string with the passed key
+ * Encrypt the passed string with the passed key.
  *
- * @param string $input_string String to be encrypted
- * @param string $key The key
- * @return string The encrypted string.
+ * @param  string $input_string String to be encrypted.
+ * @param  string $key          The key used for the encryption.
+ * @return string               The encrypted string.
  */
 function wp_to_diaspora_encrypt( $input_string, $key = AUTH_KEY ) {
   global $wpdb;
@@ -264,16 +270,17 @@ function wp_to_diaspora_encrypt( $input_string, $key = AUTH_KEY ) {
 }
 
 /**
- * Decrypt the passed string with the passed key
+ * Decrypt the passed string with the passed key.
  *
- * @param string $input_string String to be decrypted
- * @param string $key The key
- * @return string The decrypted string.
+ * @param  string $input_string String to be decrypted.
+ * @param  string $key          The key used for the decryption.
+ * @return string               The decrypted string.
  */
 function wp_to_diaspora_decrypt( $encrypted_string, $key = AUTH_KEY ) {
   global $wpdb;
   return $wpdb->get_var( $wpdb->prepare( "SELECT AES_DECRYPT(%s,%s)", base64_decode( $encrypted_string ), $key ) );
 }
+
 
 /* OPTIONS PAGE */
 
@@ -299,7 +306,7 @@ function wp_to_diaspora_settings_init() {
     'wp_to_diaspora_settings'
   );
 
-  // Add a "Defaults" section that contains the Pod domain, Username and Password.
+  // Add a "Defaults" section that contains all posting settings to be used by default.
   add_settings_section(
     'wp_to_diaspora_defaults_section',
     __( 'Posting Defaults', 'wp_to_diaspora' ),
@@ -349,8 +356,8 @@ function wp_to_diaspora_setup_section_cb() {
 function wp_to_diaspora_pod_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
-  https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo $options['pod']; ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="wp_to_diaspora_pod_list" required> <a id="refresh_pod_list" class="button"><?php _e( 'Refresh pod list', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span>
-  <datalist id="wp_to_diaspora_pod_list">
+  https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo $options['pod']; ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required> <a id="refresh-pod-list" class="button"><?php _e( 'Refresh pod list', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span>
+  <datalist id="pod-list">
   <?php foreach ( $options['pod_list'] as $pod ) : ?>
     <option data-secure="<?php echo $pod['secure']; ?>" value="<?php echo $pod['domain']; ?>"></option>
   <?php endforeach; ?>
@@ -376,9 +383,9 @@ function wp_to_diaspora_password_render() {
   // Special case if we already have a password.
   $has_password = ( isset( $options['password'] ) && '' !== $options['password'] );
   $placeholder  = ( $has_password ) ? __( 'Password already set', 'wp_to_diaspora' ) : __( 'Password', 'wp_to_diaspora' );
-  $required     = ( $has_password ) ? '' : 'required';
+  $required     = ( $has_password ) ? '' : ' required';
   ?>
-  <input type="password" name="wp_to_diaspora_settings[password]" value="" placeholder="<?php echo $placeholder; ?>" <?php echo $required; ?>>
+  <input type="password" name="wp_to_diaspora_settings[password]" value="" placeholder="<?php echo $placeholder; ?>"<?php echo $required; ?>>
   <?php if ( $has_password ) : ?>
     <p class="description"><?php _e( 'If you would like to change the password type a new one. Otherwise leave this blank.', 'wp_to_diaspora' ); ?></p>
   <?php endif;
@@ -401,11 +408,11 @@ function wp_to_diaspora_defaults_section_cb() {
 
    // Post to Diaspora* checkbox.
   add_settings_field(
-  'post_to_diaspora',
-  __( 'Post to Diaspora*', 'wp_to_diaspora' ),
-  'wp_to_diaspora_post_to_diaspora_render',
-  'wp_to_diaspora_settings',
-  'wp_to_diaspora_defaults_section'
+    'post_to_diaspora',
+    __( 'Post to Diaspora*', 'wp_to_diaspora' ),
+    'wp_to_diaspora_post_to_diaspora_render',
+    'wp_to_diaspora_settings',
+    'wp_to_diaspora_defaults_section'
   );
 
   // Full entry link checkbox.
@@ -455,43 +462,47 @@ function wp_to_diaspora_defaults_section_cb() {
 }
 
 /**
- * Render the "Post types" field.
+ * Render the "Post types" checkboxes.
  */
 function wp_to_diaspora_post_types_render() {
-
   $options = get_option( 'wp_to_diaspora_settings' );
   $post_types = get_post_types( array( 'public' => true ), 'objects' );
 
+  // Remove excluded post types from the list.
   $excluded_post_types = array( 'attachment', 'nav_menu_item', 'revision' );
-
   foreach ( $excluded_post_types as $excluded ) {
-    unset( $post_types[$excluded] );
+    unset( $post_types[ $excluded ] );
   }
 
+  // Set up the tabs and content boxes.
+  $tabs     = '';
+  $contents = '';
   foreach ( $post_types as $type ) {
-    $name     = $type->labels->name;
-    $slug     = $type->name;
-    $checked = in_array( $slug, $options['enabled_post_types'] ) ? "checked='checked'" : "";
+    $name = $type->label;
+    $slug = $type->name;
 
-    $tabs .= "<li class='tab-link' data-tab='tab-$slug'>$name</li>";
-    $contents .= "<div id='tab-$slug' class='tab-content'>
-                    <p><label><input type='checkbox' name='wp_to_diaspora_settings[enabled_post_types][]' value='$slug' $checked>" .
-                      sprintf( __( 'Enable WP to Diaspora* on %s', 'wp_to_diaspora' ), $name ) .
-                    "</label></p>
-                  </div>";
+    $tabs .= '<li class="tab-link" data-tab="tab-' . $slug . '">' . $name . '</li>';
+    $contents .= sprintf('
+      <div id="tab-%1$s" class="tab-content">
+        <label><input type="checkbox" name="wp_to_diaspora_settings[enabled_post_types][]" value="%1$s" %2$s>%3$s</label>
+      </div>',
+      $slug,
+      checked( in_array( $slug, $options['enabled_post_types'] ), true, false ),
+      sprintf( __( 'Enable WP to Diaspora* on %s', 'wp_to_diaspora' ), $name )
+    );
   }
 
-  printf( '<div class="container wp-to-diaspora-settings"><ul class="tabs">' . $tabs . '</ul>' . $contents . '</div>' );
+  echo '<div class="post-types-container"><ul class="tabs">' . $tabs . '</ul>' . $contents . '</div>';
 }
 
 /**
 * Render the "Post to Diaspora*" checkbox.
 */
 function wp_to_diaspora_post_to_diaspora_render() {
-$options = get_option( 'wp_to_diaspora_settings' );
-?>
-<label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_settings[post_to_diaspora]" value="1" <?php checked( $options['post_to_diaspora'] ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
-<?php
+  $options = get_option( 'wp_to_diaspora_settings' );
+  ?>
+  <label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_settings[post_to_diaspora]" value="1" <?php checked( $options['post_to_diaspora'] ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
+  <?php
 }
 
 /**
@@ -500,7 +511,7 @@ $options = get_option( 'wp_to_diaspora_settings' );
 function wp_to_diaspora_fullentrylink_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
-  <label><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1" <?php checked( $options['fullentrylink'], 1 ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
+  <label><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1" <?php checked( $options['fullentrylink'] ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
   <p class="description"><?php _e( 'Include a link back to your original post.', 'wp_to_diaspora' ); ?></p>
   <?php
 }
@@ -523,7 +534,7 @@ function wp_to_diaspora_tags_to_post_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   $tags_to_post = isset( $options['tags_to_post'] ) ? $options['tags_to_post'] : 'gc';
   ?>
-  <select id="tags_to_post" name="wp_to_diaspora_settings[tags_to_post]">
+  <select id="tags-to-post" name="wp_to_diaspora_settings[tags_to_post]">
     <option value="gcp" <?php selected( $tags_to_post, 'gcp' ); ?>><?php _e( 'All tags (global, custom and post tags)', 'wp_to_diaspora' ); ?></option>
     <option value="gc" <?php  selected( $tags_to_post, 'gc' );  ?>><?php _e( 'Global and custom tags', 'wp_to_diaspora' ); ?></option>
     <option value="gp" <?php  selected( $tags_to_post, 'gp' );  ?>><?php _e( 'Global and post tags', 'wp_to_diaspora' ); ?></option>
@@ -547,7 +558,7 @@ function wp_to_diaspora_global_tags_render() {
 }
 
 /**
- * Render the "Aspects" field.
+ * Render the "Aspects" checkboxes.
  */
 function wp_to_diaspora_aspects_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
@@ -564,7 +575,7 @@ function wp_to_diaspora_aspects_render() {
     } else {
       // Just add the default "Public" aspect.
       ?>
-      <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>>Public</label>
+      <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>><?php _e( 'Public', 'wp_to_diaspora' ); ?></label>
       <?php
     }
     ?>
@@ -631,18 +642,18 @@ function wp_to_diaspora_settings_validate( $new_values ) {
 
   // Validate all settings before saving to the database.
   $new_values['pod']      = sanitize_text_field( $new_values['pod'] );
-  // If we are saving the settings via the form, the pod and aspects list won't be set,
-  // so get those from the options.
+  $new_values['user']     = sanitize_text_field( $new_values['user'] );
+  $new_values['password'] = sanitize_text_field( $new_values['password'] );
+
+  // If we are saving the settings via the form, the pod and aspects list won't be set, so get those from the options.
   if ( ! isset( $new_values['pod_list'] ) ) {
     $new_values['pod_list'] = $options['pod_list'];
   }
   if ( ! isset( $new_values['aspects_list'] ) ) {
     $new_values['aspects_list'] = $options['aspects_list'];
   }
-  $new_values['user']     = sanitize_text_field( $new_values['user'] );
-  $new_values['password'] = sanitize_text_field( $new_values['password'] );
 
-  // If password is blank, it hasn't been changed. 
+  // If password is blank, it hasn't been changed.
   // If new password is equal to the encrypted password already saved, it was just passed again. It happens everytime update_option('wp_to_diaspora_settings') is called.
   if ( '' === $new_values['password'] || $options['password'] === $new_values['password'] ) {
     $new_values['password'] = $options['password'];
@@ -666,9 +677,7 @@ function wp_to_diaspora_settings_validate( $new_values ) {
   }
 
   $global_tags_clean = array();
-  foreach ( explode( ',', $new_values['global_tags'] ) as $tag ) {
-    // Keep only alphanumeric, dash and unserscore.
-    // TODO: What about eastern characters?
+  foreach ( array_filter( explode( ',', $new_values['global_tags'] ) ) as $tag ) {
     $global_tags_clean[] = wp_to_diaspora_clean_tag( $tag );
   }
   $new_values['global_tags'] = implode( ', ', array_unique( $global_tags_clean ) );
@@ -691,23 +700,20 @@ function wp_to_diaspora_settings_validate( $new_values ) {
 /* META BOX */
 
 /**
- * Adds a box to the main column on the Post and Page edit screens.
+ * Adds a meta box to the main column on the enabled Post Types' edit screens.
  */
 function wp_to_diaspora_add_meta_box() {
-
   $options = get_option( 'wp_to_diaspora_settings' );
 
   foreach ( $options['enabled_post_types'] as $post_type ) {
-
     add_meta_box(
       'wp_to_diaspora_meta_box',
-      __( 'WP to Diaspora*', 'wp_to_diaspora' ),
+      'WP to Diaspora*',
       'wp_to_diaspora_meta_box_callback',
       $post_type,
       'side',
       'high'
     );
-
   }
 }
 add_action( 'add_meta_boxes', 'wp_to_diaspora_add_meta_box' );
@@ -740,9 +746,9 @@ function wp_to_diaspora_meta_box_callback( $post ) {
   // Have we already posted on Diaspora*?
   if ( ( $diaspora_post_history = get_post_meta( $post->ID, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
     $latest_post = end( $diaspora_post_history );
-  ?>
+    ?>
     <p><a href="<?php echo $latest_post['post_url']; ?>" target="_blank"><?php _e( 'Already posted to Diaspora*', 'wp_to_diaspora' ); ?></a></p>
-  <?php
+    <?php
   }
   ?>
   <p><label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_post_to_diaspora" value="1" <?php checked( $post_to_diaspora ); ?>><?php _e( 'Post to Diaspora*', 'wp_to_diaspora' ); ?></label></p>
@@ -756,7 +762,7 @@ function wp_to_diaspora_meta_box_callback( $post ) {
   <p>
     <label title="<?php _e( 'Choose which tags should be posted to Diaspora*.', 'wp_to_diaspora' ); ?>">
       <?php _e( 'Tags to post', 'wp_to_diaspora' ); ?>
-      <select id="tags_to_post" name="wp_to_diaspora_tags_to_post">
+      <select id="tags-to-post" name="wp_to_diaspora_tags_to_post">
         <option value="gcp" <?php selected( $tags_to_post, 'gcp' ); ?>><?php _e( 'All tags (global, custom and post tags)', 'wp_to_diaspora' ); ?></option>
         <option value="gc" <?php  selected( $tags_to_post, 'gc' );  ?>><?php _e( 'Global and custom tags', 'wp_to_diaspora' ); ?></option>
         <option value="gp" <?php  selected( $tags_to_post, 'gp' );  ?>><?php _e( 'Global and post tags', 'wp_to_diaspora' ); ?></option>
@@ -800,7 +806,7 @@ function wp_to_diaspora_meta_box_callback( $post ) {
 }
 
 /**
- * When the post is saved, save our custom data.
+ * When the post is saved, save our meta data.
  *
  * @param int $post_id The ID of the post being saved.
  */
@@ -820,8 +826,14 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
   }
 
   // Check the user's permissions.
-  if ( ! current_user_can( 'edit_post', $post_id ) ) {
-    return;
+  if ( isset( $_POST['post_type'] ) && 'page' === $_POST['post_type'] ) {
+    if ( ! current_user_can( 'edit_pages', $post_id ) ) {
+      return;
+    }
+  } else {
+    if ( ! current_user_can( 'edit_posts', $post_id ) ) {
+      return;
+    }
   }
 
   // OK, it's safe for us to save the data now.
@@ -838,7 +850,7 @@ function wp_to_diaspora_save_meta_box_data( $post_id ) {
   }
 
   $custom_tags_clean = array();
-  foreach ( explode( ',', $_POST['wp_to_diaspora_custom_tags'] ) as $tag ) {
+  foreach ( array_filter ( explode( ',', $_POST['wp_to_diaspora_custom_tags'] ) ) as $tag ) {
     $custom_tags_clean[] = wp_to_diaspora_clean_tag( $tag );
   }
   $wp_to_diaspora_meta['custom_tags'] = implode( ', ', array_unique( $custom_tags_clean ) );
@@ -860,7 +872,7 @@ add_action( 'save_post', 'wp_to_diaspora_save_meta_box_data', 10 );
  */
 function wp_to_diaspora_admin_notices() {
   global $post, $pagenow;
-  if ( ! $post || $pagenow != 'post.php' ) {
+  if ( ! $post || 'post.php' !== $pagenow ) {
     return;
   }
 
@@ -901,10 +913,11 @@ add_action( 'admin_init', 'wp_to_diaspora_ignore_post_error' );
 
 /**
  * Fetch the updated list of pods from podupti.me and save it to the settings.
+ *
  * @return array The list of pods.
  */
 function wp_to_diaspora_update_pod_list() {
-  // API url to fetch pos list from podupti.me.
+  // API url to fetch pods list from podupti.me.
   $pod_list_url = 'http://podupti.me/api.php?format=json&key=4r45tg';
 
   $pods = array();
@@ -938,6 +951,7 @@ add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', 'wp_to_diaspora_update_pod
 
 /**
  * Fetch the list of aspects and save them to the settings.
+ *
  * @return array The list of aspects. (id => name pairs)
  */
 function wp_to_diaspora_update_aspects_list() {
@@ -963,7 +977,9 @@ function wp_to_diaspora_update_aspects_list() {
       $options['aspects_list'] = $aspects;
       update_option( 'wp_to_diaspora_settings', $options );
     }
-  } catch ( Exception $e ) { }
+  } catch ( Exception $e ) {
+    // TODO: Return some kind of error.
+  }
 
   return $aspects;
 }

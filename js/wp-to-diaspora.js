@@ -1,26 +1,33 @@
 jQuery(document).ready(function ($) {
 
-  $('ul.tabs li').first().addClass('current');
-  $('.tab-content').first().addClass('current');
+  // Tabbed container for post types.
+  if ( $('.settings_page_wp_to_diaspora').length ) {
+    var $tabs = $('ul.tabs li');
+    var $contents = $('.tab-content');
 
-  $('ul.tabs li').click(function(){
-    var tab_id = $(this).attr('data-tab');
+    $tabs.first().addClass('current');
+    $contents.first().addClass('current');
 
-    $('ul.tabs li').removeClass('current');
-    $('.tab-content').removeClass('current');
+    $tabs.click(function(){
+      var tab_id = $(this).attr('data-tab');
 
-    $(this).addClass('current');
-    $('#'+tab_id).addClass('current');
-  });
+      $tabs.removeClass('current');
+      $contents.removeClass('current');
+
+      $(this).addClass('current');
+      $('#'+tab_id).addClass('current');
+    });
+  }
+
 
   // Refresh the list of pods and repopulate the autocomplete list.
-  $('#refresh_pod_list').click(function() {
+  $('#refresh-pod-list').click(function() {
     var $refreshButton = $(this).hide();
     var $spinner = $refreshButton.next('.spinner').show();
 
     $.post(ajaxurl, { 'action': 'wp_to_diaspora_update_pod_list' }, function(pods) {
       // Empty the current pod list and repopulate it.
-      var $podList = $('#wp_to_diaspora_pod_list').empty();
+      var $podList = $('#pod-list').empty();
       pods.forEach(function(pod) {
         $podList.append( '<option data-secure="' + pod.secure + '" value="' + pod.domain + '"></option>' );
       });
@@ -35,7 +42,7 @@ jQuery(document).ready(function ($) {
    * Make the aspect checkboxes clever, giving the 'public' aspect the power to disable all others.
    */
   function smartAspectSelection() {
-    $allAspectCheckboxes = $('#aspects-container input[type="checkbox"]');
+    var $allAspectCheckboxes = $('#aspects-container input[type="checkbox"]');
     var setDisabledAttrs = function() {
       var disabled = ( $allAspectCheckboxes.filter('[value="public"]').removeAttr('disabled').is(':checked') ) ? 'disabled' : null;
       $allAspectCheckboxes.not('[value="public"]').attr('disabled', disabled);
