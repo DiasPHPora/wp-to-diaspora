@@ -37,7 +37,7 @@ if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once dirname( __FILE__ ) . '
  * Initialise upgrade sequence.
  */
 function wp_to_diaspora_upgrade(){
-  // Define the default options.
+  // Define the default options, for new installs.
   $defaults = array(
     'pod_list'           => array(),
     'aspects_list'       => array(),
@@ -48,23 +48,24 @@ function wp_to_diaspora_upgrade(){
     'version'            => WP_TO_DIASPORA_VERSION
   );
 
-  // Get the current options.
-  $options = get_option( 'wp_to_diaspora_settings' );
+  // Get the current options, or assign defaults.
+  $options = get_option( 'wp_to_diaspora_settings', $defaults );
 
-  if ( ! $options ) {
-    // No saved options. Probably a fresh install.
-    add_option( 'wp_to_diaspora_settings', $defaults );
-  } elseif ( WP_TO_DIASPORA_VERSION != $options['version'] ) {
-    // Saved options exist, but versions differ. Probably a fresh update. Need to save updated options.
-    unset( $options['version'] );
+  // If the versions differ, this is probably an update. Need to save updated options.
+  if ( WP_TO_DIASPORA_VERSION != $options['version'] ) {
 
-    // TODO: remove this check on v1.2.8!
-    // Password is stored encrypted since version 1.2.7. When upgrading to it, the plain text password is encrypted and saved again.
-    $options['password'] = wp_to_diaspora_encrypt( $options['password'] );
+    // Password is stored encrypted since version 1.2.7.
+    // When upgrading to it, the plain text password is encrypted and saved again.
+    if ( version_compare( $options['version'], '1.2.7', '<' ) ) {
+      $options['password'] = wp_to_diaspora_encrypt( $options['password'] );
+    }
 
-    $options = array_merge( $defaults, $options );
-    update_option( 'wp_to_diaspora_settings', $options );
+    // Update version.
+    $options['version'] = WP_TO_DIASPORA_VERSION;
   }
+
+  // Add or update options.
+  update_option( 'wp_to_diaspora_settings', $options );
 }
 add_action( 'admin_init', 'wp_to_diaspora_upgrade' );
 
