@@ -237,7 +237,7 @@ add_action( 'admin_enqueue_scripts', 'wp_to_diaspora_admin_loadscripts' );
  * @return array        Links to display for plugin on plugins page.
  */
 function wp_to_diaspora_settings_link ( $links ) {
-  $links[] = '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings', 'wp_to_diaspora' ) . '</a>';
+  $links[] = '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings' ) . '</a>';
   return $links;
 }
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wp_to_diaspora_settings_link' );
@@ -334,7 +334,7 @@ function wp_to_diaspora_setup_section_cb() {
   // Username entry field.
   add_settings_field(
     'user',
-    __( 'Username', 'wp_to_diaspora' ),
+    __( 'Username' ),
     'wp_to_diaspora_user_render',
     'wp_to_diaspora_settings',
     'wp_to_diaspora_setup_section'
@@ -343,7 +343,7 @@ function wp_to_diaspora_setup_section_cb() {
   // Password entry field.
   add_settings_field(
     'password',
-    __( 'Password', 'wp_to_diaspora' ),
+    __( 'Password' ),
     'wp_to_diaspora_password_render',
     'wp_to_diaspora_settings',
     'wp_to_diaspora_setup_section'
@@ -371,7 +371,7 @@ function wp_to_diaspora_pod_render() {
 function wp_to_diaspora_user_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
-  <input type="text" name="wp_to_diaspora_settings[user]" value="<?php echo $options['user']; ?>" placeholder="<?php _e( 'Username', 'wp_to_diaspora' ); ?>" required>
+  <input type="text" name="wp_to_diaspora_settings[user]" value="<?php echo $options['user']; ?>" placeholder="<?php _e( 'Username' ); ?>" required>
   <?php
 }
 
@@ -382,7 +382,7 @@ function wp_to_diaspora_password_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   // Special case if we already have a password.
   $has_password = ( isset( $options['password'] ) && '' !== $options['password'] );
-  $placeholder  = ( $has_password ) ? __( 'Password already set', 'wp_to_diaspora' ) : __( 'Password', 'wp_to_diaspora' );
+  $placeholder  = ( $has_password ) ? __( 'Password already set', 'wp_to_diaspora' ) : __( 'Password' );
   $required     = ( $has_password ) ? '' : ' required';
   ?>
   <input type="password" name="wp_to_diaspora_settings[password]" value="" placeholder="<?php echo $placeholder; ?>"<?php echo $required; ?>>
@@ -501,7 +501,7 @@ function wp_to_diaspora_post_types_render() {
 function wp_to_diaspora_post_to_diaspora_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
-  <label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_settings[post_to_diaspora]" value="1" <?php checked( $options['post_to_diaspora'] ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
+  <label><input type="checkbox" id="post_to_diaspora" name="wp_to_diaspora_settings[post_to_diaspora]" value="1" <?php checked( $options['post_to_diaspora'] ); ?>><?php _e( 'Yes' ); ?></label>
   <?php
 }
 
@@ -511,7 +511,7 @@ function wp_to_diaspora_post_to_diaspora_render() {
 function wp_to_diaspora_fullentrylink_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
-  <label><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1" <?php checked( $options['fullentrylink'] ); ?>><?php _e( 'Yes', 'wp_to_diaspora' ); ?></label>
+  <label><input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1" <?php checked( $options['fullentrylink'] ); ?>><?php _e( 'Yes' ); ?></label>
   <p class="description"><?php _e( 'Include a link back to your original post.', 'wp_to_diaspora' ); ?></p>
   <?php
 }
@@ -523,7 +523,7 @@ function wp_to_diaspora_display_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
   <label><input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $options['display'], 'full' ); ?>><?php _e( 'Full Post', 'wp_to_diaspora' ); ?></label><br />
-  <label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $options['display'], 'excerpt' ); ?>><?php _e( 'Excerpt', 'wp_to_diaspora' ); ?></label>
+  <label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $options['display'], 'excerpt' ); ?>><?php _e( 'Excerpt' ); ?></label>
   <?php
 }
 
@@ -553,7 +553,7 @@ function wp_to_diaspora_global_tags_render() {
   $options = get_option( 'wp_to_diaspora_settings' );
   ?>
   <input type="text" name="wp_to_diaspora_settings[global_tags]" value="<?php echo $options['global_tags']; ?>" placeholder="<?php _e( 'Global tags', 'wp_to_diaspora' ); ?>" class="regular-text">
-  <p class="description"><?php _e( 'Custom tags to add to all posts being posted to Diaspora*.', 'wp_to_diaspora' ); ?> <?php _e( 'Separate tags with commas.', 'wp_to_diaspora' ); ?></p>
+  <p class="description"><?php _e( 'Custom tags to add to all posts being posted to Diaspora*.', 'wp_to_diaspora' ); ?> <?php _e( 'Separate tags with commas' ); ?></p>
   <?php
 }
 
@@ -575,7 +575,7 @@ function wp_to_diaspora_aspects_render() {
     } else {
       // Just add the default "Public" aspect.
       ?>
-      <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>><?php _e( 'Public', 'wp_to_diaspora' ); ?></label>
+      <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>><?php _e( 'Public' ); ?></label>
       <?php
     }
     ?>
@@ -756,7 +756,7 @@ function wp_to_diaspora_meta_box_callback( $post ) {
 
   <p>
     <label><input type="radio" name="wp_to_diaspora_display" value="full" <?php checked( $display, 'full' ); ?>><?php _e( 'Full Post', 'wp_to_diaspora' ); ?></label>&nbsp;
-    <label><input type="radio" name="wp_to_diaspora_display" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php _e( 'Excerpt', 'wp_to_diaspora' ); ?></label>
+    <label><input type="radio" name="wp_to_diaspora_display" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php _e( 'Excerpt' ); ?></label>
   </p>
 
   <p>
@@ -778,7 +778,7 @@ function wp_to_diaspora_meta_box_callback( $post ) {
       <?php _e( 'Custom tags', 'wp_to_diaspora' ); ?>
       <input type="text" name="wp_to_diaspora_custom_tags" value="<?php echo $custom_tags; ?>" class="widefat">
     </label>
-    <p class="howto"><?php _e( 'Separate tags with commas.', 'wp_to_diaspora' ); ?></p>
+    <p class="howto"><?php _e( 'Separate tags with commas' ); ?></p>
   </p>
 
   <p>
@@ -794,7 +794,7 @@ function wp_to_diaspora_meta_box_callback( $post ) {
       } else {
         // Just add the default "Public" aspect.
         ?>
-        <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>><?php _e( 'Public', 'wp_to_diaspora' ); ?></label>
+        <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>><?php _e( 'Public' ); ?></label>
         <?php
       }
       ?>
@@ -892,7 +892,7 @@ function wp_to_diaspora_admin_notices() {
       printf( '<div class="updated"><p>%1$s <a href="%2$s" target="_blank">%3$s</a></p></div>',
         __( 'Successfully posted to Diaspora*.', 'wp_to_diaspora' ),
         $latest_post['post_url'],
-        __( 'View Post', 'wp_to_diaspora' )
+        __( 'View Post' )
       );
     }
   }
@@ -956,7 +956,7 @@ add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', 'wp_to_diaspora_update_pod
  */
 function wp_to_diaspora_update_aspects_list() {
   $options = get_option( 'wp_to_diaspora_settings' );
-  $aspects = ( isset( $options['aspects_list'] ) ) ? $options['aspects_list'] : array( 'public' => __( 'Public', 'wp_to_diaspora' ) );
+  $aspects = ( isset( $options['aspects_list'] ) ) ? $options['aspects_list'] : array( 'public' => __( 'Public' ) );
 
   try {
     // Initialise a new connection to post to Diaspora*.
@@ -967,7 +967,7 @@ function wp_to_diaspora_update_aspects_list() {
     // Do we have a list of aspects?
     if ( $aspects_raw = $conn->get_aspects() ) {
       // Add the 'public' aspect, as it's global and not user specific.
-      $aspects = array( 'public' => __( 'Public', 'wp_to_diaspora' ) );
+      $aspects = array( 'public' => __( 'Public' ) );
 
       // Create an array of all the aspects and save them to the settings.
       foreach ( $aspects_raw as $aspect ) {
