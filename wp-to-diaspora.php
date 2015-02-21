@@ -28,21 +28,20 @@
 
 define( 'WP_TO_DIASPORA_VERSION', '1.2.7' );
 
-// Include necessary classes.
-if ( ! class_exists( 'Diasphp' ) )          require_once dirname( __FILE__ ) . '/class-diaspora.php';
-if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once dirname( __FILE__ ) . '/HTML_To_Markdown.php';
-
+// Load necessary classes.
+if ( ! class_exists( 'Diaspora_API' ) )     require_once dirname( __FILE__ ) . '/lib/class-diaspora-api.php';
+if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once dirname( __FILE__ ) . '/lib/class-html-to-markdown.php';
 
 /**
  * Initialise upgrade sequence.
  */
-function wp_to_diaspora_upgrade(){
+function wp_to_diaspora_upgrade() {
   // Define the default options, for new installs.
   $defaults = array(
     'pod_list'           => array(),
     'aspects_list'       => array(),
     'post_to_diaspora'   => true,
-    'enabled_post_types' => array ( 'post' ),
+    'enabled_post_types' => array( 'post' ),
     'fullentrylink'      => true,
     'display'            => 'full',
     'version'            => WP_TO_DIASPORA_VERSION
@@ -153,41 +152,39 @@ function wp_to_diaspora_post( $post_id, $post ) {
     $status_markdown = new HTML_To_Markdown( $status_message );
     $status_message  = $status_markdown->output();
 
-    try {
-      // Initialise a new connection to post to Diaspora*.
-      $pod_url = 'https://' . $options['pod'];
-      $conn = new Diasphp( $pod_url );
-      $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) );
-
-      // NOTE: Leave "via" as a static value, to promote plugin!
-      $response = $conn->post( $status_message, 'WP to Diaspora*', $aspects );
+    // Set up the connection to Diaspora.
+    $conn = new Diaspora_API( $options['pod'] );
+    if ( $conn->init()
+      && $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) )
+      && $response = $conn->post( $status_message, $aspects ) ) {
 
       // Save certain Diaspora* post data as meta data for future reference.
-      if ( isset( $response ) ) {
-        // Get the existing post history.
-        $diaspora_post_history = get_post_meta( $post_id, '_wp_to_diaspora_post_history', true );
-        if ( empty( $diaspora_post_history ) ) {
-          $diaspora_post_history = array();
-        }
 
-        // Add a new entry to the history.
-        $diaspora_post_history[] = array(
-          'id'         => $response->id,
-          'guid'       => $response->guid,
-          'created_at' => $post->post_modified,
-          'aspects'    => $aspects,
-          'nsfw'       => $response->nsfw,
-          'post_url'   => $pod_url . '/posts/' . $response->guid
-        );
-        update_post_meta( $post_id, '_wp_to_diaspora_post_history', $diaspora_post_history );
-
-        // If there is still a previous post error around, remove it.
-        delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
+      // Get the existing post history.
+      $diaspora_post_history = get_post_meta( $post_id, '_wp_to_diaspora_post_history', true );
+      if ( empty( $diaspora_post_history ) ) {
+        $diaspora_post_history = array();
       }
-    } catch ( Exception $e ) {
+
+      // Add a new entry to the history.
+      $diaspora_post_history[] = array(
+        'id'         => $response->id,
+        'guid'       => $response->guid,
+        'created_at' => $post->post_modified,
+        'aspects'    => $aspects,
+        'nsfw'       => $response->nsfw,
+        'post_url'   => $conn->get_pod_url() . '/posts/' . $response->guid
+      );
+      update_post_meta( $post_id, '_wp_to_diaspora_post_history', $diaspora_post_history );
+
+      // If there is still a previous post error around, remove it.
+      delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
+    } else {
       // Save the post error as post meta data, so we can display it to the user.
-      update_post_meta( $post_id, '_wp_to_diaspora_post_error', $e->getMessage() );
+      update_post_meta( $post_id, '_wp_to_diaspora_post_error', $conn->last_error );
     }
+    // Remember to clean up after ourselves.
+    $conn->cleanup();
   }
 }
 add_action( 'save_post', 'wp_to_diaspora_post', 20, 2 );
@@ -595,26 +592,27 @@ function wp_to_diaspora_options_page() {
     <?php
       $options = get_option( 'wp_to_diaspora_settings' );
 
-      try {
-        $conn = new Diasphp( 'https://' . $options['pod'] );
-        $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) );
-
+      // Set up the connection to Diaspora.
+      $conn = new Diaspora_API( $options['pod'] );
+      if ( $conn->init() && $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) ) ) {
         // Show success message if connected successfully.
         add_settings_error(
           'wp_to_diaspora_settings',
           'wp_to_diaspora_connected',
-          sprintf( __( 'Connected to %s', 'wp_to_diaspora' ), $options['pod'] ),
+          sprintf( __( 'Connected to %s', 'wp_to_diaspora' ), $conn->get_pod_url() ),
           'updated'
         );
-      } catch ( Exception $e ) {
+      } else {
         // Show error message if connection failed.
         add_settings_error(
           'wp_to_diaspora_settings',
           'wp_to_diaspora_connected',
-          sprintf( __( 'Couldn\'t connect to %s: Invalid pod, username or password.', 'wp_to_diaspora' ), $options['pod'] ),
+          sprintf( __( 'Couldn\'t connect to "%1$s": %2$s', 'wp_to_diaspora' ), $conn->get_pod_url(), $conn->last_error ),
           'error'
         );
       }
+      // Remember to clean up after ourselves.
+      $conn->cleanup();
 
       // Output success or error message.
       settings_errors( 'wp_to_diaspora_settings' );
@@ -958,28 +956,28 @@ function wp_to_diaspora_update_aspects_list() {
   $options = get_option( 'wp_to_diaspora_settings' );
   $aspects = ( isset( $options['aspects_list'] ) ) ? $options['aspects_list'] : array( 'public' => __( 'Public' ) );
 
-  try {
-    // Initialise a new connection to post to Diaspora*.
-    $pod_url = 'https://' . $options['pod'];
-    $conn = new Diasphp( $pod_url );
-    $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) );
+  // Set up the connection to Diaspora.
+  $conn = new Diaspora_API( $options['pod'] );
+  if ( $conn->init()
+    && $conn->login( $options['user'], wp_to_diaspora_decrypt( $options['password'] ) )
+    && $aspects_raw = $conn->get_aspects() ) {
 
-    // Do we have a list of aspects?
-    if ( $aspects_raw = $conn->get_aspects() ) {
-      // Add the 'public' aspect, as it's global and not user specific.
-      $aspects = array( 'public' => __( 'Public' ) );
+    // So we have a new list of aspects.
 
-      // Create an array of all the aspects and save them to the settings.
-      foreach ( $aspects_raw as $aspect ) {
-        $aspects[ $aspect->id ] = $aspect->name;
-      }
-      $options = get_option( 'wp_to_diaspora_settings' );
-      $options['aspects_list'] = $aspects;
-      update_option( 'wp_to_diaspora_settings', $options );
+    // Add the 'public' aspect, as it's global and not user specific.
+    $aspects = array( 'public' => __( 'Public' ) );
+
+    // Create an array of all the aspects and save them to the settings.
+    foreach ( $aspects_raw as $aspect ) {
+      $aspects[ $aspect->id ] = $aspect->name;
     }
-  } catch ( Exception $e ) {
-    // TODO: Return some kind of error.
+    $options = get_option( 'wp_to_diaspora_settings' );
+    $options['aspects_list'] = $aspects;
+    update_option( 'wp_to_diaspora_settings', $options );
   }
+
+  // Remember to clean up after ourselves.
+  $conn->cleanup();
 
   return $aspects;
 }
