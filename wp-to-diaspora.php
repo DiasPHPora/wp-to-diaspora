@@ -173,7 +173,7 @@ function wp_to_diaspora_post( $post_id, $post ) {
         'created_at' => $post->post_modified,
         'aspects'    => $aspects,
         'nsfw'       => $response->nsfw,
-        'post_url'   => $conn->get_pod_url() . '/posts/' . $response->guid
+        'post_url'   => $conn->get_pod_url( '/posts/' . $response->guid )
       );
       update_post_meta( $post_id, '_wp_to_diaspora_post_history', $diaspora_post_history );
 

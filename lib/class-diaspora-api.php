@@ -119,10 +119,15 @@ class Diaspora_API {
   /**
    * The full pod url, with the used protocol.
    *
-   * @var string
+   * @var string $path Path to add to the pod url.
    */
-  public function get_pod_url() {
-    return sprintf( 'http%s://%s', ( $this->_is_secure ) ? 's' : '', $this->_pod );
+  public function get_pod_url( $path = '' ) {
+    // Add a slash to the beginning?
+    if ( 0 !== strpos( $url, '/' ) ) {
+      $path = '/' . $path;
+    }
+
+    return sprintf( 'http%s://%s%s', ( $this->_is_secure ) ? 's' : '', $this->_pod, $path );
   }
 
   /**
@@ -242,7 +247,8 @@ class Diaspora_API {
 
     // Try to sign in.
     $req = $this->_http_request( '/users/sign_in', $params );
-    if ( 200 !== $req->info['http_code'] ) {
+    // If the request failed or we're still on the sign in page, the login failed.
+    if ( 200 !== $req->info['http_code'] || $this->get_pod_url( '/users/sign_in' ) === $req->info['url'] ) {
       // Login failed.
       $this->last_error = __( 'Login failed.', 'wp_to_diaspora' );
       return false;
@@ -363,7 +369,7 @@ class Diaspora_API {
   private function _http_request( $url, $data = array(), $headers = array() ) {
     // Prefix the full pod URL if necessary.
     if ( 0 === strpos( $url, '/' ) ) {
-      $url = $this->get_pod_url() . $url;
+      $url = $this->get_pod_url( $url );
     }
 
     // Define maximum redirects.
