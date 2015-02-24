@@ -32,6 +32,9 @@ Available:
 = Development =
 https://github.com/gutobenn/wp-to-diaspora
 
+= Credit =
+Dandelion banner image: [Pixabay](http://pixabay.com/en/dandelion-sky-flower-nature-seeds-463928/)
+
 == Installation ==
 
 1. Upload 'wp-to-diaspora' folder to the '/wp-content/plugins/' directory
