@@ -242,7 +242,7 @@ class Diaspora_API {
 
     // Try to sign in.
     $req = $this->_http_request( '/users/sign_in', $params );
-    if ( 302 !== $req->info['http_code'] ) {
+    if ( 200 !== $req->info['http_code'] ) {
       // Login failed.
       $this->last_error = __( 'Login failed.', 'wp_to_diaspora' );
       return false;
