@@ -1,7 +1,7 @@
-WP to Diaspora*
+WP to diaspora*
 =====================
 
-Automatically share WordPress posts on Diaspora*
+Automatically share WordPress posts on diaspora*
 
 https://wordpress.org/plugins/wp-to-diaspora/
 
@@ -20,6 +20,6 @@ If you want to contribute a translation, check out https://poeditor.com/join/pro
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gutobenn/wp-to-diaspora)
 
 ### Donate
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=gutobenn&url=https://github.com/gutobenn/wp-to-diaspora&title=WP to Diaspora*&language=&tags=github&category=software)
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=gutobenn&url=https://github.com/gutobenn/wp-to-diaspora&title=WP to diaspora*&language=&tags=github&category=software)
 Bitcoin: 1DVgfD9mzh6GPKZ5XGQeiJdVAQqVaJszAm
 

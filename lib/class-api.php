@@ -1,12 +1,12 @@
 <?php
 
 /**
- * API-like class to deal with HTTP(S) requests to Diaspora* using cURL.
+ * API-like class to deal with HTTP(S) requests to diaspora* using cURL.
  *
  * Basic functionality includes:
- * - Logging in to Diapora*
+ * - Logging in to diaspora*
  * - Fetching a user's aspects and connected services
- * - Posting to Diaspora*
+ * - Posting to diaspora*
  *
  * After many failed attempts of getting rid of using cURL cookiejar,
  * we've decided to stick with it and remove the temporary cookie file when cleaning up.
@@ -18,7 +18,15 @@
  * Which in turn are based on:
  * https://github.com/cocreature/diaspy/blob/master/client.py -- Thanks, Moritz
  */
-class Diaspora_API {
+
+/**
+ * diaspora* API.
+ *
+ * @package WP_To_Diaspora
+ * @subpackage API
+ * @since 1.2.7
+ */
+class WP2D_API {
 
   /**
    * The last http request error that occurred.
@@ -28,11 +36,11 @@ class Diaspora_API {
   public $last_error;
 
   /**
-   * The provider name to display when posting to Diaspora*.
+   * The provider name to display when posting to diaspora*.
    *
    * @var string
    */
-  public $provider = 'WP to Diaspora*';
+  public $provider = 'WP to diaspora*';
 
   /**
    * Security token to be used for making requests.
@@ -42,7 +50,7 @@ class Diaspora_API {
   private $_token;
 
   /**
-   * The last http request made to Diaspora*.
+   * The last http request made to diaspora*.
    * Contains the response and request infos.
    *
    * @var object
@@ -64,14 +72,14 @@ class Diaspora_API {
   private $_pod;
 
   /**
-   * Username to use when logging in to Diaspora*.
+   * Username to use when logging in to diaspora*.
    *
    * @var string
    */
   private $_username;
 
   /**
-   * Password to use when logging in to Diaspora*.
+   * Password to use when logging in to diaspora*.
    *
    * @var string
    */
@@ -123,7 +131,7 @@ class Diaspora_API {
    */
   public function get_pod_url( $path = '' ) {
     // Add a slash to the beginning?
-    if ( 0 !== strpos( $url, '/' ) ) {
+    if ( '' !== $path && '/' !== $path[0] ) {
       $path = '/' . $path;
     }
 
@@ -131,7 +139,7 @@ class Diaspora_API {
   }
 
   /**
-   * Constructor to initialise the connection to Diaspora*.
+   * Constructor to initialise the connection to diaspora*.
    *
    * @param string  $pod       The pod domain to connect to.
    * @param boolean $is_secure Is this a secure server? (Default: True)
@@ -140,11 +148,11 @@ class Diaspora_API {
     // Set class variables.
     $this->_pod       = $pod;
     $this->_is_secure = (bool) $is_secure;
-    $this->_cookiejar = tempnam( sys_get_temp_dir(), '' );
+    $this->_cookiejar = tempnam( sys_get_temp_dir(), 'wp2d' );
   }
 
   /**
-   * Initialise the connection to Diaspora*. The pod and protocol can be changed by passing new parameters.
+   * Initialise the connection to diaspora*. The pod and protocol can be changed by passing new parameters.
    * Check if we can connect to the pod to retrieve the token.
    *
    * @param  string  $pod       Pod domain to connect to, if it should be changed.
@@ -264,7 +272,7 @@ class Diaspora_API {
    *
    * @param  string         $text     The text to post.
    * @param  string|array   $aspects  The aspects to post to. (Array or comma seperated ids)
-   * @return string|boolean           Return the response data of the new Diaspora* post if successfully posted, else false.
+   * @return string|boolean           Return the response data of the new diaspora* post if successfully posted, else false.
    */
   public function post( $text, $aspects = 'public' ) {
     // Are we logged in?
