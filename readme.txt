@@ -1,4 +1,4 @@
-=== WP to Diaspora ===
+=== WP to diaspora ===
 Contributors: gutobenn, noplanman
 Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora
@@ -8,11 +8,11 @@ Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically shares WordPress posts on Diaspora*
+Automatically shares WordPress posts on diaspora*
 
 == Description ==
 
-Automatically shares WordPress posts on Diaspora*
+Automatically shares WordPress posts on diaspora*
 
 = What's diaspora*? =
 diaspora* is a decentralized social network. More about on https://diasporafoundation.org/
@@ -41,7 +41,7 @@ https://github.com/gutobenn/wp-to-diaspora
 
 1. Configuration page
 2. Meta box on post editor page
-3. Example post on Diaspora*
+3. Example post on diaspora*
 4. Example post on WordPress
 
 == Changelog ==
@@ -60,7 +60,7 @@ https://github.com/gutobenn/wp-to-diaspora
 * Interface improvements and some bug fixed
 
 = 1.2.5.2 =
-* Fixes a bug included in on 1.2.4: not able to set 'full entry on' link false 
+* Fixes a bug included in on 1.2.4: not able to set 'full entry on' link false
 
 = 1.2.4 =
 * Possibility of choosing to post between 'full post' and 'excerpt'
