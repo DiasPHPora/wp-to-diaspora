@@ -1,25 +1,39 @@
 === WP to diaspora ===
 Contributors: gutobenn, noplanman
 Donate link: http://github.com/gutobenn/wp-to-diaspora/
-Tags: diaspora
+Tags: diaspora, integration, share, post
 Requires at least: 3.2.1
 Tested up to: 4.1
 Stable tag: 1.2.7
+Author URI: http://github.com/gutobenn
+Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically shares WordPress posts on diaspora*
+Automatically share your WordPress posts on your diaspora\* profile.
 
 == Description ==
 
-Automatically shares WordPress posts on diaspora*
+With WP to diaspora\* and just a few clicks, you can automatically share your WordPress posts on your diaspora\* profile.
 
-= What's diaspora*? =
-diaspora* is a decentralized social network. More about on https://diasporafoundation.org/
+With the focus on being **intuitive**, sharing your posts to diaspora\* is made **as easy as possible**.
 
-= i18n =
-Available:
+Simply write your post and have it shared to diaspora\* at the same time you publish it on your website.
 
+= Minimum requirements =
+WordPress 3.2.1, PHP 5 with [cURL extension](https://php.net/manual/book.curl.php).
+
+= Getting started =
+After installing and activating the plugin, be sure to visit the plugin's settings page at 'Settings -> WP to diaspora' on your WordPress Admin page.
+Simply add your diaspora\* pod, username and password to get started.
+
+On this page you can also define the default behaviour when publishing new posts.
+These settings can easily be adjusted for each individual post by using the meta box that has been added to the post types that you have selected.
+
+= What's diaspora\*? =
+diaspora\* is a decentralized social network. More about it on https://diasporafoundation.org/
+
+= This plugin speaks your language =
 * Portuguese (Brazil)
 * Russian -- contributed by [Vitalie Ciubotaru](http://ciubotaru.tk)
 * Japanese -- ""
@@ -27,27 +41,58 @@ Available:
 * French -- contributed by [Fabián Rodriguez](http://fabianrodriguez.com)
 * German -- contributed by [Katrin Leinweber](http://www.konscience.de)
 * Italian -- contributed by [Giulio Roberti](http://www.viroproject.com)
-* Spanish -- contributed by [Armando Lüscher](http://www.noplanman.ch)
+* Spanish -- contributed by [Armando Lüscher](http://noplanman.ch)
+
+Your language isn't listed? Then feel free to [contribute your language skills](https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a) and help make this plugin more accessible!
 
 = Development =
-https://github.com/gutobenn/wp-to-diaspora
+This plugin is completely open source and is a work of love by all who have contributed.
+If you would like to be part of it and join in, make your way over to the [project page on GitHub](https://github.com/gutobenn/wp-to-diaspora) now.
+Also, if you have an idea you would like to see in this plugin or if you've found a bug, please [let us know](https://github.com/gutobenn/wp-to-diaspora/issues/new).
 
-= Credit =
-Dandelion banner image: [Pixabay](http://pixabay.com/en/dandelion-sky-flower-nature-seeds-463928/)
+= Credits =
+* Dandelion banner image: [Pixabay](http://pixabay.com/en/dandelion-sky-flower-nature-seeds-463928/)
 
 == Installation ==
 
-1. Upload 'wp-to-diaspora' folder to the '/wp-content/plugins/' directory
-2. Go to the options page and set your pod, username and password
+You can either use the built in WordPress installer or install the plugin manually.
+
+For an automated installation:
+1. Go to 'Plugins -> Add New' on your WordPress Admin page.
+2. Search for the 'WP to diaspora' plugin.
+3. Install by clicking the 'Install Now' button.
+4. Activate the plugin on the 'Plugins' page in your WordPress Admin.
+
+For a manual installation:
+1. Upload 'wp-to-diaspora' folder to the '/wp-content/plugins/' directory of your WordPress installation.
+2. Activate the plugin on the 'Plugins' page in your WordPress Admin.
 
 == Screenshots ==
 
 1. Configuration page
 2. Meta box on post editor page
-3. Example post on diaspora*
+3. Example post on diaspora\*
 4. Example post on WordPress
 
+== Learn ==
+
+A side effect of this plugin is to help anybody who is interested to learn from and especially understand how the insides of this plugin work.
+When you look into the code, you will see that it is well documented, making it easier for you to understand what's going on.
+We encourage you to discover something new and learn a thing or two!
+
+= How does this plugin do it? =
+So you want to know what happens in the background, to get your post to diaspora\*?
+Well, this might be a little technical, but it's simple enough to understand the concept.
+
+Basically, the server your WordPress installation is set up on makes a connection to your diaspora\* pod, logs you in using the provided username and password, adds a new post (which is your WordPress post) and responds to say if everything was successful.
+
+Quite straightforward, right?
+
 == Changelog ==
+
+= 1.3.0 =
+* Internal code restructuring
+* Updated readme file
 
 = 1.2.7 =
 * Custom post types support added
@@ -88,7 +133,7 @@ Dandelion banner image: [Pixabay](http://pixabay.com/en/dandelion-sky-flower-nat
 * Posts are now converted to markdown before sharing on diaspora
 
 = 1.1 =
-* Possibility of posting or not to diaspora*
+* Possibility of posting or not to diaspora\*
 * Required fields
 * i18n support
 * pt_BR translation
