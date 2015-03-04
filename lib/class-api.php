@@ -86,6 +86,13 @@ class WP2D_API {
   private $_password;
 
   /**
+   * Save the cookie string for the requests.
+   *
+   * @var string
+   */
+  private $_cookie;
+
+  /**
    * Remember the current login state.
    *
    * @var boolean
@@ -113,16 +120,10 @@ class WP2D_API {
    */
   private $_regexes = array(
     'token'    => '/content="(.*?)" name="csrf-token/',
+    'cookie'   => '/Set-Cookie: (.*?);/',
     'aspects'  => '/"aspects"\:(\[.+?\])/',
     'services' => '/"configured_services"\:(\[.+?\])/'
   );
-
-  /**
-   * Path to the used cookiejar.
-   *
-   * @var string
-   */
-  private $_cookiejar;
 
   /**
    * The full pod url, with the used protocol.
@@ -237,6 +238,7 @@ class WP2D_API {
       return true;
     }
 
+    // Set the uername and password.
     $this->_username = ( isset( $username ) && '' !== $username ) ? $username : null;
     $this->_password = ( isset( $password ) && '' !== $password ) ? $password : null;
 
@@ -254,9 +256,13 @@ class WP2D_API {
     );
 
     // Try to sign in.
-    $req = $this->_http_request( '/users/sign_in', $params );
-    // If the request failed or we're still on the sign in page, the login failed.
-    if ( 200 !== $req->info['http_code'] || $this->get_pod_url( '/users/sign_in' ) === $req->info['url'] ) {
+    $this->_http_request( '/users/sign_in', $params );
+
+    // Can we load the bookmarklet to make sure we're logged in?
+    $req = $this->_http_request( '/bookmarklet' );
+
+    // If the request isn't successful, we are not logged in correctly.
+    if ( 200 !== $req->info['http_code'] ) {
       // Login failed.
       $this->last_error = __( 'Login failed.', 'wp_to_diaspora' );
       return false;
@@ -384,13 +390,15 @@ class WP2D_API {
     $max_redirects = 10;
 
     // Call address via cURL.
-    $ch = curl_init();
+    $ch = curl_init( $url );
 
     // Set up cURL options.
-    curl_setopt( $ch, CURLOPT_URL, $url );
-    curl_setopt( $ch, CURLOPT_COOKIEFILE, $this->_cookiejar );
-    curl_setopt( $ch, CURLOPT_COOKIEJAR,  $this->_cookiejar );
+    curl_setopt( $ch, CURLOPT_HEADER, true );
     curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+    if ( ! empty( $this->_cookie ) ) {
+      curl_setopt( $ch, CURLOPT_COOKIE, $this->_cookie );
+    }
 
     // Add the passed headers.
     if ( ! empty( $headers ) ) {
@@ -403,53 +411,17 @@ class WP2D_API {
       curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
     }
 
-    // Check if the call can safely be made.
-    if ( '' === ini_get( 'open_basedir' ) && ! ini_get( 'safe_mode' ) ) {
-      // Set up cURL options.
-      curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-      curl_setopt( $ch, CURLOPT_MAXREDIRS, $max_redirects );
-      $response = curl_exec( $ch );
-    } else {
-      curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
-      $mr = $max_redirects;
-      if ( $mr > 0 ) {
-        $newurl = curl_getinfo( $ch, CURLINFO_EFFECTIVE_URL );
+    // Get the response from the cURL call.
+    $response = curl_exec( $ch );
 
-        // Copy the current handle to see if a redirection is necessary.
-        $ch_r = curl_copy_handle( $ch );
-
-        // Set up cURL options.
-        curl_setopt( $ch_r, CURLOPT_HEADER, true );
-        curl_setopt( $ch_r, CURLOPT_NOBODY, true );
-        curl_setopt( $ch_r, CURLOPT_FORBID_REUSE, false );
-
-        do {
-          curl_setopt( $ch_r, CURLOPT_URL, $newurl );
-          $header = curl_exec( $ch_r );
-          if ( curl_errno( $ch_r ) ) {
-            $code = 0;
-          } else {
-            $code = curl_getinfo( $ch_r, CURLINFO_HTTP_CODE );
-            if ( 301 == $code || 302 == $code ) {
-              preg_match( '/Location:(.*?)\n/', $header, $matches );
-              $newurl = trim( array_pop( $matches ) );
-            } else {
-              $code = 0;
-            }
-          }
-        } while ( $code && --$mr );
-
-        curl_close( $ch_r );
-        if ( $mr > 0 ) {
-          curl_setopt( $ch, CURLOPT_URL, $newurl );
-        }
-      }
-
-      $response = ( 0 === $mr && $max_redirects > 0 ) ? false : curl_exec( $ch );
-    }
+    // Get the headers and the html response.
+    $header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
+    $headers  = substr( $response, 0, $header_size );
+    $response = substr( $response, $header_size );
 
     // Remember this request.
     $this->_last_request = new stdClass();
+    $this->_last_request->headers  = $headers;
     $this->_last_request->response = $response;
     $this->_last_request->info     = curl_getinfo( $ch );
     curl_close( $ch );
@@ -457,6 +429,11 @@ class WP2D_API {
     // Save the new token.
     if ( $token = $this->_parse_regex( 'token', $response ) ) {
       $this->_token = $token;
+    }
+
+    // Save the lastest cookie.
+    if ( $cookie = $this->_parse_regex( 'cookie', $headers ) ) {
+      $this->_cookie = $cookie;
     }
 
     // Can we load new aspects while we're at it?
@@ -487,31 +464,6 @@ class WP2D_API {
 
     preg_match( $regex, $content, $matches );
     return trim( array_pop( $matches ) );
-  }
-
-  /**
-   * Remove the temporary cookiejar file.
-   *
-   * @return boolean True if the file has been deleted, else false.
-   */
-  public function cleanup() {
-    // Reset variables.
-    $this->_token     = null;
-    $this->_aspects   = array();
-    $this->_services  = array();
-    $this->last_error = null;
-
-    // If the cookie file exists, try to remove it, if no permissions prevent it.
-    if ( file_exists( $this->_cookiejar ) && ! @unlink( $this->_cookiejar ) ) {
-      // Clearly we couldn't delete the file.
-      $this->last_error = sprintf(
-        _x( 'Error while deleting Cookie at: %s.', 'Placeholder is the path to the Cookie file.', 'wp_to_diaspora' ),
-        $this->_cookiejar
-      );
-      return false;
-    }
-
-    return true;
   }
 }
 

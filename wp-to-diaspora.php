@@ -116,12 +116,15 @@ class WP_To_Diaspora {
     self::$_is_set_up = true;
   }
 
+  /**
+   * Load the diaspora* API for ease of use.
+   *
+   * @return WP2D_API The API object.
+   */
   private function _load_api() {
     $options = WP2D_Options::get_instance();
     if ( ! isset( $this->_api ) ) {
       $this->_api = new WP2D_API( $options->get_option( 'pod' ) );
-      // Clean up after finishing execution.
-      add_action( 'shutdown', array( $this->_api, 'cleanup' ) );
     }
     if ( $this->_api->init() ) {
       $this->_api->login( $options->get_option( 'username' ), WP2D_Helpers::decrypt( $options->get_option( 'password' ) ) );
