@@ -4,7 +4,7 @@ Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
 Requires at least: 3.2.1
 Tested up to: 4.1
-Stable tag: 1.2.7
+Stable tag: 1.3 
 Author URI: http://github.com/gutobenn
 Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
@@ -142,4 +142,4 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
-What's new: Custom post types support; Posting to specific aspects is now possible; There's a prepopulated list of pods; Password is now encrypted on database; Admin notices are displayed after posting.
+* Internal code restructuring
