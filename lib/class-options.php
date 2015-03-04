@@ -131,8 +131,6 @@ class WP2D_Options {
             'error'
           );
         }
-        // Remember to clean up after ourselves.
-        $conn->cleanup();
 
         // Output success or error message.
         settings_errors( 'wp_to_diaspora_settings' );
