@@ -316,7 +316,7 @@ class WP2D_API {
     $req = $this->_http_request( '/status_messages', $post_data_json, $headers );
     $response = json_decode( $req->response );
     if ( 201 !== $req->info['http_code'] ) {
-      $this->last_error = ( isset( $response->error ) ) ? $response->error : _x( 'Unknown error occurred.', 'When an unknown error occurred in the Diaspora_API object.', 'wp_to_diaspora' );
+      $this->last_error = ( isset( $response->error ) ) ? $response->error : _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp_to_diaspora' );
       return false;
     }
 
@@ -431,7 +431,7 @@ class WP2D_API {
       $this->_token = $token;
     }
 
-    // Save the lastest cookie.
+    // Save the latest cookie.
     if ( $cookie = $this->_parse_regex( 'cookie', $headers ) ) {
       $this->_cookie = $cookie;
     }
