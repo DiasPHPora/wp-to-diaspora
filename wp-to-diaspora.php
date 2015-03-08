@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP to diaspora*
  * Description: Automatically shares WordPress posts on diaspora*
- * Version: 1.3
+ * Version: 1.3.1
  * Author: Augusto Bennemann
  * Author URI: https://github.com/gutobenn
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
@@ -26,7 +26,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define( 'WP2D_VERSION', '1.3' );
+define( 'WP2D_VERSION', '1.3.1' );
 
 class WP_To_Diaspora {
 

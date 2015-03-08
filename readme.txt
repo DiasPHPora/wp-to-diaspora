@@ -4,7 +4,7 @@ Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
 Requires at least: 3.5
 Tested up to: 4.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 Author URI: http://github.com/gutobenn
 Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
@@ -90,6 +90,10 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= 1.3.1 =
+* Security improved
+* Debug added
+
 = 1.3.0 =
 * Internal code restructuring
 * Updated readme file
@@ -142,4 +146,4 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
-* Internal code restructuring
+* This version contains security improvements and includes and a debugger
