@@ -10,28 +10,28 @@ Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically share your WordPress posts on your diaspora\* profile.
+Automatically share your WordPress posts on your diaspora* profile.
 
 == Description ==
 
-With WP to diaspora\* and just a few clicks, you can automatically share your WordPress posts on your diaspora\* profile.
+With WP to diaspora* and just a few clicks, you can automatically share your WordPress posts on your diaspora* profile.
 
-With the focus on being **intuitive**, sharing your posts to diaspora\* is made **as easy as possible**.
+With the focus on being **intuitive**, sharing your posts to diaspora* is made **as easy as possible**.
 
-Simply write your post and have it shared to diaspora\* at the same time you publish it on your website.
+Simply write your post and have it shared to diaspora* at the same time you publish it on your website.
 
 = Minimum requirements =
 WordPress 3.5, PHP 5.3 with [cURL extension](https://php.net/manual/book.curl.php).
 
 = Getting started =
 After installing and activating the plugin, be sure to visit the plugin's settings page at 'Settings -> WP to diaspora' on your WordPress Admin page.
-Simply add your diaspora\* pod, username and password to get started.
+Simply add your diaspora* pod, username and password to get started.
 
 On this page you can also define the default behaviour when publishing new posts.
 These settings can easily be adjusted for each individual post by using the meta box that has been added to the post types that you have selected.
 
-= What's diaspora\*? =
-diaspora\* is a decentralized social network. More about it on https://diasporafoundation.org/
+= What's diaspora*? =
+diaspora* is a decentralized social network. More about it on https://diasporafoundation.org/
 
 = This plugin speaks your language =
 * Portuguese (Brazil)
@@ -71,7 +71,7 @@ For a manual installation:
 
 1. Configuration page
 2. Meta box on post editor page
-3. Example post on diaspora\*
+3. Example post on diaspora*
 4. Example post on WordPress
 
 == Learn ==
@@ -81,10 +81,10 @@ When you look into the code, you will see that it is well documented, making it 
 We encourage you to discover something new and learn a thing or two!
 
 = How does this plugin do it? =
-So you want to know what happens in the background, to get your post to diaspora\*?
+So you want to know what happens in the background, to get your post to diaspora*?
 Well, this might be a little technical, but it's simple enough to understand the concept.
 
-Basically, the server your WordPress installation is set up on makes a connection to your diaspora\* pod, logs you in using the provided username and password, adds a new post (which is your WordPress post) and responds to say if everything was successful.
+Basically, the server your WordPress installation is set up on makes a connection to your diaspora* pod, logs you in using the provided username and password, adds a new post (which is your WordPress post) and responds to say if everything was successful.
 
 Quite straightforward, right?
 
@@ -137,7 +137,7 @@ Quite straightforward, right?
 * Posts are now converted to markdown before sharing on diaspora
 
 = 1.1 =
-* Possibility of posting or not to diaspora\*
+* Possibility of posting or not to diaspora*
 * Required fields
 * i18n support
 * pt_BR translation
