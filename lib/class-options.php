@@ -136,6 +136,11 @@ class WP2D_Options {
         settings_errors( 'wp_to_diaspora_settings' );
       ?>
 
+      <?php if ( defined( 'WP2D_DEBUGGING' ) && WP2D_DEBUGGING ) : ?>
+        <h3>Debug Info</h3>
+        <textarea rows="5" cols="50"><?php echo WP2D_Helpers::get_debugging(); ?></textarea>
+      <?php endif; ?>
+
       <form action="options.php" method="post">
         <?php settings_fields( 'wp_to_diaspora_settings' ); ?>
         <?php do_settings_sections( 'wp_to_diaspora_settings' ); ?>

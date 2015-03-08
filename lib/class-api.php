@@ -446,6 +446,9 @@ class WP2D_API {
       $this->_services = $services;
     }
 
+    // Add debug info.
+    WP2D_Helpers::add_debugging( sprintf( "code %s on %s\n", $this->_last_request->info['http_code'], $this->_last_request->info['url'] ) );
+
     // Return the last request details.
     return $this->_last_request;
   }

@@ -10,6 +10,45 @@
 class WP2D_Helpers {
 
   /**
+   * Debug text that get's accumulated before output.
+   *
+   * @var string
+   */
+  private static $_debugging = '';
+
+  /**
+   * Add a line to the debug output. Include the stack trace to see where it's coming from.
+   *
+   * @param string $text Text to add.
+   */
+  public static function add_debugging( $text ) {
+    // Make sure we're in debug mode.
+    if ( defined( 'WP2D_DEBUGGING' ) && WP2D_DEBUGGING ) {
+      $d = '';
+      foreach ( debug_backtrace() as $dbt ) {
+        extract( $dbt );
+        // Only trace back as far as the plugin goes.
+        if ( strstr( $file, plugin_dir_path( dirname( __FILE__ ) ) ) ) {
+          $d = sprintf( "%s%s%s[%s:%s]\n", $class, $type, $function, basename( $file ), $line ) . $d;
+        }
+      }
+
+      self::$_debugging .= sprintf( "%s - %s\n", date( 'YmdHis' ), $d . $text );
+    }
+  }
+
+  /**
+   * Return the debug output.
+   *
+   * @return string The debug output.
+   */
+  public static function get_debugging() {
+    if ( defined( 'WP2D_DEBUGGING' ) && WP2D_DEBUGGING ) {
+      return self::$_debugging;
+    }
+  }
+
+  /**
    * Clean up the passed tags. Keep only alphanumeric, hyphen and underscore characters.
    *
    * @param  array|string $tag Tags to be cleaned as array or comma seperated values.

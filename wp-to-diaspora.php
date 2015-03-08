@@ -75,6 +75,9 @@ class WP_To_Diaspora {
     // Get the unique instance.
     $instance = self::get_instance();
 
+    // Are we in debugging mode?
+    define( 'WP2D_DEBUGGING', isset( $_GET['debugging'] ) );
+
     // Load necessary classes.
     if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once dirname( __FILE__ ) . '/lib/class-html-to-markdown.php';
     require_once dirname( __FILE__ ) . '/lib/class-helpers.php';
