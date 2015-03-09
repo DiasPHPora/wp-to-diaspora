@@ -94,6 +94,43 @@ jQuery(document).ready(function ($) {
     });
   });
 
+  // Refresh the list of services and update the checkboxes.
+  $('#refresh-services-list').click(function() {
+    var $refreshButton = $(this).hide();
+    var $spinner = $refreshButton.next('.spinner').show();
+    var $servicesContainer = $('#services-container');
+
+    // Before loading the new checkboxes, disable all the current ones.
+    var $servicesCheckboxes = $servicesContainer.find('input[type="checkbox"]').attr('disabled', 'disabled');
+
+    $.post(ajaxurl, { 'action': 'wp_to_diaspora_update_services_list' }, function(services) {
+      // Remember the selected services and clear the list.
+      $servicesContainer.empty();
+      var servicesSelected = [];
+      if ( $servicesCheckboxes.length ) {
+        $servicesCheckboxes.each(function() {
+          if ( this.checked ) {
+            servicesSelected.push(this.value);
+          }
+        });
+        $servicesContainer.data('services-selected', servicesSelected.join(','));
+      } else {
+        servicesSelected = $servicesContainer.data('services-selected').split(',');
+      }
+
+      // Add fresh checkboxes.
+      for(var id in services) {
+        if(services.hasOwnProperty(id)) {
+          var checked = ( -1 !== $.inArray( id, servicesSelected ) ) ? ' checked="checked"' : '';
+          $servicesContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="' + id + '"' + checked + '>' + services[id] + '</label> ' )
+        }
+      }
+
+      $spinner.hide();
+      $refreshButton.show();
+    });
+  });
+
   // Enable all checkboxes on save, as disabled ones don't get saved.
   $('#submit, #save-post, #publish').click(function() {
     $('#aspects-container input[type="checkbox"]').removeAttr('disabled');

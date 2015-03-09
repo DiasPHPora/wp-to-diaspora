@@ -111,9 +111,10 @@ class WP_To_Diaspora {
     // Add meta boxes.
     add_action( 'add_meta_boxes', array( $instance, 'add_meta_boxes' ) );
 
-    // AJAX actions for loading pods and aspects.
+    // AJAX actions for loading pods, aspects and services.
     add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', array( $instance, 'update_pod_list_callback' ) );
     add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', array( $instance, 'update_aspects_list_callback' ) );
+    add_action( 'wp_ajax_wp_to_diaspora_update_services_list', array( $instance, 'update_services_list_callback' ) );
 
     // The instance has been set up.
     self::$_is_set_up = true;
@@ -264,9 +265,14 @@ class WP_To_Diaspora {
       $status_markdown = new HTML_To_Markdown( $status_message );
       $status_message  = $status_markdown->output();
 
-      // Set up the connection to Diaspora.
+      // Add services to share to via diaspora*.
+      $extra_data = array(
+        'services' => $meta_services
+      );
+
+      // Set up the connection to diaspora*.
       $api = $this->_load_api();
-      if ( ! $api->last_error && $response = $api->post( $status_message, $meta_aspects ) ) {
+      if ( ! $api->last_error && $response = $api->post( $status_message, $meta_aspects, $extra_data ) ) {
         // Save certain diaspora* post data as meta data for future reference.
 
         // Get the existing post history.
@@ -389,7 +395,8 @@ class WP_To_Diaspora {
 
     // If this post is already published, don't post again to diaspora*.
     $meta_post_to_diaspora = ( 'publish' === get_post_status( $post->ID ) ) ? false : $meta_post_to_diaspora;
-    $meta_aspects          = ( ! empty( $meta_aspects ) && is_array( $meta_aspects ) ) ? $meta_aspects : array();
+    $meta_aspects          = ( ! empty( $meta_aspects )  && is_array( $meta_aspects ) )  ? $meta_aspects  : array();
+    $meta_services         = ( ! empty( $meta_services ) && is_array( $meta_services ) ) ? $meta_services : array();
 
     // Have we already posted on diaspora*?
     if ( ( $diaspora_post_history = get_post_meta( $post->ID, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
@@ -406,6 +413,7 @@ class WP_To_Diaspora {
     <p><?php $options->tags_to_post_render( $meta_tags_to_post ); ?></p>
     <p><?php $options->custom_tags_render( $meta_custom_tags ); ?></p>
     <p><?php $options->aspects_render( $meta_aspects ); ?></p>
+    <p><?php $options->services_render( $meta_services ); ?></p>
 
     <?php
   }
@@ -472,6 +480,13 @@ class WP_To_Diaspora {
       $meta_to_save['aspects'] = array( 'public' );
     } else {
       array_walk( $meta_to_save['aspects'], 'sanitize_text_field' );
+    }
+
+    // Clean up the list of services.
+    if ( empty( $meta_to_save['services'] ) || ! is_array( $meta_to_save['services'] ) ) {
+      $meta_to_save['services'] = array();
+    } else {
+      array_walk( $meta_to_save['services'], 'sanitize_text_field' );
     }
 
     // Update the meta data for this post.
@@ -568,19 +583,10 @@ class WP_To_Diaspora {
     $options = WP2D_Options::get_instance();
     $aspects = $options->get_option( 'aspects_list', array( 'public' => __( 'Public' ) ) );
 
-    // Set up the connection to Diaspora.
+    // Set up the connection to diaspora*.
     $api = $this->_load_api();
-    if ( ! $api->last_error && $aspects_raw = $api->get_aspects() ) {
+    if ( ! $api->last_error && $aspects = $api->get_aspects() ) {
       // So we have a new list of aspects.
-
-      // Add the 'public' aspect, as it's global and not user specific.
-      $aspects = array( 'public' => __( 'Public' ) );
-
-      // Create an array of all the aspects and save them to the settings.
-      foreach ( $aspects_raw as $aspect ) {
-        $aspects[ $aspect->id ] = $aspect->name;
-      }
-
       $options = WP2D_Options::get_instance();
       $options->set_option( 'aspects_list', $aspects );
       $options->save();
@@ -594,6 +600,34 @@ class WP_To_Diaspora {
    */
   public function update_aspects_list_callback() {
     wp_send_json( $this->_update_aspects_list() );
+  }
+
+  /**
+   * Fetch the list of services and save them to the settings.
+   *
+   * @return array The list of services. (id => name pairs)
+   */
+  private function _update_services_list() {
+    $options = WP2D_Options::get_instance();
+    $services = $options->get_option( 'services_list', array() );
+
+    // Set up the connection to diaspora*.
+    $api = $this->_load_api();
+    if ( ! $api->last_error && $services = $api->get_services() ) {
+      // So we have a new list of services.
+      $options = WP2D_Options::get_instance();
+      $options->set_option( 'services_list', $services );
+      $options->save();
+    }
+
+    return $services;
+  }
+
+  /**
+   * Update the list of services and return them for use with AJAX.
+   */
+  public function update_services_list_callback() {
+    wp_send_json( $this->_update_services_list() );
   }
 }
 

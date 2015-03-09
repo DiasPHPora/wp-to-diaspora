@@ -245,6 +245,9 @@ class WP2D_Options {
 
     // Aspects checkboxes.
     add_settings_field( 'aspects', __( 'Aspects', 'wp_to_diaspora' ), array( $this, 'aspects_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'aspects' ) );
+
+    // Services checkboxes.
+    add_settings_field( 'services', __( 'Services', 'wp_to_diaspora' ), array( $this, 'services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'services' ) );
   }
 
   /**
@@ -404,6 +407,39 @@ class WP2D_Options {
     <?php
   }
 
+  /**
+   * Render the "Services" checkboxes.
+   */
+  public function services_render( $services ) {
+    // Special case for this field if it's displayed on the settings page.
+    $on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
+    $services         = ( ! empty( $services ) && is_array( $services ) ) ? $services : array();
+    $description      = __( 'Choose which services to share to.', 'wp_to_diaspora' );
+
+    if ( ! $on_settings_page ) {
+      echo $description;
+    }
+    ?>
+    <div id="services-container" data-services-selected="<?php echo implode( ',', $services ); ?>">
+      <?php
+      if ( $services_list = $this->get_option( 'services_list' ) ) {
+        foreach ( $services_list as $service_id => $service_name ) {
+          ?>
+          <label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="<?php echo $service_id; ?>" <?php checked( in_array( $service_id, $services ) ); ?>><?php echo $service_name; ?></label>
+          <?php
+        }
+      } else {
+        // No services loaded yet.
+        ?>
+        <label><?php _e( 'No connected services loaded yet.', 'wp_to_diaspora' ); ?></label>
+        <?php
+      }
+      ?>
+    </div>
+    <p class="description"><?php if ( $on_settings_page ) { echo $description; } ?> <a id="refresh-services-list" class="button"><?php _e( 'Refresh Services', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span></p>
+    <?php
+  }
+
 
   /**
    * Get a specific option.
@@ -537,6 +573,13 @@ class WP2D_Options {
       $input['aspects'] = array( 'public' );
     } else {
       array_walk( $input['aspects'], 'sanitize_text_field' );
+    }
+
+    // Clean up the list of services.
+    if ( empty( $input['services'] ) || ! is_array( $input['services'] ) ) {
+      $input['services'] = array();
+    } else {
+      array_walk( $input['services'], 'sanitize_text_field' );
     }
 
     // Parse inputs with default options and return.
