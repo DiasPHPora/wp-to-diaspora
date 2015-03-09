@@ -90,6 +90,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= 1.3.2 =
+* Posting to connected services via diaspora* is now possible
+
 = 1.3.1 =
 * Security improved
 * Debug added
