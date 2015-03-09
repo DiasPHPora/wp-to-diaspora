@@ -19,6 +19,10 @@ jQuery(document).ready(function ($) {
     });
   }
 
+  // Tag-it
+  $('.wp2dtags').tagit({
+    removeConfirmation: true
+  });
 
   // Refresh the list of pods and repopulate the autocomplete list.
   $('#refresh-pod-list').click(function() {

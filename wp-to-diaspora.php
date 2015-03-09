@@ -337,7 +337,11 @@ class WP_To_Diaspora {
 
     // Only load the styles and scripts on the settings page and the allowed post types.
     if ( 'settings_page_wp_to_diaspora' === $screen->id || ( in_array( $screen->post_type, $enabled_post_types ) && 'post' === $screen->base ) ) {
+      wp_enqueue_style(  'tag-it', plugins_url( '/css/jquery.tagit.css', __FILE__ ) );
+      wp_enqueue_style(  'chosen', plugins_url( '/css/chosen.min.css', __FILE__ ) );
       wp_enqueue_style(  'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
+      wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.js', __FILE__ ), array( 'jquery' ), false, true );
+      wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-autocomplete' ), false, true );
       wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), array( 'jquery' ), false, true );
     }
   }

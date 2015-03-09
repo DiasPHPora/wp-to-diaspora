@@ -353,8 +353,8 @@ class WP2D_Options {
       $tags = implode( ', ', $tags );
     }
     ?>
-    <input type="text" name="wp_to_diaspora_settings[global_tags]" value="<?php echo $tags; ?>" placeholder="<?php _e( 'Global tags', 'wp_to_diaspora' ); ?>" class="regular-text">
-    <p class="description"><?php _e( 'Custom tags to add to all posts being posted to diaspora*.', 'wp_to_diaspora' ); ?> <?php _e( 'Separate tags with commas' ); ?></p>
+    <input type="text" class="wp2dtags" name="wp_to_diaspora_settings[global_tags]" value="<?php echo $tags; ?>" placeholder="<?php _e( 'Global tags', 'wp_to_diaspora' ); ?>" class="regular-text">
+    <p class="description"><?php _e( 'Custom tags to add to all posts being posted to diaspora*.', 'wp_to_diaspora' ); ?></p>
     <?php
   }
 
@@ -368,7 +368,7 @@ class WP2D_Options {
     ?>
     <label title="<?php _e( 'Custom tags to add to this post when it\'s posted to diaspora*.', 'wp_to_diaspora' ); ?>">
       <?php _e( 'Custom tags', 'wp_to_diaspora' ); ?>
-      <input type="text" name="wp_to_diaspora_settings[custom_tags]" value="<?php echo $tags; ?>" class="widefat">
+      <input type="text" class="wp2dtags" name="wp_to_diaspora_settings[custom_tags]" value="<?php echo $tags; ?>" class="widefat">
     </label>
     <p class="description"><?php _e( 'Separate tags with commas' ); ?></p>
     <?php
