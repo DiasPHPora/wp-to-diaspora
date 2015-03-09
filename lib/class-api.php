@@ -8,9 +8,6 @@
  * - Fetching a user's aspects and connected services
  * - Posting to diaspora*
  *
- * After many failed attempts of getting rid of using cURL cookiejar,
- * we've decided to stick with it and remove the temporary cookie file when cleaning up.
- *
  * Ideas in this class are based on classes from:
  * https://github.com/Faldrian/WP-diaspora-postwidget/blob/master/wp-diaspora-postwidget/diasphp.php -- Thanks, Faldrian!
  * https://github.com/meitar/diasposter/blob/master/lib/Diaspora_Connection.php -- Thanks, Meitar
@@ -149,7 +146,6 @@ class WP2D_API {
     // Set class variables.
     $this->_pod       = $pod;
     $this->_is_secure = (bool) $is_secure;
-    $this->_cookiejar = tempnam( sys_get_temp_dir(), 'wp2d' );
   }
 
   /**
