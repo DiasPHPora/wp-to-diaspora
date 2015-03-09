@@ -94,23 +94,23 @@ Quite straightforward, right?
 * Posting to connected services via diaspora* is now possible
 
 = 1.3.1 =
-* Security improved
-* Debug added
+* Security improved by removing the cookie jar so that the cookie is never written to the temporary folder on the server
+* Simple debug feature added when appending `&debugging` to the URL on the settings page
 
 = 1.3.0 =
-* Internal code restructuring
-* Updated readme file
+* Internal code restructuring, making the plugin completely OOP
+* Updated readme file structure and add more details about the plugin
 
 = 1.2.7 =
 * Custom post types support added
 * Posting to specific aspects is now possible
-* Password encryption
-* Prepopulated list of pods
-* Admin notices after posting
+* Password encryption added to save the user credentials safely
+* Pre-populated list of pods for easier selection when setting up the plugin
+* Admin notices after posting to diaspora*, WordPress style
 
 = 1.2.6 =
 * Added support for videos embedding using [embed] shortcode
-* Hashtags support
+* Hashtags support to add global and custom hashtags to posts
 * Posting Defaults configuration
 * Interface improvements and some bug fixed
 
