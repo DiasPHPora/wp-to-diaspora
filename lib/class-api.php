@@ -116,7 +116,7 @@ class WP2D_API {
    * @var array
    */
   private $_regexes = array(
-    'token'    => '/content="(.*?)" name="csrf-token/',
+    'token'    => '/content="(.*?)" name="csrf-token"|name="csrf-token" content="(.*?)"/',
     'cookie'   => '/Set-Cookie: (.*?);/',
     'aspects'  => '/"aspects"\:(\[.+?\])/',
     'services' => '/"configured_services"\:(\[.+?\])/'

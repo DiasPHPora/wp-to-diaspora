@@ -88,7 +88,7 @@ class WP2D_Helpers {
    */
   public static function encrypt( $input, $key = AUTH_KEY ) {
     global $wpdb;
-    return base64_encode( $wpdb->get_var( $wpdb->prepare( "SELECT AES_ENCRYPT(%s,%s)", $input, $key ) ) );
+    return $wpdb->get_var( $wpdb->prepare( "SELECT HEX(AES_ENCRYPT(%s,%s))", $input, $key ) );
   }
 
   /**
@@ -100,7 +100,7 @@ class WP2D_Helpers {
    */
   public static function decrypt( $input, $key = AUTH_KEY ) {
     global $wpdb;
-    return $wpdb->get_var( $wpdb->prepare( "SELECT AES_DECRYPT(%s,%s)", base64_decode( $input ), $key ) );
+    return $wpdb->get_var( $wpdb->prepare( "SELECT AES_DECRYPT(UNHEX(%s),%s)", $input, $key ) );
   }
 }
 
