@@ -78,10 +78,13 @@ class WP_To_Diaspora {
     // Are we in debugging mode?
     define( 'WP2D_DEBUGGING', isset( $_GET['debugging'] ) );
 
+    // Define simple constants.
+    define( 'WP2D_LIB', dirname( __FILE__ ) . '/lib' );
+
     // Load necessary classes.
-    if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once dirname( __FILE__ ) . '/lib/class-html-to-markdown.php';
-    require_once dirname( __FILE__ ) . '/lib/class-helpers.php';
-    require_once dirname( __FILE__ ) . '/lib/class-api.php';
+    if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once WP2D_LIB . '/class-html-to-markdown.php';
+    require_once WP2D_LIB . '/class-helpers.php';
+    require_once WP2D_LIB . '/class-api.php';
 
     // Load languages.
     add_action( 'plugins_loaded', array( $instance, 'l10n' ) );
@@ -96,7 +99,7 @@ class WP_To_Diaspora {
     add_action( 'admin_enqueue_scripts', array( $instance, 'admin_load_scripts' ) );
 
     // Set up the options.
-    require_once dirname( __FILE__ ) . '/lib/class-options.php';
+    require_once WP2D_LIB . '/class-options.php';
     add_action( 'admin_menu', array( 'WP2D_Options', 'setup' ) );
 
     // Notices when a post has been shared or if it has failed.
