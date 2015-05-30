@@ -438,25 +438,28 @@ class WP2D_API {
       $this->_cookie = $cookie;
     }
 
-    // Can we load new aspects while we're at it?
-    if ( $aspects_raw = json_decode( $this->_parse_regex( 'aspects', $response ) ) ) {
-      // Add the 'public' aspect, as it's global and not user specific.
-      $aspects = array( 'public' => __( 'Public' ) );
+    // Once we're logged in, can we load new aspects and services while we're at it?
+    if ( $this->is_logged_in() ) {
+      // Load the aspects.
+      if ( empty( $this->_aspects ) && $aspects_raw = json_decode( $this->_parse_regex( 'aspects', $response ) ) ) {
+        // Add the 'public' aspect, as it's global and not user specific.
+        $aspects = array( 'public' => __( 'Public' ) );
 
-      // Create an array of all the aspects and save them to the settings.
-      foreach ( $aspects_raw as $aspect ) {
-        $aspects[ $aspect->id ] = $aspect->name;
+        // Create an array of all the aspects and save them to the settings.
+        foreach ( $aspects_raw as $aspect ) {
+          $aspects[ $aspect->id ] = $aspect->name;
+        }
+        $this->_aspects = $aspects;
       }
-      $this->_aspects = $aspects;
-    }
 
-    // Can we load new services while we're at it?
-    if ( $services_raw = json_decode( $this->_parse_regex( 'services', $response ) ) ) {
-      $services = array();
-      foreach ( $services_raw as $service ) {
-        $services[ $service ] = ucfirst( $service );
+      // Load the services.
+      if ( empty( $this->_services ) && $services_raw = json_decode( $this->_parse_regex( 'services', $response ) ) ) {
+        $services = array();
+        foreach ( $services_raw as $service ) {
+          $services[ $service ] = ucfirst( $service );
+        }
+        $this->_services = $services;
       }
-      $this->_services = $services;
     }
 
     // Add debug info.

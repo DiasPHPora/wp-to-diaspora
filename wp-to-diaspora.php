@@ -119,6 +119,10 @@ class WP_To_Diaspora {
     add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', array( $instance, 'update_aspects_list_callback' ) );
     add_action( 'wp_ajax_wp_to_diaspora_update_services_list', array( $instance, 'update_services_list_callback' ) );
 
+    // Check the pod connection status on the options page.
+    add_action( 'wp_ajax_wp_to_diaspora_check_pod_connection_status', array( $instance, 'check_pod_connection_status_callback' ) );
+
+
     // The instance has been set up.
     self::$_is_set_up = true;
   }
@@ -562,7 +566,7 @@ class WP_To_Diaspora {
     $pod_list_url = 'http://podupti.me/api.php?format=json&key=4r45tg';
 
     $pods = array();
-    if ( $json = file_get_contents( $pod_list_url ) ) {
+    if ( $json = @file_get_contents( $pod_list_url ) ) {
       $pod_list = json_decode( $json );
       if ( isset( $pod_list->pods ) ) {
         foreach ( $pod_list->pods as $pod ) {
@@ -596,7 +600,12 @@ class WP_To_Diaspora {
    */
   private function _update_aspects_list() {
     $options = WP2D_Options::get_instance();
-    $aspects = $options->get_option( 'aspects_list', array( 'public' => __( 'Public' ) ) );
+    $aspects = $options->get_option( 'aspects_list' );
+
+    // Make sure that we have at least the 'Public' aspect.
+    if ( empty( $aspects ) ) {
+      $aspects = array( 'public' => __( 'Public' ) );
+    }
 
     // Set up the connection to diaspora*.
     $api = $this->_load_api();
@@ -643,6 +652,39 @@ class WP_To_Diaspora {
    */
   public function update_services_list_callback() {
     wp_send_json( $this->_update_services_list() );
+  }
+
+
+
+
+
+
+  /**
+   * Check the pod connection status.
+   *
+   * @return string The status of the connection.
+   */
+  private function _check_pod_connection_status() {
+    $options = WP2D_Options::get_instance();
+
+    $status = 'notset';
+
+    if ( $options->is_pod_set_up() ) {
+      if ( $this->_load_api()->last_error ) {
+        $status = 'failed';
+      } else {
+        $status = 'success';
+      }
+    }
+
+    return $status;
+  }
+
+  /**
+   * Update the list of services and return them for use with AJAX.
+   */
+  public function check_pod_connection_status_callback() {
+    wp_send_json( $this->_check_pod_connection_status() );
   }
 }
 
