@@ -293,7 +293,7 @@ class WP2D_Options {
     _e( 'Set up the connection to your diaspora* account.', 'wp_to_diaspora' );
 
     // Pod entry field.
-    add_settings_field( 'pod', __( 'diaspora* Pod', 'wp_to_diaspora' ), array( $this, 'pod_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
+    add_settings_field( 'pod', __( 'Diaspora* Pod', 'wp_to_diaspora' ), array( $this, 'pod_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
 
     // Username entry field.
     add_settings_field( 'username', __( 'Username' ), array( $this, 'username_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
@@ -331,7 +331,7 @@ class WP2D_Options {
   public function password_render() {
     // Special case if we already have a password.
     $has_password = ( '' !== $this->get_option( 'password', '' ) );
-    $placeholder  = ( $has_password ) ? __( 'Password already set', 'wp_to_diaspora' ) : __( 'Password' );
+    $placeholder  = ( $has_password ) ? __( 'Password already set.', 'wp_to_diaspora' ) : __( 'Password' );
     $required     = ( $has_password ) ? '' : ' required';
     ?>
     <input type="password" name="wp_to_diaspora_settings[password]" value="" placeholder="<?php echo $placeholder; ?>"<?php echo $required; ?>>
