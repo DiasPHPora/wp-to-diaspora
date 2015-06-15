@@ -1,166 +1,292 @@
-# Copyright (C) 2015 WP to Diaspora*
-# This file is distributed under the same license as the WP to Diaspora* package.
+# Copyright (C) 2015 WP to diaspora*
+# This file is distributed under the same license as the WP to diaspora* package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP to Diaspora* 1.2.1\n"
+"Project-Id-Version: WP to diaspora* 1.4.0\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-to-diaspora\n"
-"POT-Creation-Date: 2015-02-10 13:56-0300\n"
-"PO-Revision-Date: 2015-02-10 13:56-0300\n"
-"Last-Translator: Augusto Bennemann <gutobenn@gmail.com>\n"
-"Language-Team:  <gutobenn@gmail.com>\n"
-"Language: en\n"
+"POT-Creation-Date: 2015-06-29 09:36:44+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.10\n"
-"X-Poedit-Basepath: ../\n"
-"X-Poedit-KeywordsList: __;_e;esc_attr_e\n"
-"X-Poedit-SearchPath-0: .\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: wp-to-diaspora.php:136
-msgid "Originally posted at:"
+#: lib/class-api.php:173
+msgctxt "Placeholder is the full pod URL."
+msgid "Failed to initialise connection to pod \"%s\"."
 msgstr ""
 
-#: wp-to-diaspora.php:153
-#, php-format
-msgid "WP to Diaspora*: Sending \"%1$s\" failed with error: %2$s"
+#: lib/class-api.php:203
+msgid "Not logged in."
 msgstr ""
 
-#: wp-to-diaspora.php:191
-msgid "Settings"
+#: lib/class-api.php:263
+msgid "Login failed."
 msgstr ""
 
-#: wp-to-diaspora.php:231
-msgid "Diaspora* Setup"
+#: lib/class-api.php:321
+msgctxt "When an unknown error occurred in the WP2D_API object."
+msgid "Unknown error occurred."
 msgstr ""
 
-#: wp-to-diaspora.php:239
+#: lib/class-api.php:344
+msgid "Error loading aspects."
+msgstr ""
+
+#: lib/class-api.php:368
+msgid "Error loading services."
+msgstr ""
+
+#: lib/class-api.php:446 lib/class-options.php:523 wp-to-diaspora.php:607
+msgid "Public"
+msgstr ""
+
+#: lib/class-options.php:131
+msgid "First of all, set up the connection to your pod below."
+msgstr ""
+
+#: lib/class-options.php:185
+msgid "Save Changes"
+msgstr ""
+
+#: lib/class-options.php:187
+msgid "Reset Defaults"
+msgstr ""
+
+#: lib/class-options.php:236
 msgid "Posting Defaults"
 msgstr ""
 
-#: wp-to-diaspora.php:250
-msgid "Set up the connection to your Diaspora* account."
+#: lib/class-options.php:240
+msgid "diaspora* Setup"
 msgstr ""
 
-#: wp-to-diaspora.php:255
+#: lib/class-options.php:258
+msgid "Defaults"
+msgstr ""
+
+#: lib/class-options.php:262
+msgid "Setup"
+msgstr ""
+
+#: lib/class-options.php:293
+msgid "Set up the connection to your diaspora* account."
+msgstr ""
+
+#: lib/class-options.php:296
 msgid "Diaspora* Pod"
 msgstr ""
 
-#: wp-to-diaspora.php:264 wp-to-diaspora.php:296
+#: lib/class-options.php:299 lib/class-options.php:324
 msgid "Username"
 msgstr ""
 
-#: wp-to-diaspora.php:273 wp-to-diaspora.php:307
+#: lib/class-options.php:302 lib/class-options.php:334
 msgid "Password"
 msgstr ""
 
-#: wp-to-diaspora.php:307
-msgid "Password already set"
+#: lib/class-options.php:310
+msgid "Refresh pod list"
 msgstr ""
 
-#: wp-to-diaspora.php:312
+#: lib/class-options.php:334
+msgid "Password already set."
+msgstr ""
+
+#: lib/class-options.php:339
 msgid ""
 "If you would like to change the password type a new one. Otherwise leave "
 "this blank."
 msgstr ""
 
-#: wp-to-diaspora.php:320
+#: lib/class-options.php:348
 msgid ""
 "Define the default posting behaviour for all posts here. These settings can "
 "be modified for each post individually, by changing the values in the \"WP "
-"to Diaspora*\" meta box, which gets displayed in your post edit screen."
+"to diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr ""
 
-#: wp-to-diaspora.php:325 wp-to-diaspora.php:565
-msgid "Post to Diaspora*"
+#: lib/class-options.php:351
+msgid "Post types"
 msgstr ""
 
-#: wp-to-diaspora.php:334 wp-to-diaspora.php:566
+#: lib/class-options.php:354 lib/class-options.php:412
+msgid "Post to diaspora*"
+msgstr ""
+
+#: lib/class-options.php:357 lib/class-options.php:429
 msgid "Show \"Posted at\" link?"
 msgstr ""
 
-#: wp-to-diaspora.php:343
+#: lib/class-options.php:360
 msgid "Display"
 msgstr ""
 
-#: wp-to-diaspora.php:352 wp-to-diaspora.php:575
+#: lib/class-options.php:363
 msgid "Tags to post"
 msgstr ""
 
-#: wp-to-diaspora.php:361 wp-to-diaspora.php:425
+#: lib/class-options.php:366 lib/class-options.php:478
 msgid "Global tags"
 msgstr ""
 
-#: wp-to-diaspora.php:374 wp-to-diaspora.php:384
+#: lib/class-options.php:369
+msgid "Aspects"
+msgstr ""
+
+#: lib/class-options.php:372
+msgid "Services"
+msgstr ""
+
+#: lib/class-options.php:401
+msgid "Enable WP to diaspora* on %s"
+msgstr ""
+
+#: lib/class-options.php:412 lib/class-options.php:426
 msgid "Yes"
 msgstr ""
 
-#: wp-to-diaspora.php:385 wp-to-diaspora.php:566
+#: lib/class-options.php:422
 msgid "Include a link back to your original post."
 msgstr ""
 
-#: wp-to-diaspora.php:395 wp-to-diaspora.php:569
+#: lib/class-options.php:438
 msgid "Full Post"
 msgstr ""
 
-#: wp-to-diaspora.php:396 wp-to-diaspora.php:570
+#: lib/class-options.php:439
 msgid "Excerpt"
 msgstr ""
 
-#: wp-to-diaspora.php:408 wp-to-diaspora.php:577
+#: lib/class-options.php:448
+msgid "Choose which tags should be posted to diaspora*."
+msgstr ""
+
+#: lib/class-options.php:456
 msgid "All tags (global, custom and post tags)"
 msgstr ""
 
-#: wp-to-diaspora.php:409 wp-to-diaspora.php:578
+#: lib/class-options.php:457
 msgid "Global and custom tags"
 msgstr ""
 
-#: wp-to-diaspora.php:410 wp-to-diaspora.php:579
+#: lib/class-options.php:458
 msgid "Global and post tags"
 msgstr ""
 
-#: wp-to-diaspora.php:411 wp-to-diaspora.php:580
+#: lib/class-options.php:459
 msgid "Only custom tags"
 msgstr ""
 
-#: wp-to-diaspora.php:412 wp-to-diaspora.php:581
+#: lib/class-options.php:460
 msgid "Only post tags"
 msgstr ""
 
-#: wp-to-diaspora.php:413 wp-to-diaspora.php:582
+#: lib/class-options.php:461
 msgid "No tags"
 msgstr ""
 
-#: wp-to-diaspora.php:415 wp-to-diaspora.php:574
-msgid "Choose which tags should be posted to Diaspora*."
+#: lib/class-options.php:479
+msgid "Custom tags to add to all posts being posted to diaspora*."
 msgstr ""
 
-#: wp-to-diaspora.php:426
-msgid "Custom tags to add to all posts being posted to Diaspora*."
+#: lib/class-options.php:491
+msgid "Custom tags to add to this post when it's posted to diaspora*."
 msgstr ""
 
-#: wp-to-diaspora.php:426 wp-to-diaspora.php:592
-msgid "Separate tags with commas."
-msgstr ""
-
-#: wp-to-diaspora.php:449
-#, php-format
-msgid "Connected to %s"
-msgstr ""
-
-#: wp-to-diaspora.php:457
-#, php-format
-msgid "Couldn't connect to %s: Invalid pod, username or password."
-msgstr ""
-
-#: wp-to-diaspora.php:532
-msgid "WP to Diaspora*"
-msgstr ""
-
-#: wp-to-diaspora.php:588
-msgid "Custom tags to add to this post when it's posted to Diaspora*."
-msgstr ""
-
-#: wp-to-diaspora.php:589
+#: lib/class-options.php:492
 msgid "Custom tags"
+msgstr ""
+
+#: lib/class-options.php:495
+msgid "Separate tags with commas"
+msgstr ""
+
+#: lib/class-options.php:506
+msgid "Choose which aspects to share to."
+msgstr ""
+
+#: lib/class-options.php:528
+msgid "Refresh Aspects"
+msgstr ""
+
+#: lib/class-options.php:540
+msgid "Choose which services to share to."
+msgstr ""
+
+#: lib/class-options.php:542
+msgid "Show available services on my pod."
+msgstr ""
+
+#: lib/class-options.php:562 wp-to-diaspora.php:355
+msgid "No services connected yet."
+msgstr ""
+
+#: lib/class-options.php:567
+msgid "Refresh Services"
+msgstr ""
+
+#: wp-to-diaspora.php:266
+msgid "Originally posted at:"
+msgstr ""
+
+#: wp-to-diaspora.php:356
+msgid "Are you sure you want to reset to default values?"
+msgstr ""
+
+#: wp-to-diaspora.php:357
+msgid "Testing connection..."
+msgstr ""
+
+#: wp-to-diaspora.php:358
+msgid "Connection successful."
+msgstr ""
+
+#: wp-to-diaspora.php:359
+msgid "Connection failed."
+msgstr ""
+
+#: wp-to-diaspora.php:371
+msgid "Settings"
+msgstr ""
+
+#: wp-to-diaspora.php:424
+msgid "Already posted to diaspora*."
+msgstr ""
+
+#: wp-to-diaspora.php:528
+msgid "Failed to post to diaspora*."
+msgstr ""
+
+#: wp-to-diaspora.php:531
+msgid "Ignore"
+msgstr ""
+
+#: wp-to-diaspora.php:540
+msgid "Successfully posted to diaspora*."
+msgstr ""
+
+#: wp-to-diaspora.php:542
+msgid "View Post"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "WP to diaspora*"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/gutobenn/wp-to-diaspora"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Automatically shares WordPress posts on diaspora*"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Augusto Bennemann"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/gutobenn"
 msgstr ""
