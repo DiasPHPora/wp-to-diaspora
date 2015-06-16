@@ -1,0 +1,321 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WP to Diaspora*\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-to-diaspora\n"
+"POT-Creation-Date: 2015-06-29 09:36:44+00:00\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Vitalie Ciubotaru <vitalie@ciubotaru.tk>\n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+
+#: lib/class-api.php:173
+msgctxt "Placeholder is the full pod URL."
+msgid "Failed to initialise connection to pod \"%s\"."
+msgstr ""
+
+#: lib/class-api.php:203
+msgid "Not logged in."
+msgstr ""
+
+#: lib/class-api.php:263
+msgid "Login failed."
+msgstr ""
+
+#: lib/class-api.php:321
+msgctxt "When an unknown error occurred in the WP2D_API object."
+msgid "Unknown error occurred."
+msgstr ""
+
+#: lib/class-api.php:344
+msgid "Error loading aspects."
+msgstr ""
+
+#: lib/class-api.php:368
+msgid "Error loading services."
+msgstr ""
+
+#: lib/class-api.php:446
+#: lib/class-options.php:523
+#: wp-to-diaspora.php:607
+msgid "Public"
+msgstr ""
+
+#: lib/class-options.php:131
+msgid "First of all, set up the connection to your pod below."
+msgstr "Verbindung mit deinem diaspora* Account herstellen."
+
+#: lib/class-options.php:185
+msgid "Save Changes"
+msgstr ""
+
+#: lib/class-options.php:187
+#, fuzzy
+msgid "Reset Defaults"
+msgstr "Posting-Standard"
+
+#: lib/class-options.php:236
+msgid "Posting Defaults"
+msgstr "Posting-Standard"
+
+#: lib/class-options.php:240
+#, fuzzy
+msgid "diaspora* Setup"
+msgstr "Diaspora* Setup"
+
+#: lib/class-options.php:258
+#, fuzzy
+msgid "Defaults"
+msgstr "Posting-Standard"
+
+#: lib/class-options.php:262
+msgid "Setup"
+msgstr ""
+
+#: lib/class-options.php:293
+msgid "Set up the connection to your diaspora* account."
+msgstr "Verbindung mit deinem diaspora* Account herstellen."
+
+#: lib/class-options.php:296
+msgid "Diaspora* Pod"
+msgstr "Diaspora* Pod"
+
+#: lib/class-options.php:299
+#: lib/class-options.php:324
+msgid "Username"
+msgstr ""
+
+#: lib/class-options.php:302
+#: lib/class-options.php:334
+msgid "Password"
+msgstr ""
+
+#: lib/class-options.php:310
+msgid "Refresh pod list"
+msgstr "Pod-Liste aktualisieren"
+
+#: lib/class-options.php:334
+msgid "Password already set."
+msgstr "Passwort wurde schon festgelegt."
+
+#: lib/class-options.php:339
+msgid "If you would like to change the password type a new one. Otherwise leave this blank."
+msgstr "Wenn du dein Passwort ändern möchstest, tippe das neue hier ein. Anderfalls, lass' dieses Feld leer."
+
+#: lib/class-options.php:348
+#, fuzzy
+msgid "Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the \"WP to diaspora*\" meta box, which gets displayed in your post edit screen."
+msgstr "Definiere das Standardverhalten für Posts. Diese Einstellungen können für jeden Post individuell über die Werte in der \"WP to Diaspora*\"-Metabox geändert werden, die in deinem \"Beitrag bearbeiten\"-Dialog angezeigt wird."
+
+#: lib/class-options.php:351
+msgid "Post types"
+msgstr "Beitragstypen"
+
+#: lib/class-options.php:354
+#: lib/class-options.php:412
+#, fuzzy
+msgid "Post to diaspora*"
+msgstr "Auf Diaspora* posten"
+
+#: lib/class-options.php:357
+#: lib/class-options.php:429
+msgid "Show \"Posted at\" link?"
+msgstr "\"Gepostet auf\"-Link zeigen?"
+
+#: lib/class-options.php:360
+msgid "Display"
+msgstr "Anzeige"
+
+#: lib/class-options.php:363
+msgid "Tags to post"
+msgstr "zu postende Tags"
+
+#: lib/class-options.php:366
+#: lib/class-options.php:478
+msgid "Global tags"
+msgstr "Globale Tags"
+
+#: lib/class-options.php:369
+msgid "Aspects"
+msgstr "Aspekte"
+
+#: lib/class-options.php:372
+msgid "Services"
+msgstr ""
+
+#: lib/class-options.php:401
+#, fuzzy
+msgid "Enable WP to diaspora* on %s"
+msgstr "WP to Diaspora* für %s aktivieren"
+
+#: lib/class-options.php:412
+#: lib/class-options.php:426
+msgid "Yes"
+msgstr ""
+
+#: lib/class-options.php:422
+msgid "Include a link back to your original post."
+msgstr "Link zum Originalbeitrag mitposten."
+
+#: lib/class-options.php:438
+msgid "Full Post"
+msgstr "Vollständiger Post"
+
+#: lib/class-options.php:439
+msgid "Excerpt"
+msgstr ""
+
+#: lib/class-options.php:448
+#, fuzzy
+msgid "Choose which tags should be posted to diaspora*."
+msgstr "Wähle die Tags aus, die auf Diaspora* gepostet werden sollen."
+
+#: lib/class-options.php:456
+msgid "All tags (global, custom and post tags)"
+msgstr "Alle Tags (global, custom und Beitrag)"
+
+#: lib/class-options.php:457
+msgid "Global and custom tags"
+msgstr "Globale und Custom Tags"
+
+#: lib/class-options.php:458
+msgid "Global and post tags"
+msgstr "Globale- und Beitrags-Tags"
+
+#: lib/class-options.php:459
+msgid "Only custom tags"
+msgstr "Nur Custom Tags"
+
+#: lib/class-options.php:460
+msgid "Only post tags"
+msgstr "Nur Beitrags-Tags"
+
+#: lib/class-options.php:461
+msgid "No tags"
+msgstr "Kein Tags"
+
+#: lib/class-options.php:479
+#, fuzzy
+msgid "Custom tags to add to all posts being posted to diaspora*."
+msgstr "Custom Tags, die jedem auf Diaspora* geposteten Beitrag hinzugefügt werden."
+
+#: lib/class-options.php:491
+#, fuzzy
+msgid "Custom tags to add to this post when it's posted to diaspora*."
+msgstr "Custom Tags, die diesem Beitrag hinzugefügt werden, wenn er auf Diaspora* gespostet wird."
+
+#: lib/class-options.php:492
+msgid "Custom tags"
+msgstr "Custom Tags"
+
+#: lib/class-options.php:495
+msgid "Separate tags with commas"
+msgstr ""
+
+#: lib/class-options.php:506
+msgid "Choose which aspects to share to."
+msgstr "Aspekte zum Teilen auswählen."
+
+#: lib/class-options.php:528
+msgid "Refresh Aspects"
+msgstr "Aspekte aktualisieren"
+
+#: lib/class-options.php:540
+#, fuzzy
+msgid "Choose which services to share to."
+msgstr "Aspekte zum Teilen auswählen."
+
+#: lib/class-options.php:542
+msgid "Show available services on my pod."
+msgstr ""
+
+#: lib/class-options.php:562
+#: wp-to-diaspora.php:355
+msgid "No services connected yet."
+msgstr ""
+
+#: lib/class-options.php:567
+#, fuzzy
+msgid "Refresh Services"
+msgstr "Aspekte aktualisieren"
+
+#: wp-to-diaspora.php:266
+msgid "Originally posted at:"
+msgstr "Dies wurde im Original gepostet auf"
+
+#: wp-to-diaspora.php:356
+msgid "Are you sure you want to reset to default values?"
+msgstr ""
+
+#: wp-to-diaspora.php:357
+msgid "Testing connection..."
+msgstr ""
+
+#: wp-to-diaspora.php:358
+msgid "Connection successful."
+msgstr ""
+
+#: wp-to-diaspora.php:359
+msgid "Connection failed."
+msgstr ""
+
+#: wp-to-diaspora.php:371
+msgid "Settings"
+msgstr ""
+
+#: wp-to-diaspora.php:424
+msgid "Already posted to diaspora*."
+msgstr "Wurde schon auf Diaspora* gepostet."
+
+#: wp-to-diaspora.php:528
+msgid "Failed to post to diaspora*."
+msgstr "Posten auf Diaspora* fehlgeschlagen."
+
+#: wp-to-diaspora.php:531
+msgid "Ignore"
+msgstr "Ignorieren"
+
+#: wp-to-diaspora.php:540
+#, fuzzy
+msgid "Successfully posted to diaspora*."
+msgstr "Erfolgreich auf Diaspora* gepostet."
+
+#: wp-to-diaspora.php:542
+msgid "View Post"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+#, fuzzy
+msgid "WP to diaspora*"
+msgstr "WP nach Diaspora*"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/gutobenn/wp-to-diaspora"
+msgstr "https://github.com/gutobenn/wp-to-diaspora"
+
+#. Description of the plugin/theme
+#, fuzzy
+msgid "Automatically shares WordPress posts on diaspora*"
+msgstr "WordPress-Beiträge automatisch auf Diaspora* teilen"
+
+#. Author of the plugin/theme
+msgid "Augusto Bennemann"
+msgstr "Augusto Bennemann"
+
+#. Author URI of the plugin/theme
+#, fuzzy
+msgid "https://github.com/gutobenn"
+msgstr "https://github.com/gutobenn/wp-to-diaspora"
+
+#~ msgid "Connected to %s"
+#~ msgstr "Mit %s verbunden"
+
+#~ msgid "Couldn't connect to %s: Invalid pod, username or password."
+#~ msgstr ""
+#~ "Konnte nicht mit %s verbinden: Pod, Nutzername oder Passwort ungültig"
+
+#~ msgid "WP to Diaspora*: Sending \\\"%1$s\\\" failed with error: %2$s"
+#~ msgstr "WP to Diaspora*: Senden von \\\"%1$s\\\" schlug fehl. Fehler: %2$s"
