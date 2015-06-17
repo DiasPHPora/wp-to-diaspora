@@ -128,7 +128,7 @@ class WP2D_Options {
           add_settings_error(
             'wp_to_diaspora_settings',
             'wp_to_diaspora_connected',
-            __( 'First of all, setup the connection to your pod below.', 'wp_to_diaspora' ),
+            __( 'First of all, set up the connection to your pod below.', 'wp_to_diaspora' ),
             'updated'
           );
         } else {
