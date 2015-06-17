@@ -35,7 +35,7 @@ class WP2D_Options {
     'enabled_post_types' => array( 'post' ),
     'fullentrylink'      => true,
     'display'            => 'full',
-    'version'            => WP_TO_DIASPORA_VERSION
+    'version'            => WP2D_VERSION
   );
 
   /**
