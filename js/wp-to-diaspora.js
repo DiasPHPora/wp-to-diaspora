@@ -27,7 +27,7 @@ jQuery(document).ready(function ($) {
   // Refresh the list of pods and repopulate the autocomplete list.
   $('#refresh-pod-list').click(function() {
     var $refreshButton = $(this).hide();
-    var $spinner = $refreshButton.next('.spinner').show().css( 'visibility', 'visible' );
+    var $spinner = $refreshButton.next('.spinner').show();
 
     $.post(ajaxurl, { 'action': 'wp_to_diaspora_update_pod_list' }, function(pods) {
       // Empty the current pod list and repopulate it.
@@ -36,7 +36,7 @@ jQuery(document).ready(function ($) {
         $podList.append( '<option data-secure="' + pod.secure + '" value="' + pod.domain + '"></option>' );
       });
 
-      $spinner.hide().css( 'visibility', 'hidden' );
+      $spinner.hide();
       $refreshButton.show();
     });
   });
@@ -63,7 +63,7 @@ jQuery(document).ready(function ($) {
   // Refresh the list of aspects and update the checkboxes.
   $('#refresh-aspects-list').click(function() {
     var $refreshButton = $(this).hide();
-    var $spinner = $refreshButton.next('.spinner').show().css( 'visibility', 'visible' );
+    var $spinner = $refreshButton.next('.spinner').show();
     var $aspectsContainer = $('#aspects-container');
 
     // Before loading the new checkboxes, disable all the current ones.
@@ -93,7 +93,7 @@ jQuery(document).ready(function ($) {
       }
       smartAspectSelection();
 
-      $spinner.hide().css( 'visibility', 'hidden' );;
+      $spinner.hide();;
       $refreshButton.show();
     });
   });
@@ -101,7 +101,7 @@ jQuery(document).ready(function ($) {
   // Refresh the list of services and update the checkboxes.
   $('#refresh-services-list').click(function() {
     var $refreshButton = $(this).hide();
-    var $spinner = $refreshButton.next('.spinner').show().css( 'visibility', 'visible' );
+    var $spinner = $refreshButton.next('.spinner').show();
     var $servicesContainer = $('#services-container');
 
     // Before loading the new checkboxes, disable all the current ones.
@@ -134,7 +134,7 @@ jQuery(document).ready(function ($) {
         $servicesContainer.append(WP2DL10n.no_services_connected);
       }
 
-      $spinner.hide().css( 'visibility', 'hidden' );
+      $spinner.hide();
       $refreshButton.show();
     });
   });
@@ -147,7 +147,7 @@ jQuery(document).ready(function ($) {
   $.post(ajaxurl, { 'action': 'wp_to_diaspora_check_pod_connection_status' }, function(status) {
 
     // After testing the connection, mark the "Setup" tab appropriately.
-    $pcs.next('.spinner').hide().css( 'visibility', 'hidden' );
+    $pcs.next('.spinner').hide();
     var clr = '';
     var msg = '';
     switch ( status ) {
