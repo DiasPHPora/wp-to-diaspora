@@ -93,7 +93,7 @@ jQuery(document).ready(function ($) {
       }
       smartAspectSelection();
 
-      $spinner.hide();
+      $spinner.hide();;
       $refreshButton.show();
     });
   });
@@ -122,12 +122,16 @@ jQuery(document).ready(function ($) {
         servicesSelected = $servicesContainer.data('services-selected').split(',');
       }
 
-      // Add fresh checkboxes.
-      for(var id in services) {
-        if(services.hasOwnProperty(id)) {
-          var checked = ( -1 !== $.inArray( id, servicesSelected ) ) ? ' checked="checked"' : '';
-          $servicesContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="' + id + '"' + checked + '>' + services[id] + '</label> ' )
+      // Add fresh checkboxes if we have connected services.
+      if ( services.length > 0 ) {
+        for(var id in services) {
+          if(services.hasOwnProperty(id)) {
+            var checked = ( -1 !== $.inArray( id, servicesSelected ) ) ? ' checked="checked"' : '';
+            $servicesContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="' + id + '"' + checked + '>' + services[id] + '</label> ' )
+          }
         }
+      } else {
+        $servicesContainer.append(WP2DL10n.no_services_connected);
       }
 
       $spinner.hide();
@@ -135,8 +139,34 @@ jQuery(document).ready(function ($) {
     });
   });
 
+
+  // Check the pod connection status.
+  var $pcs = $('#pod-connection-status');
+  $pcs.parent().attr('title', WP2DL10n.conn_testing);
+
+  $.post(ajaxurl, { 'action': 'wp_to_diaspora_check_pod_connection_status' }, function(status) {
+
+    // After testing the connection, mark the "Setup" tab appropriately.
+    $pcs.next('.spinner').hide();
+    var clr = '';
+    var msg = '';
+    switch ( status ) {
+      case 'success': status = 'yes'; clr = '#008000'; msg = WP2DL10n.conn_successful; break;
+      case 'failed':  status = 'no';  clr = '#800000'; msg = WP2DL10n.conn_failed;     break;
+      case 'notset':  return;
+    }
+    $pcs.parent().attr('title', msg);
+    $pcs.addClass('dashicons-' + status).css('color', clr).show();
+  });
+
   // Enable all checkboxes on save, as disabled ones don't get saved.
-  $('#submit, #save-post, #publish').click(function() {
+  $('#submit, #submit-defaults, #save-post, #publish').click(function() {
     $('#aspects-container input[type="checkbox"]').removeAttr('disabled');
   });
+
+  // Confirmation when resetting to default settings.
+  $('#reset-defaults').click(function() {
+    return confirm(WP2DL10n.sure_reset_defaults);
+  });
+
 });

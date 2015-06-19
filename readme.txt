@@ -3,8 +3,8 @@ Contributors: gutobenn, noplanman
 Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
 Requires at least: 3.5
-Tested up to: 4.1
-Stable tag: 1.3.1
+Tested up to: 4.2.2
+Stable tag: 1.4.0
 Author URI: http://github.com/gutobenn
 Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
@@ -89,6 +89,12 @@ Basically, the server your WordPress installation is set up on makes a connectio
 Quite straightforward, right?
 
 == Changelog ==
+
+= 1.4.0 =
+* Split Settings page into tabs to give a better overview
+* The initial setup of the plugin is a lot easier now, requiring the connection details first, before being able to change default behaviour
+* Aspects and Services get loaded automatically on initial setup
+* Minor code optimisations
 
 = 1.3.2 =
 * Posting to connected services via diaspora* is now possible

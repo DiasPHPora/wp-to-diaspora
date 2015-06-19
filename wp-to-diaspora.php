@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP to diaspora*
  * Description: Automatically shares WordPress posts on diaspora*
- * Version: 1.3.1
+ * Version: 1.4.0
  * Author: Augusto Bennemann
  * Author URI: https://github.com/gutobenn
  * Plugin URI: https://github.com/gutobenn/wp-to-diaspora
@@ -26,7 +26,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define( 'WP2D_VERSION', '1.3.1' );
+define( 'WP2D_VERSION', '1.4.0' );
 
 class WP_To_Diaspora {
 
@@ -78,10 +78,13 @@ class WP_To_Diaspora {
     // Are we in debugging mode?
     define( 'WP2D_DEBUGGING', isset( $_GET['debugging'] ) );
 
+    // Define simple constants.
+    define( 'WP2D_LIB', dirname( __FILE__ ) . '/lib' );
+
     // Load necessary classes.
-    if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once dirname( __FILE__ ) . '/lib/class-html-to-markdown.php';
-    require_once dirname( __FILE__ ) . '/lib/class-helpers.php';
-    require_once dirname( __FILE__ ) . '/lib/class-api.php';
+    if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once WP2D_LIB . '/class-html-to-markdown.php';
+    require_once WP2D_LIB . '/class-helpers.php';
+    require_once WP2D_LIB . '/class-api.php';
 
     // Load languages.
     add_action( 'plugins_loaded', array( $instance, 'l10n' ) );
@@ -96,7 +99,7 @@ class WP_To_Diaspora {
     add_action( 'admin_enqueue_scripts', array( $instance, 'admin_load_scripts' ) );
 
     // Set up the options.
-    require_once dirname( __FILE__ ) . '/lib/class-options.php';
+    require_once WP2D_LIB . '/class-options.php';
     add_action( 'admin_menu', array( 'WP2D_Options', 'setup' ) );
 
     // Notices when a post has been shared or if it has failed.
@@ -115,6 +118,10 @@ class WP_To_Diaspora {
     add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', array( $instance, 'update_pod_list_callback' ) );
     add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', array( $instance, 'update_aspects_list_callback' ) );
     add_action( 'wp_ajax_wp_to_diaspora_update_services_list', array( $instance, 'update_services_list_callback' ) );
+
+    // Check the pod connection status on the options page.
+    add_action( 'wp_ajax_wp_to_diaspora_check_pod_connection_status', array( $instance, 'check_pod_connection_status_callback' ) );
+
 
     // The instance has been set up.
     self::$_is_set_up = true;
@@ -343,6 +350,14 @@ class WP_To_Diaspora {
       wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.js', __FILE__ ), array( 'jquery' ), false, true );
       wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-autocomplete' ), false, true );
       wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), array( 'jquery' ), false, true );
+      // Javascript-specific l10n.
+      wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', array(
+        'no_services_connected' => __( 'No services connected yet.', 'wp_to_diaspora' ),
+        'sure_reset_defaults'   => __( 'Are you sure you want to reset to default values?', 'wp_to_diaspora' ),
+        'conn_testing'          => __( 'Testing connection...', 'wp_to_diaspora' ),
+        'conn_successful'       => __( 'Connection successful', 'wp_to_diaspora' ),
+        'conn_failed'           => __( 'Connection failed', 'wp_to_diaspora' )
+      ));
     }
   }
 
@@ -551,7 +566,7 @@ class WP_To_Diaspora {
     $pod_list_url = 'http://podupti.me/api.php?format=json&key=4r45tg';
 
     $pods = array();
-    if ( $json = file_get_contents( $pod_list_url ) ) {
+    if ( $json = @file_get_contents( $pod_list_url ) ) {
       $pod_list = json_decode( $json );
       if ( isset( $pod_list->pods ) ) {
         foreach ( $pod_list->pods as $pod ) {
@@ -585,7 +600,12 @@ class WP_To_Diaspora {
    */
   private function _update_aspects_list() {
     $options = WP2D_Options::get_instance();
-    $aspects = $options->get_option( 'aspects_list', array( 'public' => __( 'Public' ) ) );
+    $aspects = $options->get_option( 'aspects_list' );
+
+    // Make sure that we have at least the 'Public' aspect.
+    if ( empty( $aspects ) ) {
+      $aspects = array( 'public' => __( 'Public' ) );
+    }
 
     // Set up the connection to diaspora*.
     $api = $this->_load_api();
@@ -632,6 +652,39 @@ class WP_To_Diaspora {
    */
   public function update_services_list_callback() {
     wp_send_json( $this->_update_services_list() );
+  }
+
+
+
+
+
+
+  /**
+   * Check the pod connection status.
+   *
+   * @return string The status of the connection.
+   */
+  private function _check_pod_connection_status() {
+    $options = WP2D_Options::get_instance();
+
+    $status = 'notset';
+
+    if ( $options->is_pod_set_up() ) {
+      if ( $this->_load_api()->last_error ) {
+        $status = 'failed';
+      } else {
+        $status = 'success';
+      }
+    }
+
+    return $status;
+  }
+
+  /**
+   * Update the list of services and return them for use with AJAX.
+   */
+  public function check_pod_connection_status_callback() {
+    wp_send_json( $this->_check_pod_connection_status() );
   }
 }
 

@@ -31,10 +31,15 @@ class WP2D_Options {
   private static $_default_options = array(
     'pod_list'           => array(),
     'aspects_list'       => array(),
+    'services_list'      => array(),
     'post_to_diaspora'   => true,
     'enabled_post_types' => array( 'post' ),
     'fullentrylink'      => true,
     'display'            => 'full',
+    'tags_to_post'       => 'gcp',
+    'global_tags'        => '',
+    'aspects'            => array( 'public' ),
+    'services'           => array(),
     'version'            => WP2D_VERSION
   );
 
@@ -88,6 +93,11 @@ class WP2D_Options {
       return $instance;
     }
 
+    // Redirect away from setup tab if we just saved the setup settings.
+    if ( isset( $_GET['tab'], $_GET['settings-updated'] ) && 'setup' === $_GET['tab'] ) {
+      wp_redirect( '?page=wp_to_diaspora' );
+    }
+
     // Populate options array.
     $instance->get_option();
 
@@ -112,24 +122,42 @@ class WP2D_Options {
       <h2>WP to diaspora*</h2>
 
       <?php
-        // Set up the connection to Diaspora.
-        $conn = new WP2D_API( $this->get_option( 'pod' ) );
-        if ( $conn->init() && $conn->login( $this->get_option( 'username' ), WP2D_Helpers::decrypt( $this->get_option( 'password' ) ) ) ) {
-          // Show success message if connected successfully.
+        // Check the connection status to diaspora.
+        if ( ! $this->is_pod_set_up() ) {
+
           add_settings_error(
             'wp_to_diaspora_settings',
             'wp_to_diaspora_connected',
-            sprintf( __( 'Connected to %s', 'wp_to_diaspora' ), $conn->get_pod_url() ),
+            __( 'First of all, set up the connection to your pod below.', 'wp_to_diaspora' ),
             'updated'
           );
         } else {
-          // Show error message if connection failed.
-          add_settings_error(
-            'wp_to_diaspora_settings',
-            'wp_to_diaspora_connected',
-            sprintf( __( 'Couldn\'t connect to "%1$s": %2$s', 'wp_to_diaspora' ), $conn->get_pod_url(), $conn->last_error ),
-            'error'
-          );
+          // Get initial aspects list and connected services.
+          //
+          // DON'T check for empty services list here!!
+          //   It could always be empty, resulting in this code being run every time the page is loaded.
+          //   The aspects will at least have a "Public" entry after the initial fetch.
+          if ( empty( $this->get_option( 'aspects_list' ) ) ) {
+
+            // Set up the connection to diaspora*.
+            $conn = new WP2D_API( $this->get_option( 'pod' ) );
+            if ( $conn->init() && $conn->login( $this->get_option( 'username' ), WP2D_Helpers::decrypt( $this->get_option( 'password' ) ) ) ) {
+
+              // Get the loaded aspects.
+              if ( $aspects = $conn->get_aspects() ) {
+                // Save the new list of aspects.
+                $this->set_option( 'aspects_list', $aspects );
+              }
+
+              // Get the loaded services.
+              if ( $services = $conn->get_services() ) {
+                // Save the new list of services.
+                $this->set_option( 'services_list', $services );
+              }
+
+              $this->save();
+            }
+          }
         }
 
         // Output success or error message.
@@ -141,28 +169,122 @@ class WP2D_Options {
         <textarea rows="5" cols="50"><?php echo WP2D_Helpers::get_debugging(); ?></textarea>
       <?php endif; ?>
 
+      <?php $page_tabs = array_keys( $this->_options_page_tabs( true ) ); ?>
+
       <form action="options.php" method="post">
-        <?php settings_fields( 'wp_to_diaspora_settings' ); ?>
-        <?php do_settings_sections( 'wp_to_diaspora_settings' ); ?>
-        <?php submit_button(); ?>
+
+        <?php
+          // Load the settings fields.
+          settings_fields( 'wp_to_diaspora_settings' );
+          do_settings_sections( 'wp_to_diaspora_settings' );
+
+          // Get the name of the current tab, if set, else take the first one from the list.
+          $tab = $this->_current_tab( $page_tabs[0] );
+
+          // Add Save and Reset buttons.
+          echo '<input id="submit-' . $tab . '" name="wp_to_diaspora_settings[submit_' . $tab . ']" type="submit" class="button-primary" value="' . __( 'Save Changes' ) . '" />&nbsp;';
+          if ( 'setup' !== $tab ) {
+            echo '<input id="reset-' . $tab . '" name="wp_to_diaspora_settings[reset_' . $tab . ']" type="submit" class="button-secondary" value="' . __( 'Reset Defaults', 'wp_to_diaspora' ) . '" />';
+          }
+        ?>
+
+        <?php //submit_button(); ?>
       </form>
     </div>
+
     <?php
   }
 
   /**
-   * Initialise the settings sections and fields.
+   * Return if the settings for the pod setup have been entered.
+   *
+   * @return boolean If the setup for the pod has been done.
+   */
+  public function is_pod_set_up() {
+    return ( $this->get_option( 'pod' ) && $this->get_option( 'username' ) && $this->get_option( 'password' ) );
+  }
+
+  /**
+   * Get the currently selected tab.
+   *
+   * @param  string $default Tab to select if the current selection is invalid.
+   * @return string          Return the currently selected tab.
+   */
+  private function _current_tab( $default = 'defaults' ) {
+
+    $tab = ( isset ( $_GET['tab'] ) ? $_GET['tab'] : $default );
+
+    // If the pod settings aren't configured yet, open the 'Setup' tab.
+    if ( ! $this->is_pod_set_up() ) {
+      $tab = 'setup';
+    }
+
+    return $tab;
+  }
+
+  /**
+   * Initialise the settings sections and fields of the currently selected tab.
    */
   public function register_settings() {
       // Register the settings with validation callback.
     register_setting( 'wp_to_diaspora_settings', 'wp_to_diaspora_settings', array( $this, 'validate_settings' ) );
 
-    // Add a "Setup" section that contains the Pod domain, Username and Password.
-    add_settings_section( 'wp_to_diaspora_setup_section', __( 'diaspora* Setup', 'wp_to_diaspora' ), array( $this, 'setup_section' ), 'wp_to_diaspora_settings' );
-
-    // Add a "Defaults" section that contains all posting settings to be used by default.
-    add_settings_section( 'wp_to_diaspora_defaults_section', __( 'Posting Defaults', 'wp_to_diaspora' ), array( $this, 'defaults_section' ), 'wp_to_diaspora_settings' );
+    // Load only the sections of the selected tab.
+    switch ( $this->_current_tab() ) {
+      case 'defaults' :
+        // Add a "Defaults" section that contains all posting settings to be used by default.
+        add_settings_section( 'wp_to_diaspora_defaults_section', __( 'Posting Defaults', 'wp_to_diaspora' ), array( $this, 'defaults_section' ), 'wp_to_diaspora_settings' );
+        break;
+      case 'setup' :
+        // Add a "Setup" section that contains the Pod domain, Username and Password.
+        add_settings_section( 'wp_to_diaspora_setup_section', __( 'diaspora* Setup', 'wp_to_diaspora' ), array( $this, 'setup_section' ), 'wp_to_diaspora_settings' );
+        break;
+    }
   }
+
+
+
+
+  /**
+   * Output all options tabs and return an array of them all, if requested by $return.
+   *
+   * @param bool $return Define if the options tabs should be returned.
+   * @return array       (If requested) An array of the outputted options tabs.
+   */
+  private function _options_page_tabs( $return = false ) {
+    // The array defining all options sections to be shown as tabs.
+    $tabs = array();
+    if ( $this->is_pod_set_up() ) {
+      $tabs['defaults'] = __( 'Defaults', 'wp_to_diaspora' );
+    }
+
+    // Add the 'Setup' tab to the end of the list.
+    $tabs['setup'] = __( 'Setup', 'wp_to_diaspora' ) . '<span id="pod-connection-status" class="dashicons-before" style="display:none;"></span><span class="spinner"></span>';
+
+
+
+    // Container for all options tabs.
+    $out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
+    foreach ( $tabs as $tab => $name ) {
+      // The tab link.
+      $out .= '<a class="nav-tab' . ( ( $tab == $this->_current_tab() ) ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
+    }
+    $out .= '</h2>';
+
+    // Output the container with all tabs.
+    echo $out;
+
+    // Check if the tabs should be returned.
+    if ( $return ) {
+      return $tabs;
+    }
+  }
+
+
+
+
+
+
 
   /**
    * Callback for the "Setup" section.
@@ -414,7 +536,11 @@ class WP2D_Options {
     // Special case for this field if it's displayed on the settings page.
     $on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
     $services         = ( ! empty( $services ) && is_array( $services ) ) ? $services : array();
-    $description      = __( 'Choose which services to share to.', 'wp_to_diaspora' );
+    $description      = sprintf( '%1$s<br><a href="%2$s" target="_blank">%3$s</a>',
+      __( 'Choose which services to share to.', 'wp_to_diaspora' ),
+      'https://' . $this->get_option( 'pod' ) . '/services',
+      __( 'Show available services on my pod.', 'wp_to_diaspora' )
+    );
 
     if ( ! $on_settings_page ) {
       echo $description;
@@ -430,8 +556,10 @@ class WP2D_Options {
         }
       } else {
         // No services loaded yet.
+        // Keep this for when we have a better pod selection which includes dropdown for HTTP/S.
+        // $link_to_services = sprintf( 'http%s://%s%s', ( $this->get_option( 'is_secure' ) ) ? 's' : '', $this->get_option( 'pod' ), '/services' );
         ?>
-        <label><?php _e( 'No connected services loaded yet.', 'wp_to_diaspora' ); ?></label>
+        <label><?php _e( 'No services connected yet.', 'wp_to_diaspora' ); ?></label>
         <?php
       }
       ?>
@@ -537,50 +665,73 @@ class WP2D_Options {
    */
   public function validate_settings( $input ) {
     // Validate all settings before saving to the database.
-    $input['pod']      = trim( sanitize_text_field( $input['pod'] ), ' /' );
-    $input['username'] = sanitize_text_field( $input['username'] );
-    $input['password'] = sanitize_text_field( $input['password'] );
 
-    // If password is blank, it hasn't been changed.
-    // If new password is equal to the encrypted password already saved, it was just passed again. It happens everytime update_option('wp_to_diaspora_settings') is called.
-    if ( '' === $input['password'] || $this->get_option( 'password' ) === $input['password'] ) {
-      unset( $input['password'] );
-    } else {
-      $input['password'] = WP2D_Helpers::encrypt( $input['password'] );
-    }
+    // Saving the pod setup details.
+    if ( isset( $input['submit_setup'] ) ) {
+      $input['pod']      = trim( sanitize_text_field( $input['pod'] ), ' /' );
+      $input['username'] = sanitize_text_field( $input['username'] );
+      $input['password'] = sanitize_text_field( $input['password'] );
 
-    if ( ! isset( $input['enabled_post_types'] ) ) {
-      $input['enabled_post_types'] = array();
-    }
-
-    // Checkboxes.
-    foreach ( array( 'post_to_diaspora', 'fullentrylink' ) as $option ) {
-      $input[ $option ] = isset( $input[ $option ] );
-    }
-
-    // Selects.
-    foreach ( array( 'display', 'tags_to_post' ) as $option ) {
-      if ( isset( $input[ $option ] ) && ! $this->is_valid_value( $option, $input[ $option ] ) ) {
-        unset( $input[ $option ] );
+      // If password is blank, it hasn't been changed.
+      // If new password is equal to the encrypted password already saved, it was just passed again. It happens everytime update_option('wp_to_diaspora_settings') is called.
+      if ( '' === $input['password'] || $this->get_option( 'password' ) === $input['password'] ) {
+        $input['password'] = $this->get_option( 'password' );
+      } else {
+        $input['password'] = WP2D_Helpers::encrypt( $input['password'] );
       }
     }
 
-    // Get unique, non-empty, trimmed tags and clean them up.
-    $input['global_tags'] = WP2D_Helpers::get_clean_tags( $input['global_tags'] );
+    // Saving the default options.
+    if ( isset( $input['submit_defaults'] ) ) {
+      if ( ! isset( $input['enabled_post_types'] ) ) {
+        $input['enabled_post_types'] = array();
+      }
 
-    // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
-    if ( empty( $input['aspects'] ) || ! is_array( $input['aspects'] ) ) {
-      $input['aspects'] = array( 'public' );
-    } else {
-      array_walk( $input['aspects'], 'sanitize_text_field' );
+      // Checkboxes.
+      foreach ( array( 'post_to_diaspora', 'fullentrylink' ) as $option ) {
+        $input[ $option ] = isset( $input[ $option ] );
+      }
+
+      // Selects.
+      foreach ( array( 'display', 'tags_to_post' ) as $option ) {
+        if ( isset( $input[ $option ] ) && ! $this->is_valid_value( $option, $input[ $option ] ) ) {
+          unset( $input[ $option ] );
+        }
+      }
+
+      // Get unique, non-empty, trimmed tags and clean them up.
+      $input['global_tags'] = WP2D_Helpers::get_clean_tags( $input['global_tags'] );
+
+      // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
+      if ( empty( $input['aspects'] ) || ! is_array( $input['aspects'] ) ) {
+        $input['aspects'] = array( 'public' );
+      } else {
+        array_walk( $input['aspects'], 'sanitize_text_field' );
+      }
+
+      // Clean up the list of services.
+      if ( empty( $input['services'] ) || ! is_array( $input['services'] ) ) {
+        $input['services'] = array();
+      } else {
+        array_walk( $input['services'], 'sanitize_text_field' );
+      }
     }
 
-    // Clean up the list of services.
-    if ( empty( $input['services'] ) || ! is_array( $input['services'] ) ) {
-      $input['services'] = array();
-    } else {
-      array_walk( $input['services'], 'sanitize_text_field' );
+    // Reset to defaults.
+    if ( isset( $input['reset_defaults'] ) ) {
+      // Set the input to the default options.
+      $input = self::$_default_options;
+
+      // Don't reset the fetched lists of pods, aspects and services.
+      unset( $input['pod_list'] );
+      unset( $input['aspects_list'] );
+      unset( $input['services_list'] );
     }
+
+    // Unset all unused input fields.
+    unset( $input['submit_defaults'] );
+    unset( $input['reset_defaults'] );
+    unset( $input['submit_setup'] );
 
     // Parse inputs with default options and return.
     return wp_parse_args( $input, array_merge( self::$_default_options, self::$_options ) );
