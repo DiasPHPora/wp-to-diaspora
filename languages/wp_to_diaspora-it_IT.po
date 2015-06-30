@@ -1,16 +1,16 @@
-# Copyright (C) 2015 WP to diaspora*
-# This file is distributed under the same license as the WP to diaspora* package.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP to diaspora* 1.4.0\n"
+"Project-Id-Version: WP to Diaspora*\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/wp-to-diaspora\n"
 "POT-Creation-Date: 2015-06-29 09:36:44+00:00\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Vitalie Ciubotaru <vitalie@ciubotaru.tk>\n"
+"Language-Team: \n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: POEditor.com\n"
 
 #: lib/class-api.php:173
 msgctxt "Placeholder is the full pod URL."
@@ -38,98 +38,108 @@ msgstr ""
 msgid "Error loading services."
 msgstr ""
 
-#: lib/class-api.php:446 lib/class-options.php:523 wp-to-diaspora.php:607
+#: lib/class-api.php:446
+#: lib/class-options.php:523
+#: wp-to-diaspora.php:607
 msgid "Public"
 msgstr ""
 
 #: lib/class-options.php:131
+#, fuzzy
 msgid "First of all, set up the connection to your pod below."
-msgstr ""
+msgstr "Imposta la connessione con il tuo account Diaspora*"
 
 #: lib/class-options.php:185
 msgid "Save Changes"
 msgstr ""
 
 #: lib/class-options.php:187
+#, fuzzy
 msgid "Reset Defaults"
-msgstr ""
+msgstr "Pubblicazione di default"
 
 #: lib/class-options.php:236
 msgid "Posting Defaults"
-msgstr ""
+msgstr "Pubblicazione di default"
 
 #: lib/class-options.php:240
+#, fuzzy
 msgid "diaspora* Setup"
-msgstr ""
+msgstr "Impostazioni Diaspora"
 
 #: lib/class-options.php:258
+#, fuzzy
 msgid "Defaults"
-msgstr ""
+msgstr "Pubblicazione di default"
 
 #: lib/class-options.php:262
 msgid "Setup"
 msgstr ""
 
 #: lib/class-options.php:293
+#, fuzzy
 msgid "Set up the connection to your diaspora* account."
-msgstr ""
+msgstr "Imposta la connessione con il tuo account Diaspora*"
 
 #: lib/class-options.php:296
 msgid "Diaspora* Pod"
-msgstr ""
+msgstr "Diaspora* Pod "
 
-#: lib/class-options.php:299 lib/class-options.php:324
+#: lib/class-options.php:299
+#: lib/class-options.php:324
 msgid "Username"
-msgstr ""
+msgstr "Username"
 
-#: lib/class-options.php:302 lib/class-options.php:334
+#: lib/class-options.php:302
+#: lib/class-options.php:334
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 #: lib/class-options.php:310
 msgid "Refresh pod list"
 msgstr ""
 
 #: lib/class-options.php:334
+#, fuzzy
 msgid "Password already set."
-msgstr ""
+msgstr "Password già impostata"
 
 #: lib/class-options.php:339
-msgid ""
-"If you would like to change the password type a new one. Otherwise leave "
-"this blank."
-msgstr ""
+msgid "If you would like to change the password type a new one. Otherwise leave this blank."
+msgstr "Se vuoi reimpostare la password scrivine una nuova. Altrimenti lascia vuoto."
 
 #: lib/class-options.php:348
-msgid ""
-"Define the default posting behaviour for all posts here. These settings can "
-"be modified for each post individually, by changing the values in the \"WP "
-"to diaspora*\" meta box, which gets displayed in your post edit screen."
+msgid "Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the \"WP to diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr ""
 
 #: lib/class-options.php:351
 msgid "Post types"
 msgstr ""
 
-#: lib/class-options.php:354 lib/class-options.php:412
+#: lib/class-options.php:354
+#: lib/class-options.php:412
+#, fuzzy
 msgid "Post to diaspora*"
-msgstr ""
+msgstr "Pubblica su Diaspora"
 
-#: lib/class-options.php:357 lib/class-options.php:429
+#: lib/class-options.php:357
+#: lib/class-options.php:429
+#, fuzzy
 msgid "Show \"Posted at\" link?"
-msgstr ""
+msgstr "Mostra il link \"originale pubblicato su\"?"
 
 #: lib/class-options.php:360
 msgid "Display"
-msgstr ""
+msgstr "Mostra"
 
 #: lib/class-options.php:363
 msgid "Tags to post"
 msgstr ""
 
-#: lib/class-options.php:366 lib/class-options.php:478
+#: lib/class-options.php:366
+#: lib/class-options.php:478
 msgid "Global tags"
-msgstr ""
+msgstr "Tags globali"
 
 #: lib/class-options.php:369
 msgid "Aspects"
@@ -140,56 +150,64 @@ msgid "Services"
 msgstr ""
 
 #: lib/class-options.php:401
+#, fuzzy
 msgid "Enable WP to diaspora* on %s"
-msgstr ""
+msgstr "WP to Diaspora*"
 
-#: lib/class-options.php:412 lib/class-options.php:426
+#: lib/class-options.php:412
+#: lib/class-options.php:426
 msgid "Yes"
-msgstr ""
+msgstr "Sì"
 
 #: lib/class-options.php:422
 msgid "Include a link back to your original post."
-msgstr ""
+msgstr "Includi un link al tuo post originale"
 
 #: lib/class-options.php:438
 msgid "Full Post"
-msgstr ""
+msgstr "Articolo completo"
 
 #: lib/class-options.php:439
 msgid "Excerpt"
-msgstr ""
+msgstr "Estratto"
 
 #: lib/class-options.php:448
+#, fuzzy
 msgid "Choose which tags should be posted to diaspora*."
-msgstr ""
+msgstr "Scegli quali tags dovranno essere pubblicati su Diaspora*"
 
 #: lib/class-options.php:456
 msgid "All tags (global, custom and post tags)"
 msgstr ""
 
 #: lib/class-options.php:457
+#, fuzzy
 msgid "Global and custom tags"
-msgstr ""
+msgstr "Tags globali"
 
 #: lib/class-options.php:458
+#, fuzzy
 msgid "Global and post tags"
-msgstr ""
+msgstr "Tags globali"
 
 #: lib/class-options.php:459
+#, fuzzy
 msgid "Only custom tags"
-msgstr ""
+msgstr "Tags personalizzati"
 
 #: lib/class-options.php:460
+#, fuzzy
 msgid "Only post tags"
-msgstr ""
+msgstr "L'originale è stato pubblicato su"
 
 #: lib/class-options.php:461
 msgid "No tags"
-msgstr ""
+msgstr "Nessun tag"
 
 #: lib/class-options.php:479
+#, fuzzy
 msgid "Custom tags to add to all posts being posted to diaspora*."
-msgstr ""
+msgstr "Scegli quali tags dovranno essere pubblicati su Diaspora*"
 
 #: lib/class-options.php:491
 msgid "Custom tags to add to this post when it's posted to diaspora*."
@@ -197,11 +215,12 @@ msgstr ""
 
 #: lib/class-options.php:492
 msgid "Custom tags"
-msgstr ""
+msgstr "Tags personalizzati"
 
 #: lib/class-options.php:495
+#, fuzzy
 msgid "Separate tags with commas"
-msgstr ""
+msgstr "Separa i tag con la virgola"
 
 #: lib/class-options.php:506
 msgid "Choose which aspects to share to."
@@ -219,7 +238,8 @@ msgstr ""
 msgid "Show available services on my pod."
 msgstr ""
 
-#: lib/class-options.php:562 wp-to-diaspora.php:355
+#: lib/class-options.php:562
+#: wp-to-diaspora.php:355
 msgid "No services connected yet."
 msgstr ""
 
@@ -229,7 +249,7 @@ msgstr ""
 
 #: wp-to-diaspora.php:266
 msgid "Originally posted at:"
-msgstr ""
+msgstr "L'originale è stato pubblicato su"
 
 #: wp-to-diaspora.php:356
 msgid "Are you sure you want to reset to default values?"
@@ -249,44 +269,59 @@ msgstr ""
 
 #: wp-to-diaspora.php:371
 msgid "Settings"
-msgstr ""
+msgstr "Impostazioni"
 
 #: wp-to-diaspora.php:424
+#, fuzzy
 msgid "Already posted to diaspora*."
-msgstr ""
+msgstr "Pubblica su Diaspora"
 
 #: wp-to-diaspora.php:528
+#, fuzzy
 msgid "Failed to post to diaspora*."
-msgstr ""
+msgstr "Pubblica su Diaspora"
 
 #: wp-to-diaspora.php:531
 msgid "Ignore"
 msgstr ""
 
 #: wp-to-diaspora.php:540
+#, fuzzy
 msgid "Successfully posted to diaspora*."
-msgstr ""
+msgstr "Scegli quali tags dovranno essere pubblicati su Diaspora*"
 
 #: wp-to-diaspora.php:542
 msgid "View Post"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
+#, fuzzy
 msgid "WP to diaspora*"
-msgstr ""
+msgstr "WP to Diaspora*"
 
 #. Plugin URI of the plugin/theme
 msgid "https://github.com/gutobenn/wp-to-diaspora"
-msgstr ""
+msgstr "https://github.com/gutobenn/wp-to-diaspora"
 
 #. Description of the plugin/theme
+#, fuzzy
 msgid "Automatically shares WordPress posts on diaspora*"
-msgstr ""
+msgstr "Condividi automaticamente gli articoli Wordpress su Diaspora"
 
 #. Author of the plugin/theme
 msgid "Augusto Bennemann"
 msgstr ""
 
 #. Author URI of the plugin/theme
+#, fuzzy
 msgid "https://github.com/gutobenn"
-msgstr ""
+msgstr "https://github.com/gutobenn/wp-to-diaspora"
+
+#~ msgid "Connected to %s"
+#~ msgstr "Connesso a %s "
+
+#~ msgid "Couldn't connect to %s: Invalid pod, username or password."
+#~ msgstr "Impossibile connettersi a %s: pod, utente o password non validi"
+
+#~ msgid "No"
+#~ msgstr "Non"

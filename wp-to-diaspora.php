@@ -355,8 +355,8 @@ class WP_To_Diaspora {
         'no_services_connected' => __( 'No services connected yet.', 'wp_to_diaspora' ),
         'sure_reset_defaults'   => __( 'Are you sure you want to reset to default values?', 'wp_to_diaspora' ),
         'conn_testing'          => __( 'Testing connection...', 'wp_to_diaspora' ),
-        'conn_successful'       => __( 'Connection successful', 'wp_to_diaspora' ),
-        'conn_failed'           => __( 'Connection failed', 'wp_to_diaspora' )
+        'conn_successful'       => __( 'Connection successful.', 'wp_to_diaspora' ),
+        'conn_failed'           => __( 'Connection failed.', 'wp_to_diaspora' )
       ));
     }
   }
@@ -421,7 +421,7 @@ class WP_To_Diaspora {
     if ( ( $diaspora_post_history = get_post_meta( $post->ID, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
       $latest_post = end( $diaspora_post_history );
       ?>
-      <p><a href="<?php echo $latest_post['post_url']; ?>" target="_blank"><?php _e( 'Already posted to diaspora*', 'wp_to_diaspora' ); ?></a></p>
+      <p><a href="<?php echo $latest_post['post_url']; ?>" target="_blank"><?php _e( 'Already posted to diaspora*.', 'wp_to_diaspora' ); ?></a></p>
       <?php
     }
     ?>
@@ -525,7 +525,7 @@ class WP_To_Diaspora {
     if ( $error = get_post_meta( $post->ID, '_wp_to_diaspora_post_error', true ) ) {
       // This notice will only be shown if posting to diaspora* has failed.
       printf( '<div class="error"><p>%1$s: %2$s <a href="%3$s">%4$s</a></p></div>',
-        __( 'Failed to post to diaspora*', 'wp_to_diaspora' ),
+        __( 'Failed to post to diaspora*.', 'wp_to_diaspora' ),
         $error,
         add_query_arg( 'wp_to_diaspora_ignore_post_error', 'yes' ),
         __( 'Ignore', 'wp_to_diaspora' )
