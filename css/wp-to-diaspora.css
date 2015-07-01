@@ -37,6 +37,10 @@
   vertical-align: middle;
 }
 
+#tags_to_post_chosen {
+  width: auto !important;
+  min-width: 10em;
+}
 
 /* TAG-IT */
 

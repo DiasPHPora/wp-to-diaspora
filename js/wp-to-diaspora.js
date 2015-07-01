@@ -24,6 +24,9 @@ jQuery(document).ready(function ($) {
     removeConfirmation: true
   });
 
+  // Chosen.
+  $('.chosen').chosen();
+
   // Refresh the list of pods and repopulate the autocomplete list.
   $('#refresh-pod-list').click(function() {
     var $refreshButton = $(this).hide();
