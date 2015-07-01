@@ -383,26 +383,17 @@ class WP2D_Options {
     foreach ( $excluded_post_types as $excluded ) {
       unset( $post_types[ $excluded ] );
     }
+    ?>
 
-    // Set up the tabs and content boxes.
-    $tabs     = '';
-    $contents = '';
-    foreach ( $post_types as $type ) {
-      $name = $type->label;
-      $slug = $type->name;
+    <select id="enabled-post-types" multiple data-placeholder="<?php esc_attr_e( 'None', 'wp_to_diaspora' ); ?>" class="chosen" name="wp_to_diaspora_settings[enabled_post_types][]">
+    <?php foreach ( $post_types as $post_type ) : ?>
+      <option value="<?php echo esc_attr( $post_type->name ); ?>" <?php selected( in_array( $post_type->name, $this->get_option( 'enabled_post_types' ) ) ); ?>><?php echo $post_type->label; ?></option>
+    <?php endforeach;?>
+    </select>
 
-      $tabs .= '<li class="tab-link" data-tab="tab-' . $slug . '">' . $name . '</li>';
-      $contents .= sprintf('
-        <div id="tab-%1$s" class="tab-content">
-          <label><input type="checkbox" name="wp_to_diaspora_settings[enabled_post_types][]" value="%1$s" %2$s>%3$s</label>
-        </div>',
-        $slug,
-        checked( in_array( $slug, $this->get_option( 'enabled_post_types' ) ), true, false ),
-        sprintf( __( 'Enable WP to diaspora* on %s', 'wp_to_diaspora' ), $name )
-      );
-    }
+    <p class="description"><?php _e( 'Choose which post types can be posted to diaspora*.', 'wp_to_diaspora' ); ?></p>
 
-    echo '<div class="post-types-container"><ul class="tabs">' . $tabs . '</ul>' . $contents . '</div>';
+    <?php
   }
 
   /**

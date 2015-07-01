@@ -1,33 +1,3 @@
-.settings_page_wp_to_diaspora .post-types-container ul.tabs{
-  margin: 0px;
-  padding: 0px;
-  list-style: none;
-}
-
-.settings_page_wp_to_diaspora .post-types-container ul.tabs li{
-  background: none;
-  color: #222;
-  display: inline-block;
-  padding: 10px 15px;
-  margin-bottom:0px;
-  cursor: pointer;
-}
-
-.settings_page_wp_to_diaspora .post-types-container ul.tabs li.current{
-  background: #ededed;
-  color: #222;
-}
-
-.settings_page_wp_to_diaspora .post-types-container .tab-content{
-  display: none;
-  background: #ededed;
-  padding: 15px;
-}
-
-.settings_page_wp_to_diaspora .post-types-container .tab-content.current{
-  display: inherit;
-}
-
 .settings_page_wp_to_diaspora .spinner,
 #wp_to_diaspora_meta_box .spinner {
   display: inline-block;
@@ -37,6 +7,7 @@
   vertical-align: middle;
 }
 
+#enabled_post_types_chosen,
 #tags_to_post_chosen {
   width: auto !important;
   min-width: 10em;
