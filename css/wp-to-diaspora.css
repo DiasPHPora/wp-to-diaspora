@@ -7,6 +7,8 @@
   vertical-align: middle;
 }
 
+/* Modifications for chosen. */
+
 #enabled_post_types_chosen,
 #tags_to_post_chosen {
   width: auto !important;

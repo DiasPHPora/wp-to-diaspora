@@ -5,7 +5,7 @@ jQuery(document).ready(function ($) {
     removeConfirmation: true
   });
 
-  // Chosen.
+  // Initialise chosen.
   $('.chosen').chosen();
 
   // Refresh the list of pods and repopulate the autocomplete list.
