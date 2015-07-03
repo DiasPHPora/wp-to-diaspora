@@ -94,6 +94,7 @@ Quite straightforward, right?
 * Split Settings page into tabs to give a better overview
 * The initial setup of the plugin is a lot easier now, requiring the connection details first, before being able to change default behaviour
 * Aspects and Services get loaded automatically on initial setup
+* Implement chosen to simplify option inputs
 * Minor code optimisations
 
 = 1.3.2 =

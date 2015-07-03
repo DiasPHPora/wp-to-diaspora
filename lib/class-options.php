@@ -36,7 +36,7 @@ class WP2D_Options {
     'enabled_post_types' => array( 'post' ),
     'fullentrylink'      => true,
     'display'            => 'full',
-    'tags_to_post'       => 'gcp',
+    'tags_to_post'       => array( 'global', 'custom', 'post' ),
     'global_tags'        => '',
     'aspects'            => array( 'public' ),
     'services'           => array(),
@@ -50,7 +50,7 @@ class WP2D_Options {
    */
   private static $_valid_values = array(
     'display'      => array( 'full', 'excerpt' ),
-    'tags_to_post' => array( 'gcp', 'gc', 'gp', 'c', 'p', 'n' )
+    'tags_to_post' => array( 'global', 'custom', 'post' )
   );
 
   /**
@@ -383,26 +383,17 @@ class WP2D_Options {
     foreach ( $excluded_post_types as $excluded ) {
       unset( $post_types[ $excluded ] );
     }
+    ?>
 
-    // Set up the tabs and content boxes.
-    $tabs     = '';
-    $contents = '';
-    foreach ( $post_types as $type ) {
-      $name = $type->label;
-      $slug = $type->name;
+    <select id="enabled-post-types" multiple data-placeholder="<?php esc_attr_e( 'None', 'wp_to_diaspora' ); ?>" class="chosen" name="wp_to_diaspora_settings[enabled_post_types][]">
+    <?php foreach ( $post_types as $post_type ) : ?>
+      <option value="<?php echo esc_attr( $post_type->name ); ?>" <?php selected( in_array( $post_type->name, $this->get_option( 'enabled_post_types' ) ) ); ?>><?php echo $post_type->label; ?></option>
+    <?php endforeach;?>
+    </select>
 
-      $tabs .= '<li class="tab-link" data-tab="tab-' . $slug . '">' . $name . '</li>';
-      $contents .= sprintf('
-        <div id="tab-%1$s" class="tab-content">
-          <label><input type="checkbox" name="wp_to_diaspora_settings[enabled_post_types][]" value="%1$s" %2$s>%3$s</label>
-        </div>',
-        $slug,
-        checked( in_array( $slug, $this->get_option( 'enabled_post_types' ) ), true, false ),
-        sprintf( __( 'Enable WP to diaspora* on %s', 'wp_to_diaspora' ), $name )
-      );
-    }
+    <p class="description"><?php _e( 'Choose which post types can be posted to diaspora*.', 'wp_to_diaspora' ); ?></p>
 
-    echo '<div class="post-types-container"><ul class="tabs">' . $tabs . '</ul>' . $contents . '</div>';
+    <?php
   }
 
   /**
@@ -452,14 +443,12 @@ class WP2D_Options {
     }
 
     ?>
-    <select id="tags-to-post" name="wp_to_diaspora_settings[tags_to_post]">
-      <option value="gcp" <?php selected( $tags_to_post, 'gcp' ); ?>><?php _e( 'All tags (global, custom and post tags)', 'wp_to_diaspora' ); ?></option>
-      <option value="gc" <?php  selected( $tags_to_post, 'gc' );  ?>><?php _e( 'Global and custom tags', 'wp_to_diaspora' ); ?></option>
-      <option value="gp" <?php  selected( $tags_to_post, 'gp' );  ?>><?php _e( 'Global and post tags', 'wp_to_diaspora' ); ?></option>
-      <option value="c" <?php   selected( $tags_to_post, 'c' );   ?>><?php _e( 'Only custom tags', 'wp_to_diaspora' ); ?></option>
-      <option value="p" <?php   selected( $tags_to_post, 'p' );   ?>><?php _e( 'Only post tags', 'wp_to_diaspora' ); ?></option>
-      <option value="n" <?php   selected( $tags_to_post, 'n' );   ?>><?php _e( 'No tags', 'wp_to_diaspora' ); ?></option>
+    <select id="tags-to-post" multiple data-placeholder="<?php esc_attr_e( 'No tags', 'wp_to_diaspora' ); ?>" class="chosen" name="wp_to_diaspora_settings[tags_to_post][]">
+      <option value="global" <?php selected( in_array( 'global', $tags_to_post ) ); ?>><?php _e( 'Global tags', 'wp_to_diaspora' ); ?></option>
+      <option value="custom" <?php selected( in_array( 'custom', $tags_to_post ) ); ?>><?php _e( 'Custom tags', 'wp_to_diaspora' ); ?></option>
+      <option value="post"   <?php selected( in_array( 'post',   $tags_to_post ) ); ?>><?php _e( 'Post tags', 'wp_to_diaspora' );   ?></option>
     </select>
+
     <?php if ( $on_settings_page ) : ?>
       <p class="description"><?php echo $description; ?></p>
     <?php else : ?>
@@ -692,10 +681,24 @@ class WP2D_Options {
         $input[ $option ] = isset( $input[ $option ] );
       }
 
-      // Selects.
-      foreach ( array( 'display', 'tags_to_post' ) as $option ) {
+      // Single Selects.
+      foreach ( array( 'display' ) as $option ) {
         if ( isset( $input[ $option ] ) && ! $this->is_valid_value( $option, $input[ $option ] ) ) {
           unset( $input[ $option ] );
+        }
+      }
+
+      // Multiple Selects.
+      foreach ( array( 'tags_to_post' ) as $option ) {
+        if ( isset( $input[ $option ] ) ) {
+          foreach ( (array) $input[ $option ] as $option_value ) {
+            if ( ! $this->is_valid_value( $option, $option_value ) ) {
+              unset( $input[ $option ] );
+              break;
+            }
+          }
+        } else {
+          $input[ $option ] = array();
         }
       }
 

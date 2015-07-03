@@ -1,28 +1,12 @@
 jQuery(document).ready(function ($) {
 
-  // Tabbed container for post types.
-  if ( $('.settings_page_wp_to_diaspora').length ) {
-    var $tabs = $('ul.tabs li');
-    var $contents = $('.tab-content');
-
-    $tabs.first().addClass('current');
-    $contents.first().addClass('current');
-
-    $tabs.click(function(){
-      var tab_id = $(this).attr('data-tab');
-
-      $tabs.removeClass('current');
-      $contents.removeClass('current');
-
-      $(this).addClass('current');
-      $('#'+tab_id).addClass('current');
-    });
-  }
-
   // Tag-it
   $('.wp2dtags').tagit({
     removeConfirmation: true
   });
+
+  // Initialise chosen.
+  $('.chosen').chosen();
 
   // Refresh the list of pods and repopulate the autocomplete list.
   $('#refresh-pod-list').click(function() {

@@ -170,6 +170,17 @@ class WP_To_Diaspora {
         $options->set_option( 'global_tags', WP2D_Helpers::get_clean_tags( $options->get_option( 'global_tags' ) ) );
       }
 
+      if ( version_compare( $version, '1.4.0', '<' ) ) {
+        // Turn tags_to_post string into an array.
+        $tags_to_post_old = $options->get_option( 'tags_to_post' );
+        $tags_to_post = array_filter( array(
+          ( ( false !== strpos( $tags_to_post_old, 'g' ) ) ? 'global' : null ),
+          ( ( false !== strpos( $tags_to_post_old, 'c' ) ) ? 'custom' : null ),
+          ( ( false !== strpos( $tags_to_post_old, 'p' ) ) ? 'post'   : null )
+        ) );
+        $options->set_option( 'tags_to_post', $tags_to_post );
+      }
+
       // Update version.
       $options->set_option( 'version', WP2D_VERSION );
       $options->save();
@@ -225,22 +236,22 @@ class WP_To_Diaspora {
       }
 
       // Add any diaspora* tags?
-      if ( false === strpos( $meta_tags_to_post, 'n' ) ) {
+      if ( ! empty( $meta_tags_to_post ) ) {
         // The diaspora* tags to add to the post.
         $diaspora_tags = array();
 
         // Add global tags?
-        if ( false !== strpos( $meta_tags_to_post, 'g' ) ) {
+        if ( in_array( 'global', $meta_tags_to_post ) ) {
           $diaspora_tags += array_flip( $options->get_option( 'global_tags' ) );
         }
 
         // Add custom tags?
-        if ( false !== strpos( $meta_tags_to_post, 'c' ) ) {
+        if ( in_array( 'custom', $meta_tags_to_post ) ) {
           $diaspora_tags += array_flip( $meta_custom_tags );
         }
 
         // Add post tags?
-        if ( false !== strpos( $meta_tags_to_post, 'p' ) ) {
+        if ( in_array( 'post', $meta_tags_to_post ) ) {
           // Clean up the post tags.
           $diaspora_tags += array_flip( wp_get_post_tags( $post_id, array( 'fields' => 'slugs' ) ) );
         }
@@ -347,7 +358,7 @@ class WP_To_Diaspora {
       wp_enqueue_style(  'tag-it', plugins_url( '/css/jquery.tagit.css', __FILE__ ) );
       wp_enqueue_style(  'chosen', plugins_url( '/css/chosen.min.css', __FILE__ ) );
       wp_enqueue_style(  'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
-      wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.js', __FILE__ ), array( 'jquery' ), false, true );
+      wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.min.js', __FILE__ ), array( 'jquery' ), false, true );
       wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-autocomplete' ), false, true );
       wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), array( 'jquery' ), false, true );
       // Javascript-specific l10n.
@@ -484,12 +495,27 @@ class WP_To_Diaspora {
       $meta_to_save[ $option ] = isset( $meta_to_save[ $option ] );
     }
 
-    // Selects.
-    foreach ( array( 'display', 'tags_to_post' ) as $option ) {
-      if ( isset( $meta_to_save[ $option ] ) && ! $options->is_valid_value(  $option , $meta_to_save[ $option ] ) ) {
+    // Single Selects.
+    foreach ( array( 'display' ) as $option ) {
+      if ( isset( $meta_to_save[ $option ] ) && ! $options->is_valid_value( $option , $meta_to_save[ $option ] ) ) {
         $meta_to_save[ $option ] = $options->get_option( $option );
       }
     }
+
+    // Multiple Selects.
+    foreach ( array( 'tags_to_post' ) as $option ) {
+      if ( isset( $meta_to_save[ $option ] ) ) {
+        foreach ( (array) $meta_to_save[ $option ] as $option_value ) {
+          if ( ! $options->is_valid_value( $option, $option_value ) ) {
+            unset( $meta_to_save[ $option ] );
+            break;
+          }
+        }
+      } else {
+        $meta_to_save[ $option ] = array();
+      }
+    }
+
 
     // Save custom tags as array.
     $meta_to_save['custom_tags'] = WP2D_Helpers::get_clean_tags( $meta_to_save['custom_tags'] );
