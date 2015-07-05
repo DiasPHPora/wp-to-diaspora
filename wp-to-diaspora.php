@@ -290,7 +290,7 @@ class WP_To_Diaspora {
 
       // Set up the connection to diaspora*.
       $api = $this->_load_api();
-      if ( ! $api->last_error && $response = $api->post( $status_message, $meta_aspects, $extra_data ) ) {
+      if ( ! empty( $status_message ) && ! $api->last_error && $response = $api->post( $status_message, $meta_aspects, $extra_data ) ) {
         // Save certain diaspora* post data as meta data for future reference.
 
         // Get the existing post history.
