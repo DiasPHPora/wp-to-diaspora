@@ -170,7 +170,7 @@ class WP2D_API {
     // Get and save the token.
     if ( null === $this->_fetch_token( $force_new_token ) ) {
       $this->last_error = sprintf(
-        _x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.',  'wp_to_diaspora' ),
+        _x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp_to_diaspora' ),
         $this->get_pod_url()
       );
       return false;

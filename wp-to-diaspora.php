@@ -227,7 +227,7 @@ class WP_To_Diaspora {
           add_filter( 'the_content', $filter );
         }
         // Extract URLs from [embed] shortcodes.
-        add_filter( 'embed_oembed_html', array( $this, 'embed_url' ), 10, 4 );
+        add_filter( 'embed_oembed_html', array( $this, 'embed_url' ), 10, 2 );
 
         $status_message .= apply_filters( 'the_content', $post->post_content );
       } else {
@@ -322,7 +322,7 @@ class WP_To_Diaspora {
   /**
    * Return URL from [embed] shortcode instead of generated iframe.
    */
-  public function embed_url( $html, $url, $attr, $post_ID ) {
+  public function embed_url( $html, $url ) {
     return $url;
   }
 
@@ -368,7 +368,7 @@ class WP_To_Diaspora {
         'conn_testing'          => __( 'Testing connection...', 'wp_to_diaspora' ),
         'conn_successful'       => __( 'Connection successful.', 'wp_to_diaspora' ),
         'conn_failed'           => __( 'Connection failed.', 'wp_to_diaspora' )
-      ));
+      ) );
     }
   }
 
@@ -497,7 +497,7 @@ class WP_To_Diaspora {
 
     // Single Selects.
     foreach ( array( 'display' ) as $option ) {
-      if ( isset( $meta_to_save[ $option ] ) && ! $options->is_valid_value( $option , $meta_to_save[ $option ] ) ) {
+      if ( isset( $meta_to_save[ $option ] ) && ! $options->is_valid_value( $option, $meta_to_save[ $option ] ) ) {
         $meta_to_save[ $option ] = $options->get_option( $option );
       }
     }

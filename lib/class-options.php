@@ -388,7 +388,7 @@ class WP2D_Options {
     <select id="enabled-post-types" multiple data-placeholder="<?php esc_attr_e( 'None', 'wp_to_diaspora' ); ?>" class="chosen" name="wp_to_diaspora_settings[enabled_post_types][]">
     <?php foreach ( $post_types as $post_type ) : ?>
       <option value="<?php echo esc_attr( $post_type->name ); ?>" <?php selected( in_array( $post_type->name, $this->get_option( 'enabled_post_types' ) ) ); ?>><?php echo $post_type->label; ?></option>
-    <?php endforeach;?>
+    <?php endforeach; ?>
     </select>
 
     <p class="description"><?php _e( 'Choose which post types can be posted to diaspora*.', 'wp_to_diaspora' ); ?></p>
