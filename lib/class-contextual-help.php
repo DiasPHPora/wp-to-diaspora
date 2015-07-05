@@ -33,7 +33,7 @@ class WP2D_Contextual_Help {
   private static $_instance = null;
 
   /**
-   * The tab information including the content.
+   * The tab information for the settings page including the content.
    *
    * @var array
    */
@@ -130,20 +130,6 @@ class WP2D_Contextual_Help {
           </ul>'
       )
     );
-
-    /*$this->_settings_tabs = array(
-      // A short overview of the plugin.
-      'overview' => array(
-        'title'   => esc_html__( 'Overview', 'wp_to_diaspora' ),
-        'content' => '<p><strong>' . esc_html__( 'With WP to diaspora*, sharing your WordPress posts to diaspora* is as easy as ever.', 'wp_to_diaspora' ) . '</strong></p>
-          <ol>
-            <li>' . esc_html__( 'Enter your diaspora* login details on the "Setup" tab.', 'wp_to_diaspora' ) . '
-            <li>' . esc_html__( 'Define the default posting behaviour on the "Defaults" tab.', 'wp_to_diaspora' ) . '
-            <li>' . esc_html__( 'Automatically share your WordPress post on diaspora* when publishing it on your website.', 'wp_to_diaspora' ) . '
-            <li>' . esc_html__( 'Check out your new post on diaspora*.', 'wp_to_diaspora' ) . '
-          </ol>'
-      )
-    );*/
   }
 
   /**
@@ -216,7 +202,7 @@ class WP2D_Contextual_Help {
   }
 
   /**
-   * Add help tabs to the contextual help.
+   * Add help tabs to the contextual help on the settings page.
    */
   private function _add_settings_tabs() {
     foreach ( $this->_settings_tabs as $id => $data ) {
@@ -232,7 +218,7 @@ class WP2D_Contextual_Help {
   }
 
   /**
-   * Add help tabs to the contextual help.
+   * Add help tabs to the contextual help on the post pages.
    */
   private function _add_post_type_tabs() {
     get_current_screen()->add_help_tab( array(
@@ -244,5 +230,3 @@ class WP2D_Contextual_Help {
   }
 
 }
-
-?>
