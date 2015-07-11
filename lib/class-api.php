@@ -161,16 +161,16 @@ class WP2D_API {
     $force_new_token = false;
 
     // Change the pod we are connecting to?
-    if ( isset( $pod ) && ( $this->_pod !== $pod || $this->is_secure !== $is_secure ) ) {
+    if ( isset( $pod ) && ( $this->_pod !== $pod || $this->_is_secure !== $is_secure ) ) {
       $this->_pod       = $pod;
       $this->_is_secure = (bool) $is_secure;
       $force_new_token  = true;
     }
 
     // Get and save the token.
-    if ( ! $this->_fetch_token( $force_new_token ) ) {
+    if ( null === $this->_fetch_token( $force_new_token ) ) {
       $this->last_error = sprintf(
-        _x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.',  'wp_to_diaspora' ),
+        _x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp_to_diaspora' ),
         $this->get_pod_url()
       );
       return false;
@@ -196,7 +196,7 @@ class WP2D_API {
   /**
    * Check if we're logged in. Otherwise set the last error.
    *
-   * @return bool Are we logged in already?
+   * @return boolean Are we logged in already?
    */
   private function _check_login() {
     if ( ! $this->is_logged_in() ) {
@@ -226,7 +226,7 @@ class WP2D_API {
   public function login( $username, $password, $force = false ) {
     // Are we trying to log in as a different user?
     if ( $username !== $this->_username || $password !== $this->_password ) {
-      $_is_logged_in = false;
+      $this->_is_logged_in = false;
     }
 
     // If we are already logged in and not forcing a relogin, return.
@@ -273,9 +273,9 @@ class WP2D_API {
    * Post to Diaspora.
    *
    * @param  string         $text       The text to post.
-   * @param  string|array   $aspects    The aspects to post to. (Array or comma seperated ids)
+   * @param  array|string   $aspects    The aspects to post to. (Array or comma seperated ids)
    * @param  array          $extra_data Any extra data to be added to the post call.
-   * @return string|boolean             Return the response data of the new diaspora* post if successfully posted, else false.
+   * @return boolean|string             Return the response data of the new diaspora* post if successfully posted, else false.
    */
   public function post( $text, $aspects = 'public', $extra_data = array() ) {
     // Are we logged in?
@@ -344,8 +344,7 @@ class WP2D_API {
         $this->last_error = __( 'Error loading aspects.', 'wp_to_diaspora' );
         return false;
       }
-      // No need for this, as it get's done for each http request anyway.
-      //$this->_aspects = $this->_parse_regex( 'aspects', $req->response );
+      // No need to parse for aspects, as it get's done for each http request anyway.
     }
     return $this->_aspects;
   }
@@ -368,8 +367,7 @@ class WP2D_API {
         $this->last_error = __( 'Error loading services.', 'wp_to_diaspora' );
         return false;
       }
-      // No need for this, as it get's done for each http request anyway.
-      //$this->_services = $this->_parse_regex( 'services', $req->response );
+      // No need to parse for services, as it get's done for each http request anyway.
     }
     return $this->_services;
   }
@@ -377,19 +375,16 @@ class WP2D_API {
   /**
    * Send an http(s) request via cURL.
    *
-   * @param  string $url     The URL to request.
-   * @param  array  $data    Data to be posted with the request.
-   * @param  array  $headers Headers to assign to the request.
-   * @return object          An object containing details about this request.
+   * @param  string        $url     The URL to request.
+   * @param  array|string  $data    Data to be posted with the request.
+   * @param  array         $headers Headers to assign to the request.
+   * @return object                 An object containing details about this request.
    */
   private function _http_request( $url, $data = array(), $headers = array() ) {
     // Prefix the full pod URL if necessary.
     if ( 0 === strpos( $url, '/' ) ) {
       $url = $this->get_pod_url( $url );
     }
-
-    // Define maximum redirects.
-    $max_redirects = 10;
 
     // Call address via cURL.
     $ch = curl_init( $url );
@@ -485,5 +480,3 @@ class WP2D_API {
     return trim( array_pop( $matches ) );
   }
 }
-
-?>

@@ -388,7 +388,7 @@ class WP2D_Options {
     <select id="enabled-post-types" multiple data-placeholder="<?php esc_attr_e( 'None', 'wp_to_diaspora' ); ?>" class="chosen" name="wp_to_diaspora_settings[enabled_post_types][]">
     <?php foreach ( $post_types as $post_type ) : ?>
       <option value="<?php echo esc_attr( $post_type->name ); ?>" <?php selected( in_array( $post_type->name, $this->get_option( 'enabled_post_types' ) ) ); ?>><?php echo $post_type->label; ?></option>
-    <?php endforeach;?>
+    <?php endforeach; ?>
     </select>
 
     <p class="description"><?php _e( 'Choose which post types can be posted to diaspora*.', 'wp_to_diaspora' ); ?></p>
@@ -530,6 +530,8 @@ class WP2D_Options {
       'https://' . $this->get_option( 'pod' ) . '/services',
       __( 'Show available services on my pod.', 'wp_to_diaspora' )
     );
+    // Keep this for when we have a better pod selection which includes dropdown for HTTP/S.
+    // $link_to_services = sprintf( 'http%s://%s%s', ( $this->get_option( 'is_secure' ) ) ? 's' : '', $this->get_option( 'pod' ), '/services' );
 
     if ( ! $on_settings_page ) {
       echo $description;
@@ -545,8 +547,6 @@ class WP2D_Options {
         }
       } else {
         // No services loaded yet.
-        // Keep this for when we have a better pod selection which includes dropdown for HTTP/S.
-        // $link_to_services = sprintf( 'http%s://%s%s', ( $this->get_option( 'is_secure' ) ) ? 's' : '', $this->get_option( 'pod' ), '/services' );
         ?>
         <label><?php _e( 'No services connected yet.', 'wp_to_diaspora' ); ?></label>
         <?php
@@ -561,9 +561,9 @@ class WP2D_Options {
   /**
    * Get a specific option.
    *
-   * @param  string $option  ID of option to get.
-   * @param  string $default Override default value if option not found.
-   * @return object          Requested option value.
+   * @param  string       $option  ID of option to get.
+   * @param  array|string $default Override default value if option not found.
+   * @return array|string          Requested option value.
    */
   public function get_option( $option = null, $default = null ) {
     if ( ! isset( self::$_options ) ) {
@@ -595,9 +595,9 @@ class WP2D_Options {
   /**
    * Set a certain option.
    *
-   * @param string  $option ID of option to get.
-   * @param string  $value  Value to be set for the passed option.
-   * @param boolean $save   Save the options immediately after setting them?
+   * @param string       $option ID of option to get.
+   * @param array|string $value  Value to be set for the passed option.
+   * @param boolean      $save   Save the options immediately after setting them?
    */
   public function set_option( $option, $value, $save = false ) {
     if ( isset( $option ) ) {
@@ -739,9 +739,4 @@ class WP2D_Options {
     // Parse inputs with default options and return.
     return wp_parse_args( $input, array_merge( self::$_default_options, self::$_options ) );
   }
-
 }
-
-
-
-?>

@@ -5,5 +5,3 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 delete_option( 'wp_to_diaspora_settings' );
-
-?>
