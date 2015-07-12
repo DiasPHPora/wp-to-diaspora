@@ -51,8 +51,8 @@ class WP2D_Helpers {
   /**
    * Clean up the passed tags. Keep only alphanumeric, hyphen and underscore characters.
    *
-   * @param  array|string $tag Tags to be cleaned as array or comma seperated values.
-   * @return array             The cleaned tags.
+   * @param  array|string $tags Tags to be cleaned as array or comma seperated values.
+   * @return array              The cleaned tags.
    */
   public static function get_clean_tags( $tags ) {
     // Make sure we have an array of tags.
@@ -103,5 +103,3 @@ class WP2D_Helpers {
     return $wpdb->get_var( $wpdb->prepare( "SELECT AES_DECRYPT(UNHEX(%s),%s)", $input, $key ) );
   }
 }
-
-?>
