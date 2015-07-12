@@ -150,7 +150,8 @@ class WP2D_Contextual_Help {
   public static function setup() {
     // Do we display the help tabs?
     $post_type = get_current_screen()->post_type;
-    if ( '' !== $post_type && ! in_array( $post_type, WP2D_Options::get_option( 'enabled_post_types' ) ) ) {
+    $enabled_post_types = WP2D_Options::get_instance()->get_option( 'enabled_post_types' );
+    if ( '' !== $post_type && ! in_array( $post_type, $enabled_post_types ) ) {
       return;
     }
 
