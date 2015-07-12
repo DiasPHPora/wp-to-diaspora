@@ -102,7 +102,15 @@ class WP2D_Options {
     $instance->get_option();
 
     // Add options page.
-    add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $instance, 'admin_options_page' ) );
+    $hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $instance, 'admin_options_page' ) );
+
+    // Setup the contextual help menu after the options page has been loaded.
+    require_once WP2D_LIB . '/class-contextual-help.php';
+    add_action( 'load-' . $hook, array( 'WP2D_Contextual_Help', 'setup' ) );
+
+    // Setup the contextual help menu tab for post types. Checks are made there!
+    add_action( 'load-post.php', array( 'WP2D_Contextual_Help', 'setup' ) );
+    add_action( 'load-post-new.php', array( 'WP2D_Contextual_Help', 'setup' ) );
 
     // Register all settings.
     add_action( 'admin_init', array( $instance, 'register_settings' ) );

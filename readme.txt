@@ -95,6 +95,7 @@ Quite straightforward, right?
 * The initial setup of the plugin is a lot easier now, requiring the connection details first, before being able to change default behaviour
 * Aspects and Services get loaded automatically on initial setup
 * Implement chosen to simplify option inputs
+* Add contextual help to the settings and new post pages
 * Minor code optimisations
 
 = 1.3.2 =
