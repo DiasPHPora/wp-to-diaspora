@@ -137,7 +137,8 @@ class WP2D_Options {
           // DON'T check for empty services list here!!
           //   It could always be empty, resulting in this code being run every time the page is loaded.
           //   The aspects will at least have a "Public" entry after the initial fetch.
-          if ( empty( $this->get_option( 'aspects_list' ) ) ) {
+          $aspects_list = $this->get_option( 'aspects_list' );
+          if ( empty( $aspects_list ) ) {
 
             // Set up the connection to diaspora*.
             $conn = new WP2D_API( $this->get_option( 'pod' ) );
@@ -164,7 +165,7 @@ class WP2D_Options {
         settings_errors( 'wp_to_diaspora_settings' );
       ?>
 
-      <?php if ( defined( 'WP2D_DEBUGGING' ) && WP2D_DEBUGGING ) : ?>
+      <?php if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) : ?>
         <h3>Debug Info</h3>
         <textarea rows="5" cols="50"><?php echo WP2D_Helpers::get_debugging(); ?></textarea>
       <?php endif; ?>
@@ -188,7 +189,6 @@ class WP2D_Options {
           }
         ?>
 
-        <?php //submit_button(); ?>
       </form>
     </div>
 

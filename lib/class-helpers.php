@@ -23,7 +23,7 @@ class WP2D_Helpers {
    */
   public static function add_debugging( $text ) {
     // Make sure we're in debug mode.
-    if ( defined( 'WP2D_DEBUGGING' ) && WP2D_DEBUGGING ) {
+    if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
       $d = '';
       foreach ( debug_backtrace() as $dbt ) {
         extract( $dbt );
@@ -43,7 +43,7 @@ class WP2D_Helpers {
    * @return string The debug output.
    */
   public static function get_debugging() {
-    if ( defined( 'WP2D_DEBUGGING' ) && WP2D_DEBUGGING ) {
+    if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
       return self::$_debugging;
     }
   }
