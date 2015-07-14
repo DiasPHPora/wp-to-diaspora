@@ -561,7 +561,7 @@ class WP_To_Diaspora {
 
     if ( $error = get_post_meta( $post->ID, '_wp_to_diaspora_post_error', true ) ) {
       // This notice will only be shown if posting to diaspora* has failed.
-      printf( '<div class="error"><p>%1$s: %2$s <a href="%3$s">%4$s</a></p></div>',
+      printf( '<div class="error notice is-dismissible"><p>%1$s: %2$s <a href="%3$s">%4$s</a></p></div>',
         __( 'Failed to post to diaspora*.', 'wp_to_diaspora' ),
         $error,
         add_query_arg( 'wp_to_diaspora_ignore_post_error', 'yes' ),
@@ -573,7 +573,7 @@ class WP_To_Diaspora {
 
       // Only show if this post is showing a message and the post is a fresh share.
       if ( isset( $_GET['message'] ) && $post->post_modified == $latest_post['created_at'] ) {
-        printf( '<div class="updated"><p>%1$s <a href="%2$s" target="_blank">%3$s</a></p></div>',
+        printf( '<div class="updated notice is-dismissible"><p>%1$s <a href="%2$s" target="_blank">%3$s</a></p></div>',
           __( 'Successfully posted to diaspora*.', 'wp_to_diaspora' ),
           $latest_post['post_url'],
           __( 'View Post' )
