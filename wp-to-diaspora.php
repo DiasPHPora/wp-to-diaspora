@@ -431,6 +431,9 @@ class WP_To_Diaspora {
       $options->get_options()
     );
 
+    // Make sure we have some value for post meta fields.
+    $post_meta['custom_tags'] = ( isset( $post_meta['custom_tags'] ) ) ? $post_meta['custom_tags'] : array();
+
     // Facilitate access to meta data.
     extract( $post_meta, EXTR_PREFIX_ALL, 'meta' );
 
