@@ -231,7 +231,18 @@ class WP_To_Diaspora {
 
         $status_message .= apply_filters( 'the_content', $post->post_content );
       } else {
-        $excerpt = ( '' != $post->post_excerpt ) ? $post->post_excerpt : wp_trim_words( $post->post_content, 42, '[...]' );
+        // Look for the excerpt in the following order:
+        // Custom post excerpt
+        // Text up to the <!--more--> tag
+        // Manually trimmed content
+        $excerpt = $post->post_excerpt;
+        if ( '' == $excerpt ) {
+          if ( $more_pos = strpos( $post->post_content, '<!--more' ) ) {
+            $excerpt = substr( $post->post_content, 0, $more_pos );
+          } else {
+            $excerpt = wp_trim_words( $post->post_content, 42, '[...]' );
+          }
+        }
         $status_message .= '<p>' . $excerpt . '</p>';
       }
 
