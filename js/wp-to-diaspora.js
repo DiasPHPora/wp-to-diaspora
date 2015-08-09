@@ -1,5 +1,25 @@
 jQuery(document).ready(function ($) {
 
+  // Active options tab.
+  var activeOptionsTab = $('.nav-tab-active').attr('id').substr(12);
+
+
+  $('.wrap').on('click', '.open-help-tab', function(e) {
+    e.preventDefault();
+    var tab = $(this).attr('data-help-tab');
+
+    if ('' != tab && $('#tab-link-'+tab).length) {
+      // Drop down the help window if it isn't open already.
+      if ('false' == $('#contextual-help-link').attr('aria-expanded')) {
+        $('#contextual-help-link').click();
+      }
+      // Select the tab.
+      $('#tab-link-'+tab).children('a').click();
+      $('html, body').animate({ scrollTop: 0 }, 'slow');
+    }
+  });
+
+
   // Tag-it
   $('.wp2dtags').tagit({
     removeConfirmation: true
@@ -128,19 +148,31 @@ jQuery(document).ready(function ($) {
   var $pcs = $('#pod-connection-status');
   $pcs.parent().attr('title', WP2DL10n.conn_testing);
 
-  $.post(ajaxurl, { 'action': 'wp_to_diaspora_check_pod_connection_status' }, function(status) {
+  $.post(ajaxurl, { 'action': 'wp_to_diaspora_check_pod_connection_status' })
+  .done(function(status) {
 
-    // After testing the connection, mark the "Setup" tab appropriately.
-    $pcs.next('.spinner').hide();
+    // After testing the connection, mark the "Setup" tab appropriately
+    // and output an error message if the connection failed.
     var clr = '';
     var msg = '';
-    switch ( status ) {
-      case 'success': status = 'yes'; clr = '#008000'; msg = WP2DL10n.conn_successful; break;
-      case 'failed':  status = 'no';  clr = '#800000'; msg = WP2DL10n.conn_failed;     break;
-      case 'notset':  return;
+    if (true === status.success) {
+      status = 'yes';
+      clr = '#008000';
+      msg = WP2DL10n.conn_successful;
+    } else if(false === status.success) {
+      $('#wp2d_message').html('<p>' + status.data + '</p>').addClass('error').show();
+      status = 'no';
+      clr = '#800000';
+      msg = WP2DL10n.conn_failed;
+    } else {
+      return;
     }
+
     $pcs.parent().attr('title', msg);
     $pcs.addClass('dashicons-' + status).css('color', clr).show();
+  })
+  .always(function() {
+    $pcs.next('.spinner').hide();
   });
 
   // Enable all checkboxes on save, as disabled ones don't get saved.
