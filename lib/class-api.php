@@ -322,6 +322,9 @@ class WP2D_API {
       return false;
     }
 
+    // Add additional info to our response.
+    $response->permalink = $this->get_pod_url( '/posts/' . $response->guid );
+
     return $response;
   }
 
