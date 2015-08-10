@@ -121,6 +121,59 @@ class WP2D_Options {
     return $instance;
   }
 
+
+  /**
+   * Get the currently selected tab.
+   *
+   * @param  string $default Tab to select if the current selection is invalid.
+   * @return string          Return the currently selected tab.
+   */
+  private function _current_tab( $default = 'defaults' ) {
+
+    $tab = ( isset ( $_GET['tab'] ) ? $_GET['tab'] : $default );
+
+    // If the pod settings aren't configured yet, open the 'Setup' tab.
+    if ( ! $this->is_pod_set_up() ) {
+      $tab = 'setup';
+    }
+
+    return $tab;
+  }
+
+  /**
+   * Output all options tabs and return an array of them all, if requested by $return.
+   *
+   * @param bool $return Define if the options tabs should be returned.
+   * @return array       (If requested) An array of the outputted options tabs.
+   */
+  private function _options_page_tabs( $return = false ) {
+    // The array defining all options sections to be shown as tabs.
+    $tabs = array();
+    if ( $this->is_pod_set_up() ) {
+      $tabs['defaults'] = __( 'Defaults', 'wp_to_diaspora' );
+    }
+
+    // Add the 'Setup' tab to the end of the list.
+    $tabs['setup'] = __( 'Setup', 'wp_to_diaspora' ) . '<span id="pod-connection-status" class="dashicons-before" style="display:none;"></span><span class="spinner"></span>';
+
+    // Container for all options tabs.
+    $out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
+    foreach ( $tabs as $tab => $name ) {
+      // The tab link.
+      $out .= '<a class="nav-tab' . ( ( $tab == $this->_current_tab() ) ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
+    }
+    $out .= '</h2>';
+
+    // Output the container with all tabs.
+    echo $out;
+
+    // Check if the tabs should be returned.
+    if ( $return ) {
+      return $tabs;
+    }
+  }
+
+
   /**
    * Set up admin options page.
    */
@@ -149,9 +202,7 @@ class WP2D_Options {
           if ( empty( $aspects_list ) ) {
 
             // Set up the connection to diaspora*.
-            $conn = new WP2D_API( $this->get_option( 'pod' ) );
-            if ( $conn->init() && $conn->login( $this->get_option( 'username' ), WP2D_Helpers::decrypt( $this->get_option( 'password' ) ) ) ) {
-
+            if ( $conn = WP2D_Helpers::api_quick_connect() ) {
               // Get the loaded aspects.
               if ( $aspects = $conn->get_aspects() ) {
                 // Save the new list of aspects.
@@ -213,24 +264,6 @@ class WP2D_Options {
   }
 
   /**
-   * Get the currently selected tab.
-   *
-   * @param  string $default Tab to select if the current selection is invalid.
-   * @return string          Return the currently selected tab.
-   */
-  private function _current_tab( $default = 'defaults' ) {
-
-    $tab = ( isset ( $_GET['tab'] ) ? $_GET['tab'] : $default );
-
-    // If the pod settings aren't configured yet, open the 'Setup' tab.
-    if ( ! $this->is_pod_set_up() ) {
-      $tab = 'setup';
-    }
-
-    return $tab;
-  }
-
-  /**
    * Initialise the settings sections and fields of the currently selected tab.
    */
   public function register_settings() {
@@ -249,49 +282,6 @@ class WP2D_Options {
         break;
     }
   }
-
-
-
-
-  /**
-   * Output all options tabs and return an array of them all, if requested by $return.
-   *
-   * @param bool $return Define if the options tabs should be returned.
-   * @return array       (If requested) An array of the outputted options tabs.
-   */
-  private function _options_page_tabs( $return = false ) {
-    // The array defining all options sections to be shown as tabs.
-    $tabs = array();
-    if ( $this->is_pod_set_up() ) {
-      $tabs['defaults'] = __( 'Defaults', 'wp_to_diaspora' );
-    }
-
-    // Add the 'Setup' tab to the end of the list.
-    $tabs['setup'] = __( 'Setup', 'wp_to_diaspora' ) . '<span id="pod-connection-status" class="dashicons-before" style="display:none;"></span><span class="spinner"></span>';
-
-
-
-    // Container for all options tabs.
-    $out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
-    foreach ( $tabs as $tab => $name ) {
-      // The tab link.
-      $out .= '<a class="nav-tab' . ( ( $tab == $this->_current_tab() ) ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
-    }
-    $out .= '</h2>';
-
-    // Output the container with all tabs.
-    echo $out;
-
-    // Check if the tabs should be returned.
-    if ( $return ) {
-      return $tabs;
-    }
-  }
-
-
-
-
-
 
 
   /**
@@ -317,7 +307,7 @@ class WP2D_Options {
     ?>
     https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo $this->get_option( 'pod' ); ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required> <a id="refresh-pod-list" class="button"><?php _e( 'Refresh pod list', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span>
     <datalist id="pod-list">
-    <?php foreach ( $this->get_option( 'pod_list' ) as $pod ) : ?>
+    <?php foreach ( (array) $this->get_option( 'pod_list' ) as $pod ) : ?>
       <option data-secure="<?php echo $pod['secure']; ?>" value="<?php echo $pod['domain']; ?>"></option>
     <?php endforeach; ?>
     </datalist>
@@ -508,7 +498,7 @@ class WP2D_Options {
     ?>
     <div id="aspects-container" data-aspects-selected="<?php echo implode( ',', $aspects ); ?>">
       <?php
-      if ( $aspects_list = $this->get_option( 'aspects_list' ) ) {
+      if ( $aspects_list = (array) $this->get_option( 'aspects_list' ) ) {
         foreach ( $aspects_list as $aspect_id => $aspect_name ) {
           ?>
           <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="<?php echo $aspect_id; ?>" <?php checked( in_array( $aspect_id, $aspects ) ); ?>><?php echo $aspect_name; ?></label>
@@ -547,7 +537,7 @@ class WP2D_Options {
     ?>
     <div id="services-container" data-services-selected="<?php echo implode( ',', $services ); ?>">
       <?php
-      if ( $services_list = $this->get_option( 'services_list' ) ) {
+      if ( $services_list = (array) $this->get_option( 'services_list' ) ) {
         foreach ( $services_list as $service_id => $service_name ) {
           ?>
           <label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="<?php echo $service_id; ?>" <?php checked( in_array( $service_id, $services ) ); ?>><?php echo $service_name; ?></label>

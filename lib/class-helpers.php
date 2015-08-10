@@ -84,4 +84,24 @@ class WP2D_Helpers {
     global $wpdb;
     return $wpdb->get_var( $wpdb->prepare( "SELECT AES_DECRYPT(UNHEX(%s),%s)", $input, $key ) );
   }
+
+  /**
+   * Set up and return an API connection using the currently saved options..
+   *
+   * @return WP2D_API|boolean If connected successfully, the API object, else false.
+   */
+  public static function api_quick_connect() {
+    $options   = WP2D_Options::get_instance();
+    $pod       = (string) $options->get_option( 'pod' );
+    $is_secure = true;
+    $username  = (string) $options->get_option( 'username' );
+    $password  = WP2D_Helpers::decrypt( (string) $options->get_option( 'password' ) );
+
+    $api = new WP2D_API( $pod, $is_secure );
+    if ( ! ( $api->init() && $api->login( $username, $password ) ) ) {
+      return false;
+    }
+
+    return $api;
+  }
 }

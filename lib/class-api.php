@@ -216,7 +216,7 @@ class WP2D_API {
   }
 
   /**
-   * Log in to Diaspora.
+   * Log in to diaspora*.
    *
    * @param  string  $username Username used for login.
    * @param  string  $password Password used for login.
@@ -270,7 +270,7 @@ class WP2D_API {
   }
 
   /**
-   * Post to Diaspora.
+   * Post to diaspora*.
    *
    * @param  string         $text       The text to post.
    * @param  array|string   $aspects    The aspects to post to. (Array or comma seperated ids)
@@ -283,10 +283,9 @@ class WP2D_API {
       return false;
     }
 
-    // Put the aspects into an array.
-    if ( isset( $aspects ) && ! is_array( $aspects ) ) {
-      $aspects = array_filter( explode( ',', $aspects ) );
-    }
+    // Put the aspects into a clean array.
+    $aspects = array_filter( WP2D_Helpers::str_to_arr( $aspects ) );
+
     // If no aspects have been selected or the public one is also included, choose public only.
     if ( empty( $aspects ) || in_array( 'public', $aspects ) ) {
       $aspects = 'public';

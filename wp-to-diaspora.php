@@ -127,12 +127,8 @@ class WP_To_Diaspora {
    * @return WP2D_API The API object.
    */
   private function _load_api() {
-    $options = WP2D_Options::get_instance();
     if ( ! isset( $this->_api ) ) {
-      $this->_api = new WP2D_API( $options->get_option( 'pod' ) );
-    }
-    if ( $this->_api->init() ) {
-      $this->_api->login( $options->get_option( 'username' ), WP2D_Helpers::decrypt( $options->get_option( 'password' ) ) );
+      $this->_api = WP2D_Helpers::api_quick_connect();
     }
     return $this->_api;
   }
@@ -161,7 +157,8 @@ class WP_To_Diaspora {
         $options->set_option( 'user', null );
 
         // Save tags as arrays instead of comma seperated values.
-        $options->set_option( 'global_tags', $options->validate_tags( $options->get_option( 'global_tags' ) ) );
+        $global_tags = $options->get_option( 'global_tags' );
+        $options->set_option( 'global_tags', $options->validate_tags( $global_tags ) );
       }
 
       if ( version_compare( $version, '1.4.0', '<' ) ) {
@@ -328,10 +325,6 @@ class WP_To_Diaspora {
   }
 
 
-
-
-
-
   /**
    * Check the pod connection status.
    *
@@ -343,7 +336,8 @@ class WP_To_Diaspora {
     $status = 'notset';
 
     if ( $options->is_pod_set_up() ) {
-      if ( $this->_load_api()->last_error ) {
+      $api = $this->_load_api();
+      if ( ! $api || $api->last_error ) {
         $status = 'failed';
       } else {
         $status = 'success';
@@ -363,5 +357,3 @@ class WP_To_Diaspora {
 
 // Get the party started!
 WP_To_Diaspora::setup();
-
-?>

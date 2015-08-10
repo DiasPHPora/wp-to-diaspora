@@ -177,23 +177,24 @@ class WP2D_Post {
       );
 
       // Set up the connection to diaspora*.
+      if ( $conn = WP2D_Helpers::api_quick_connect() ) {
+        if ( $conn->last_error ) {
+          // Save the post error as post meta data, so we can display it to the user.
+          update_post_meta( $post_id, '_wp_to_diaspora_post_error', $conn->last_error );
+          return false;
+        }
 
-      $api = new WP2D_API( $options->get_option( 'pod' ) );
-      $username = $options->get_option( 'username' );
-      $password = WP2D_Helpers::decrypt( $options->get_option( 'password' ) );
-      if ( ! ( $api->init() && $api->login( $username, $password ) ) ) {
-        return false;
-      }
+        // Try to post to diaspora*.
+        $response = $conn->post( $status_message, $this->aspects, $extra_data );
+        if ( false !== $response ) {
+          // Save certain diaspora* post data as meta data for future reference.
+          $this->_save_to_history( $response );
 
-      if ( ! empty( $status_message ) && ! $api->last_error && $response = $api->post( $status_message, $this->aspects, $extra_data ) ) {
-        // Save certain diaspora* post data as meta data for future reference.
-        $this->_save_to_history( $response );
-
-        // If there is still a previous post error around, remove it.
-        delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
+          // If there is still a previous post error around, remove it.
+          delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
+        }
       } else {
-        // Save the post error as post meta data, so we can display it to the user.
-        update_post_meta( $post_id, '_wp_to_diaspora_post_error', $api->last_error );
+        return false;
       }
     }
   }
@@ -283,7 +284,9 @@ class WP2D_Post {
       }
 
       // Get an array of cleaned up tags.
-      $diaspora_tags = $options->validate_tags( array_keys( $diaspora_tags ) );
+      // NOTE: Validate method needs a variable, as it's passed by reference!
+      $diaspora_tags = array_keys( $diaspora_tags );
+      $options->validate_tags( $diaspora_tags );
 
       // Get all the tags and list them all nicely in a row.
       $diaspora_tags_clean = array();
@@ -480,14 +483,9 @@ class WP2D_Post {
     }
 
     // Check the user's permissions.
-    if ( isset( $_POST['post_type'] ) && 'page' === $_POST['post_type'] ) {
-      if ( ! current_user_can( 'edit_pages', $this->ID ) ) {
-        return false;
-      }
-    } else {
-      if ( ! current_user_can( 'edit_posts', $this->ID ) ) {
-        return false;
-      }
+    $permission = ( isset( $_POST['post_type'] ) && 'page' === $_POST['post_type'] ) ? 'edit_pages' : 'edit_posts';
+    if ( ! current_user_can( $permission, $this->ID ) ) {
+      return false;
     }
 
     // Make real sure that we have some meta data to save.
@@ -497,6 +495,7 @@ class WP2D_Post {
 
     return true;
   }
+
 
   /**
    * Add admin notices when a post gets displayed.
@@ -539,5 +538,4 @@ class WP2D_Post {
       delete_post_meta( $_GET['post'], '_wp_to_diaspora_post_error' );
     }
   }
-
 }
