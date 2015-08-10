@@ -458,9 +458,7 @@ class WP2D_Options {
    * Render the "Global tags" field.
    */
   public function global_tags_render( $tags ) {
-    if ( is_array( $tags ) ) {
-      $tags = implode( ', ', $tags );
-    }
+    WP2D_Helpers::arr_to_str( $tags );
     ?>
     <input type="text" class="wp2dtags" name="wp_to_diaspora_settings[global_tags]" value="<?php echo $tags; ?>" placeholder="<?php _e( 'Global tags', 'wp_to_diaspora' ); ?>" class="regular-text">
     <p class="description"><?php _e( 'Custom tags to add to all posts being posted to diaspora*.', 'wp_to_diaspora' ); ?></p>
@@ -471,9 +469,7 @@ class WP2D_Options {
    * Render the "Custom tags" field.
    */
   public function custom_tags_render( $tags ) {
-    if ( is_array( $tags ) ) {
-      $tags = implode( ', ', $tags );
-    }
+    WP2D_Helpers::arr_to_str( $tags );
     ?>
     <label title="<?php _e( 'Custom tags to add to this post when it\'s posted to diaspora*.', 'wp_to_diaspora' ); ?>">
       <?php _e( 'Custom tags', 'wp_to_diaspora' ); ?>

@@ -124,7 +124,7 @@ class WP_To_Diaspora {
   /**
    * Load the diaspora* API for ease of use.
    *
-   * @return WP2D_API The API object.
+   * @return WP2D_API|boolean The API object, or false.
    */
   private function _load_api() {
     if ( ! isset( $this->_api ) ) {
@@ -148,7 +148,7 @@ class WP_To_Diaspora {
       // Password is stored encrypted since version 1.2.7.
       // When upgrading to it, the plain text password is encrypted and saved again.
       if ( version_compare( $version, '1.2.7', '<' ) ) {
-        $options->set_option( 'password', WP2D_Helpers::encrypt( $options->get_option( 'password' ) ) );
+        $options->set_option( 'password', WP2D_Helpers::encrypt( (string) $options->get_option( 'password' ) ) );
       }
 
       if ( version_compare( $version, '1.3.0', '<' ) ) {

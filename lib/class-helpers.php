@@ -51,12 +51,25 @@ class WP2D_Helpers {
   /**
    * Convert a string with comma seperated values to an array.
    *
-   * @param  string|array &$input The string to be converted.
+   * @param  array|string &$input The string to be converted.
    * @return array                The converted array.
    */
   public static function str_to_arr( &$input ) {
     if ( ! is_array( $input ) ) {
       $input = explode( ',', $input );
+    }
+    return $input;
+  }
+
+  /**
+   * Convert an array to a string with comma seperated values.
+   *
+   * @param  array|string  &$input The array to be converted.
+   * @return string                The converted string.
+   */
+  public static function arr_to_str( &$input ) {
+    if ( is_array( $input ) ) {
+      $input = implode( ',', $input );
     }
     return $input;
   }

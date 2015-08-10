@@ -84,7 +84,7 @@ class WP2D_Post {
    * Setup all the necessary WP callbacks.
    */
   public static function setup() {
-    $instance = new WP2D_Post();
+    $instance = new WP2D_Post( null );
 
     // Notices when a post has been shared or if it has failed.
     add_action( 'admin_notices', array( $instance, 'admin_notices' ) );
@@ -103,7 +103,7 @@ class WP2D_Post {
    *
    * @param int|WP_Post $post Post ID or the post itself.
    */
-  public function __construct( $post = null) {
+  public function __construct( $post ) {
     $this->_assign_wp_post( $post );
   }
 
@@ -136,8 +136,9 @@ class WP2D_Post {
   /**
    * Post to diaspora* when saving a post.
    *
-   * @param integer $post_id ID of the post being saved.
-   * @param WP_Post $post    Post object being saved.
+   * @param  integer $post_id ID of the post being saved.
+   * @param  WP_Post $post    Post object being saved.
+   * @return boolean          If the post was posted successfully.
    */
   public function post( $post_id, $post ) {
     $this->_assign_wp_post( $post );
@@ -146,56 +147,56 @@ class WP2D_Post {
 
     // Is this post type enabled for posting?
     if ( ! in_array( $post->post_type, $options->get_option( 'enabled_post_types' ) ) ) {
-      return;
+      return false;
     }
 
     // Make sure we're posting to diaspora* and the post isn't password protected.
     // TODO: Maybe somebody wants to share a password protected post to a closed aspect.
-    if ( $this->post_to_diaspora && 'publish' === $post->post_status && '' === $post->post_password ) {
+    if ( ! ( $this->post_to_diaspora && 'publish' === $post->post_status && '' === $post->post_password ) ) {
+      return false;
+    }
 
-      $status_message = $this->_get_title_link();
+    $status_message = $this->_get_title_link();
 
-      // Post the full post text or just the excerpt?
-      if ( 'full' === $this->display ) {
-        $status_message .= $this->_get_full_content();
-      } else {
-        $status_message .= $this->_get_excerpt_content();
-      }
+    // Post the full post text or just the excerpt?
+    if ( 'full' === $this->display ) {
+      $status_message .= $this->_get_full_content();
+    } else {
+      $status_message .= $this->_get_excerpt_content();
+    }
 
-      // Add the tags assigned to the post.
-      $status_message .= $this->_get_tags_to_add();
+    // Add the tags assigned to the post.
+    $status_message .= $this->_get_tags_to_add();
 
-      // Add the original entry link to the post?
-      $status_message .= $this->_get_posted_at_link();
+    // Add the original entry link to the post?
+    $status_message .= $this->_get_posted_at_link();
 
-      $status_markdown = new HTML_To_Markdown( $status_message );
-      $status_message  = $status_markdown->output();
+    $status_markdown = new HTML_To_Markdown( $status_message );
+    $status_message  = $status_markdown->output();
 
-      // Add services to share to via diaspora*.
-      $extra_data = array(
-        'services' => $this->services
-      );
+    // Add services to share to via diaspora*.
+    $extra_data = array(
+      'services' => $this->services
+    );
 
-      // Set up the connection to diaspora*.
-      if ( $conn = WP2D_Helpers::api_quick_connect() ) {
-        if ( $conn->last_error ) {
-          // Save the post error as post meta data, so we can display it to the user.
-          update_post_meta( $post_id, '_wp_to_diaspora_post_error', $conn->last_error );
-          return false;
-        }
-
-        // Try to post to diaspora*.
-        $response = $conn->post( $status_message, $this->aspects, $extra_data );
-        if ( false !== $response ) {
-          // Save certain diaspora* post data as meta data for future reference.
-          $this->_save_to_history( $response );
-
-          // If there is still a previous post error around, remove it.
-          delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
-        }
-      } else {
+    // Set up the connection to diaspora*.
+    if ( $conn = WP2D_Helpers::api_quick_connect() ) {
+      if ( $conn->last_error ) {
+        // Save the post error as post meta data, so we can display it to the user.
+        update_post_meta( $post_id, '_wp_to_diaspora_post_error', $conn->last_error );
         return false;
       }
+
+      // Try to post to diaspora*.
+      if ( $response = $conn->post( $status_message, $this->aspects, $extra_data ) ) {
+        // Save certain diaspora* post data as meta data for future reference.
+        $this->_save_to_history( (object) $response );
+
+        // If there is still a previous post error around, remove it.
+        delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
+      }
+    } else {
+      return false;
     }
   }
 
