@@ -275,7 +275,7 @@ class WP2D_API {
    * @param  string         $text       The text to post.
    * @param  array|string   $aspects    The aspects to post to. (Array or comma seperated ids)
    * @param  array          $extra_data Any extra data to be added to the post call.
-   * @return boolean|string             Return the response data of the new diaspora* post if successfully posted, else false.
+   * @return boolean|object             Return the response data of the new diaspora* post if successfully posted, else false.
    */
   public function post( $text, $aspects = 'public', $extra_data = array() ) {
     // Are we logged in?

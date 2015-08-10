@@ -49,34 +49,16 @@ class WP2D_Helpers {
   }
 
   /**
-   * Clean up the passed tags. Keep only alphanumeric, hyphen and underscore characters.
+   * Convert a string with comma seperated values to an array.
    *
-   * @param  array|string $tags Tags to be cleaned as array or comma seperated values.
-   * @return array              The cleaned tags.
+   * @param  string|array &$input The string to be converted.
+   * @return array                The converted array.
    */
-  public static function get_clean_tags( $tags ) {
-    // Make sure we have an array of tags.
-    if ( ! is_array( $tags ) ) {
-      $tags = explode( ',', $tags );
+  public static function str_to_arr( &$input ) {
+    if ( ! is_array( $input ) ) {
+      $input = explode( ',', $input );
     }
-
-    return array_map( array( 'WP2D_Helpers', 'get_clean_tag' ),
-      array_unique(
-        array_filter( $tags, 'trim' )
-      )
-    );
-  }
-
-  /**
-   * Clean up the passed tag. Keep only alphanumeric, hyphen and underscore characters.
-   *
-   * @todo   What about eastern characters? (chinese, indian, etc.)
-   *
-   * @param  string $tag Tag to be cleaned.
-   * @return string      The clean tag.
-   */
-  public static function get_clean_tag( $tag ) {
-    return preg_replace( '/[^\w $\-]/u', '', str_replace( ' ', '-', trim( $tag ) ) );
+    return $input;
   }
 
   /**

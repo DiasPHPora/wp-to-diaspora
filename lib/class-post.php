@@ -179,7 +179,9 @@ class WP2D_Post {
       // Set up the connection to diaspora*.
 
       $api = new WP2D_API( $options->get_option( 'pod' ) );
-      if ( ! ( $api->init() && $api->login( $options->get_option( 'username' ), WP2D_Helpers::decrypt( $options->get_option( 'password' ) ) ) ) ) {
+      $username = $options->get_option( 'username' );
+      $password = WP2D_Helpers::decrypt( $options->get_option( 'password' ) );
+      if ( ! ( $api->init() && $api->login( $username, $password ) ) ) {
         return false;
       }
 
@@ -281,7 +283,7 @@ class WP2D_Post {
       }
 
       // Get an array of cleaned up tags.
-      $diaspora_tags = WP2D_Helpers::get_clean_tags( array_keys( $diaspora_tags ) );
+      $diaspora_tags = $options->validate_tags( array_keys( $diaspora_tags ) );
 
       // Get all the tags and list them all nicely in a row.
       $diaspora_tags_clean = array();
@@ -392,12 +394,12 @@ class WP2D_Post {
     $options = WP2D_Options::get_instance();
 
     // Make sure we have some value for post meta fields.
-    $this->custom_tags = ( isset( $this->custom_tags ) ) ? $this->custom_tags : array();
+    $this->custom_tags = $this->custom_tags ?: array();
 
-    // If this post is already published, don't post again to diaspora*.
-    $this->post_to_diaspora = ( 'publish' === get_post_status( $this->ID ) ) ? false : $this->post_to_diaspora;
-    $this->aspects          = ( ! empty( $this->aspects )  && is_array( $this->aspects ) )  ? $this->aspects  : array();
-    $this->services         = ( ! empty( $this->services ) && is_array( $this->services ) ) ? $this->services : array();
+    // If this post is already published, don't post again to diaspora* by default.
+    $this->post_to_diaspora = ( $this->post_to_diaspora && 'publish' !== get_post_status( $this->ID ) );
+    $this->aspects          = $this->aspects  ?: array();
+    $this->services         = $this->services ?: array();
 
     // Have we already posted on diaspora*?
     if ( is_array( $this->post_history ) ) {
@@ -429,86 +431,72 @@ class WP2D_Post {
      * We need to verify this came from our screen and with proper authorization,
      * because the save_post action can be triggered at other times.
      */
-    // Verify that our nonce is set and  valid.
-    if ( ! ( isset( $_POST['wp_to_diaspora_meta_box_nonce'] ) && wp_verify_nonce( $_POST['wp_to_diaspora_meta_box_nonce'], 'wp_to_diaspora_meta_box' ) ) ) {
+    if ( ! $this->_is_safe_to_save() ) {
       return;
-    }
-
-    // If this is an autosave, our form has not been submitted, so we don't want to do anything.
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-      return;
-    }
-
-    // Check the user's permissions.
-    if ( isset( $_POST['post_type'] ) && 'page' === $_POST['post_type'] ) {
-      if ( ! current_user_can( 'edit_pages', $post_id ) ) {
-        return;
-      }
-    } else {
-      if ( ! current_user_can( 'edit_posts', $post_id ) ) {
-        return;
-      }
     }
 
     // OK, it's safe for us to save the data now.
-
-    // Make real sure that we have some meta data to save.
-    if ( ! isset( $_POST['wp_to_diaspora_settings'] ) ) {
-      return;
-    }
 
     // Meta data to save.
     $meta_to_save = $_POST['wp_to_diaspora_settings'];
     $options = WP2D_Options::get_instance();
 
     // Checkboxes.
-    foreach ( array( 'post_to_diaspora', 'fullentrylink' ) as $option ) {
-      $meta_to_save[ $option ] = isset( $meta_to_save[ $option ] );
-    }
+    $options->validate_checkboxes( array( 'post_to_diaspora', 'fullentrylink' ), $meta_to_save );
 
     // Single Selects.
-    foreach ( array( 'display' ) as $option ) {
-      if ( isset( $meta_to_save[ $option ] ) && ! $options->is_valid_value( $option, $meta_to_save[ $option ] ) ) {
-        $meta_to_save[ $option ] = $options->get_option( $option );
-      }
-    }
+    $options->validate_single_selects( 'display', $meta_to_save );
 
     // Multiple Selects.
-    foreach ( array( 'tags_to_post' ) as $option ) {
-      if ( isset( $meta_to_save[ $option ] ) ) {
-        foreach ( (array) $meta_to_save[ $option ] as $option_value ) {
-          if ( ! $options->is_valid_value( $option, $option_value ) ) {
-            unset( $meta_to_save[ $option ] );
-            break;
-          }
-        }
-      } else {
-        $meta_to_save[ $option ] = array();
-      }
-    }
-
+    $options->validate_multi_selects( 'tags_to_post', $meta_to_save );
 
     // Save custom tags as array.
-    $meta_to_save['custom_tags'] = WP2D_Helpers::get_clean_tags( $meta_to_save['custom_tags'] );
+    $options->validate_tags( $meta_to_save['custom_tags'] );
 
     // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
-    if ( empty( $meta_to_save['aspects'] ) || ! is_array( $meta_to_save['aspects'] ) ) {
-      $meta_to_save['aspects'] = array( 'public' );
-    } else {
-      array_walk( $meta_to_save['aspects'], 'sanitize_text_field' );
-    }
+    $options->validate_aspects( $meta_to_save['aspects'] );
 
     // Clean up the list of services.
-    if ( empty( $meta_to_save['services'] ) || ! is_array( $meta_to_save['services'] ) ) {
-      $meta_to_save['services'] = array();
-    } else {
-      array_walk( $meta_to_save['services'], 'sanitize_text_field' );
-    }
+    $options->validate_services( $meta_to_save['services'] );
 
     // Update the meta data for this post.
     update_post_meta( $post_id, '_wp_to_diaspora', $meta_to_save );
   }
 
+  /**
+   * Perform all checks to see if we are allowed to save the meta data.
+   *
+   * @return bool
+   */
+  private function _is_safe_to_save() {
+    // Verify that our nonce is set and  valid.
+    if ( ! ( isset( $_POST['wp_to_diaspora_meta_box_nonce'] ) && wp_verify_nonce( $_POST['wp_to_diaspora_meta_box_nonce'], 'wp_to_diaspora_meta_box' ) ) ) {
+      return false;
+    }
+
+    // If this is an autosave, our form has not been submitted, so we don't want to do anything.
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+      return false;
+    }
+
+    // Check the user's permissions.
+    if ( isset( $_POST['post_type'] ) && 'page' === $_POST['post_type'] ) {
+      if ( ! current_user_can( 'edit_pages', $this->ID ) ) {
+        return false;
+      }
+    } else {
+      if ( ! current_user_can( 'edit_posts', $this->ID ) ) {
+        return false;
+      }
+    }
+
+    // Make real sure that we have some meta data to save.
+    if ( ! isset( $_POST['wp_to_diaspora_settings'] ) ) {
+      return false;
+    }
+
+    return true;
+  }
 
   /**
    * Add admin notices when a post gets displayed.

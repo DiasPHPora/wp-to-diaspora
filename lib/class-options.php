@@ -685,47 +685,22 @@ class WP2D_Options {
       }
 
       // Checkboxes.
-      foreach ( array( 'post_to_diaspora', 'fullentrylink' ) as $option ) {
-        $input[ $option ] = isset( $input[ $option ] );
-      }
+      $this->validate_checkboxes( array( 'post_to_diaspora', 'fullentrylink' ), $input );
 
       // Single Selects.
-      foreach ( array( 'display' ) as $option ) {
-        if ( isset( $input[ $option ] ) && ! $this->is_valid_value( $option, $input[ $option ] ) ) {
-          unset( $input[ $option ] );
-        }
-      }
+      $this->validate_single_selects( 'display', $input );
 
       // Multiple Selects.
-      foreach ( array( 'tags_to_post' ) as $option ) {
-        if ( isset( $input[ $option ] ) ) {
-          foreach ( (array) $input[ $option ] as $option_value ) {
-            if ( ! $this->is_valid_value( $option, $option_value ) ) {
-              unset( $input[ $option ] );
-              break;
-            }
-          }
-        } else {
-          $input[ $option ] = array();
-        }
-      }
+      $this->validate_multi_selects( 'tags_to_post', $input );
 
       // Get unique, non-empty, trimmed tags and clean them up.
-      $input['global_tags'] = WP2D_Helpers::get_clean_tags( $input['global_tags'] );
+      $this->validate_tags( $input['global_tags'] );
 
       // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
-      if ( empty( $input['aspects'] ) || ! is_array( $input['aspects'] ) ) {
-        $input['aspects'] = array( 'public' );
-      } else {
-        array_walk( $input['aspects'], 'sanitize_text_field' );
-      }
+      $this->validate_aspects( $input['aspects'] );
 
       // Clean up the list of services.
-      if ( empty( $input['services'] ) || ! is_array( $input['services'] ) ) {
-        $input['services'] = array();
-      } else {
-        array_walk( $input['services'], 'sanitize_text_field' );
-      }
+      $this->validate_services( $input['services'] );
     }
 
     // Reset to defaults.
@@ -746,5 +721,118 @@ class WP2D_Options {
 
     // Parse inputs with default options and return.
     return wp_parse_args( $input, array_merge( self::$_default_options, self::$_options ) );
+  }
+
+  /**
+   * Validate checkboxes, make them either true or false.
+   *
+   * @param  string|array $checkboxes Checkboxes to validate.
+   * @param  array &$options          Options values themselves.
+   * @return array                    The validated options.
+   */
+  public function validate_checkboxes( $checkboxes, &$options ) {
+    foreach ( WP2D_Helpers::str_to_arr( $checkboxes ) as $checkbox ) {
+      $options[ $checkbox ] = isset( $options[ $checkbox ] );
+    }
+    return $options;
+  }
+
+  /**
+   * Validate single-select fields and make sure their selected value are valid.
+   *
+   * @param  string|array $selects  Name(s) of the select fields.
+   * @param  array        &$options Options values themselves.
+   * @return array                  The validated options.
+   */
+  public function validate_single_selects( $selects, &$options ) {
+    foreach ( WP2D_Helpers::str_to_arr( $selects ) as $select ) {
+      if ( isset( $options[ $select ] ) && ! $this->is_valid_value( $select, $options[ $select ] ) ) {
+        unset( $options[ $select ] );
+      }
+    }
+    return $options;
+  }
+
+  /**
+   * Validate multi-select fields and make sure their selected values are valid.
+   *
+   * @param  string|array $selects  Name(s) of the select fields.
+   * @param  array        &$options Options values themselves.
+   * @return array                  The validated options.
+   */
+  public function validate_multi_selects( $selects, &$options ) {
+    foreach ( WP2D_Helpers::str_to_arr( $selects ) as $select ) {
+      if ( isset( $options[ $select ] ) ) {
+        foreach ( (array) $options[ $select ] as $option_value ) {
+          if ( ! $this->is_valid_value( $select, $option_value ) ) {
+            unset( $options[ $select ] );
+            break;
+          }
+        }
+      } else {
+        $options[ $select ] = array();
+      }
+    }
+    return $options;
+  }
+
+  /**
+   * Clean up the passed tags. Keep only alphanumeric, hyphen and underscore characters.
+   *
+   * @param  array|string &$tags Tags to be cleaned as array or comma seperated values.
+   * @return array               The cleaned tags.
+   */
+  public function validate_tags( &$tags ) {
+    WP2D_Helpers::str_to_arr( $tags );
+
+    $tags = array_map( array( $this, 'validate_tag' ),
+      array_unique(
+        array_filter( $tags, 'trim' )
+      )
+    );
+    return $tags;
+  }
+
+  /**
+   * Clean up the passed tag. Keep only alphanumeric, hyphen and underscore characters.
+   *
+   * @todo   What about eastern characters? (chinese, indian, etc.)
+   *
+   * @param  string &$tag Tag to be cleaned.
+   * @return string       The clean tag.
+   */
+  public function validate_tag( &$tag ) {
+    $tag = preg_replace( '/[^\w $\-]/u', '', str_replace( ' ', '-', trim( $tag ) ) );
+    return $tag;
+  }
+
+  /**
+   * Validate the passed aspects.
+   *
+   * @param  array &$aspects List of aspects that need to be validated.
+   * @return array           The validated list of aspects.
+   */
+  public function validate_aspects( &$aspects ) {
+    if ( empty( $aspects ) || ! is_array( $aspects ) ) {
+      $aspects = array( 'public' );
+    } else {
+      array_walk( $aspects, 'sanitize_text_field' );
+    }
+    return $aspects;
+  }
+
+  /**
+   * Validate the passed services.
+   *
+   * @param  array &$services List of services that need to be validated.
+   * @return array            The validated list of services.
+   */
+  public function validate_services( &$services ) {
+    if ( empty( $services ) || ! is_array( $services ) ) {
+      $services = array();
+    } else {
+      array_walk( $services, 'sanitize_text_field' );
+    }
+    return $services;
   }
 }

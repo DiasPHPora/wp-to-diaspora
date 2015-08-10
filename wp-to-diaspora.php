@@ -161,7 +161,7 @@ class WP_To_Diaspora {
         $options->set_option( 'user', null );
 
         // Save tags as arrays instead of comma seperated values.
-        $options->set_option( 'global_tags', WP2D_Helpers::get_clean_tags( $options->get_option( 'global_tags' ) ) );
+        $options->set_option( 'global_tags', $options->validate_tags( $options->get_option( 'global_tags' ) ) );
       }
 
       if ( version_compare( $version, '1.4.0', '<' ) ) {
