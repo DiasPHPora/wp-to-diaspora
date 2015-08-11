@@ -335,20 +335,7 @@ class WP2D_API {
    * @return array          Array of aspect objects.
    */
   public function get_aspects( $force = false ) {
-    if ( ! $this->_check_login() ) {
-      return false;
-    }
-
-    // Fetch the new list of aspects if the current list is empty or a reload is forced.
-    if ( empty( $this->_aspects ) || (bool) $force ) {
-      $req = $this->_http_request( '/bookmarklet' );
-      if ( 200 !== $req->info['http_code'] ) {
-        $this->last_error = __( 'Error loading aspects.', 'wp_to_diaspora' );
-        return false;
-      }
-      // No need to parse for aspects, as it get's done for each http request anyway.
-    }
-    return $this->_aspects;
+    return ( $this->_get_aspects_services( 'aspects', $this->_aspects, $force ) ) ? $this->_aspects : false;
   }
 
   /**
@@ -358,20 +345,43 @@ class WP2D_API {
    * @return array          Array of service objects.
    */
   public function get_services( $force = false ) {
+    return ( $this->_get_aspects_services( 'services', $this->_services, $force ) ) ? $this->_services : false;
+  }
+
+  /**
+   * Get the list of aspects or connected services.
+   *
+   * @param  string  $type  Type of list to get.
+   * @param  array   $items The current list of items.
+   * @param  boolean $force Force to fetch new list.
+   * @return boolean        Was the list fetched successfully?
+   */
+  private function _get_aspects_services( $type, $items, $force ) {
+    $error_message = '';
+    switch ( $type ) {
+      case 'aspects':
+        $error_message = __( 'Error loading aspects.', 'wp_to_diaspora' );
+        break;
+      case 'services':
+        $error_message = __( 'Error loading services.', 'wp_to_diaspora' );
+        break;
+    }
+
     if ( ! $this->_check_login() ) {
       return false;
     }
 
-    // Fetch the new list of services if the current list is empty or a reload is forced.
-    if ( empty( $this->_services ) || (bool) $force ) {
+    // Fetch the new list if the current list is empty or a reload is forced.
+    if ( empty( $list ) || (bool) $force ) {
       $req = $this->_http_request( '/bookmarklet' );
       if ( 200 !== $req->info['http_code'] ) {
-        $this->last_error = __( 'Error loading services.', 'wp_to_diaspora' );
+        $this->last_error = $error_message;
         return false;
       }
-      // No need to parse for services, as it get's done for each http request anyway.
+      // No need to parse the list, as it get's done for each http request anyway.
     }
-    return $this->_services;
+
+    return true;
   }
 
   /**

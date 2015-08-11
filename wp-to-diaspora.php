@@ -264,64 +264,49 @@ class WP_To_Diaspora {
   }
 
   /**
-   * Fetch the list of aspects and save them to the settings.
+   * Fetch the list of aspects or services and save them to the settings.
    *
-   * @return array The list of aspects. (id => name pairs)
+   * @param  string $type Type of list to update.
+   * @return array        The list of aspects or services.
    */
-  private function _update_aspects_list() {
+  private function _update_aspects_services_list( $type ) {
     $options = WP2D_Options::get_instance();
-    $aspects = $options->get_option( 'aspects_list' );
+    $list    = $options->get_option( $type . '_list' );
 
     // Make sure that we have at least the 'Public' aspect.
-    if ( empty( $aspects ) ) {
-      $aspects = array( 'public' => __( 'Public' ) );
+    if ( 'aspects' === $type && empty( $list ) ) {
+      $list = array( 'public' => __( 'Public' ) );
     }
 
     // Set up the connection to diaspora*.
     $api = $this->_load_api();
-    if ( ! $api->last_error && $aspects = $api->get_aspects() ) {
-      // So we have a new list of aspects.
+    if ( ! $api->last_error ) {
+      if ( 'aspects' === $type ) {
+        $list = $api->get_aspects();
+      } elseif ( 'services' === $type ) {
+        $list = $api->get_services();
+      }
+      // So we have a new list.
       $options = WP2D_Options::get_instance();
-      $options->set_option( 'aspects_list', $aspects );
+      $options->set_option( $type . '_list', $list );
       $options->save();
     }
 
-    return $aspects;
+    return $list;
   }
 
   /**
    * Update the list of aspects and return them for use with AJAX.
    */
   public function update_aspects_list_callback() {
-    wp_send_json( $this->_update_aspects_list() );
-  }
-
-  /**
-   * Fetch the list of services and save them to the settings.
-   *
-   * @return array The list of services. (id => name pairs)
-   */
-  private function _update_services_list() {
-    $options = WP2D_Options::get_instance();
-    $services = $options->get_option( 'services_list', array() );
-
-    // Set up the connection to diaspora*.
-    $api = $this->_load_api();
-    if ( ! $api->last_error && $services = $api->get_services() ) {
-      // So we have a new list of services.
-      $options = WP2D_Options::get_instance();
-      $options->set_option( 'services_list', $services );
-      $options->save();
-    }
-
-    return $services;
+    wp_send_json( $this->_update_aspects_services_list( 'aspects' ) );
   }
 
   /**
    * Update the list of services and return them for use with AJAX.
    */
   public function update_services_list_callback() {
-    wp_send_json( $this->_update_services_list() );
+    wp_send_json( $this->_update_aspects_services_list( 'services' ) );
   }
 
 
