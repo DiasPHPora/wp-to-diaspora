@@ -364,10 +364,10 @@ class WP2D_Options {
     add_settings_field( 'global_tags', __( 'Global tags', 'wp_to_diaspora' ), array( $this, 'global_tags_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'global_tags' ) );
 
     // Aspects checkboxes.
-    add_settings_field( 'aspects', __( 'Aspects', 'wp_to_diaspora' ), array( $this, 'aspects_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'aspects' ) );
+    add_settings_field( 'aspects', __( 'Aspects', 'wp_to_diaspora' ), array( $this, 'aspects_services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', array( 'aspects', $this->get_option( 'aspects' ) ) );
 
     // Services checkboxes.
-    add_settings_field( 'services', __( 'Services', 'wp_to_diaspora' ), array( $this, 'services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'services' ) );
+    add_settings_field( 'services', __( 'Services', 'wp_to_diaspora' ), array( $this, 'aspects_services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', array( 'services', $this->get_option( 'services' ) ) );
   }
 
   /**
@@ -480,74 +480,60 @@ class WP2D_Options {
   }
 
   /**
-   * Render the "Aspects" checkboxes.
+   * Render the "Aspects" and "Services" checkboxes.
+   *
+   * @param array $args Array containing the type and items to output as checkboxes.
    */
-  public function aspects_render( $aspects ) {
+  public function aspects_services_render( $args ) {
+    list( $type, $items ) = $args;
+    $items = array_filter( (array) $items ) ?: array();
+
+    $refresh_button = '';
+    $description    = '';
+    $empty_label    = '';
+
+    // This is where the 2 types show their differences.
+    switch ( $type ) {
+      case 'aspects':
+        $refresh_button = __( 'Refresh Aspects', 'wp_to_diaspora' );
+        $description    = __( 'Choose which aspects to share to.', 'wp_to_diaspora' );
+        $empty_label    = '<input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" checked="checked">' . __( 'Public' );
+        break;
+
+      case 'services':
+        $refresh_button = __( 'Refresh Services', 'wp_to_diaspora' );
+        $description    = sprintf( '%1$s<br><a href="%2$s" target="_blank">%3$s</a>',
+          __( 'Choose which services to share to.', 'wp_to_diaspora' ),
+          'https://' . $this->get_option( 'pod' ) . '/services',
+          __( 'Show available services on my pod.', 'wp_to_diaspora' )
+        );
+        $empty_label    = __( 'No services connected yet.', 'wp_to_diaspora' );
+        break;
+    }
+
     // Special case for this field if it's displayed on the settings page.
     $on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
-    $aspects          = ( ! empty( $aspects ) && is_array( $aspects ) ) ? $aspects : array();
-    $description      = __( 'Choose which aspects to share to.', 'wp_to_diaspora' );
 
     if ( ! $on_settings_page ) {
       echo $description;
+      $description = '';
     }
-    ?>
-    <div id="aspects-container" data-aspects-selected="<?php echo implode( ',', $aspects ); ?>">
-      <?php
-      if ( $aspects_list = (array) $this->get_option( 'aspects_list' ) ) {
-        foreach ( $aspects_list as $aspect_id => $aspect_name ) {
-          ?>
-          <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="<?php echo $aspect_id; ?>" <?php checked( in_array( $aspect_id, $aspects ) ); ?>><?php echo $aspect_name; ?></label>
-          <?php
-        }
-      } else {
-        // Just add the default "Public" aspect.
-        ?>
-        <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>><?php _e( 'Public' ); ?></label>
-        <?php
-      }
-      ?>
-    </div>
-    <p class="description"><?php if ( $on_settings_page ) { echo $description; } ?> <a id="refresh-aspects-list" class="button"><?php _e( 'Refresh Aspects', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span></p>
-    <?php
-  }
 
-  /**
-   * Render the "Services" checkboxes.
-   */
-  public function services_render( $services ) {
-    // Special case for this field if it's displayed on the settings page.
-    $on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
-    $services         = ( ! empty( $services ) && is_array( $services ) ) ? $services : array();
-    $description      = sprintf( '%1$s<br><a href="%2$s" target="_blank">%3$s</a>',
-      __( 'Choose which services to share to.', 'wp_to_diaspora' ),
-      'https://' . $this->get_option( 'pod' ) . '/services',
-      __( 'Show available services on my pod.', 'wp_to_diaspora' )
-    );
-    // Keep this for when we have a better pod selection which includes dropdown for HTTP/S.
-    // $link_to_services = sprintf( 'http%s://%s%s', ( $this->get_option( 'is_secure' ) ) ? 's' : '', $this->get_option( 'pod' ), '/services' );
-
-    if ( ! $on_settings_page ) {
-      echo $description;
-    }
     ?>
-    <div id="services-container" data-services-selected="<?php echo implode( ',', $services ); ?>">
-      <?php
-      if ( $services_list = (array) $this->get_option( 'services_list' ) ) {
-        foreach ( $services_list as $service_id => $service_name ) {
-          ?>
-          <label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="<?php echo $service_id; ?>" <?php checked( in_array( $service_id, $services ) ); ?>><?php echo $service_name; ?></label>
-          <?php
-        }
-      } else {
-        // No services loaded yet.
-        ?>
-        <label><?php _e( 'No services connected yet.', 'wp_to_diaspora' ); ?></label>
-        <?php
-      }
-      ?>
+    <div id="<?php echo $type; ?>-container" data-<?php echo $type; ?>-selected="<?php echo implode( ',', $items ); ?>">
+      <?php if ( $list = (array) $this->get_option( $type . '_list' ) ) : ?>
+        <?php foreach ( $list as $id => $name ) : ?>
+          <label><input type="checkbox" name="wp_to_diaspora_settings[<?php echo $type; ?>][]" value="<?php echo $id; ?>" <?php checked( in_array( $id, $items ) ); ?>><?php echo $name; ?></label>
+        <?php endforeach; ?>
+      <?php else : ?>
+        <label><?php echo $empty_label; ?></label>
+      <?php endif; ?>
     </div>
-    <p class="description"><?php if ( $on_settings_page ) { echo $description; } ?> <a id="refresh-services-list" class="button"><?php _e( 'Refresh Services', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span></p>
+    <p class="description">
+      <?php echo $description; ?>
+      <a id="refresh-<?php echo $type; ?>-list" class="button"><?php echo $refresh_button; ?></a>
+      <span class="spinner" style="display: none;"></span>
+    </p>
     <?php
   }
 
@@ -683,10 +669,10 @@ class WP2D_Options {
       $this->validate_tags( $input['global_tags'] );
 
       // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
-      $this->validate_aspects( $input['aspects'] );
+      $this->validate_aspects_services( $input['aspects'], array( 'public' ) );
 
       // Clean up the list of services.
-      $this->validate_services( $input['services'] );
+      $this->validate_aspects_services( $input['services'] );
     }
 
     // Reset to defaults.
@@ -793,32 +779,18 @@ class WP2D_Options {
   }
 
   /**
-   * Validate the passed aspects.
+   * Validate the passed aspects or services.
    *
-   * @param  array &$aspects List of aspects that need to be validated.
-   * @return array           The validated list of aspects.
+   * @param  array &$aspects_services List of aspects or services that need to be validated.
+   * @param  array $default           Default value if not valid.
+   * @return array                    The validated list of aspects or services.
    */
-  public function validate_aspects( &$aspects ) {
-    if ( empty( $aspects ) || ! is_array( $aspects ) ) {
-      $aspects = array( 'public' );
+  public function validate_aspects_services( &$aspects_services, $default = array() ) {
+    if ( empty( $aspects_services ) || ! is_array( $aspects_services ) ) {
+      $aspects_services = $default;
     } else {
-      array_walk( $aspects, 'sanitize_text_field' );
+      array_walk( $aspects_services, 'sanitize_text_field' );
     }
-    return $aspects;
-  }
-
-  /**
-   * Validate the passed services.
-   *
-   * @param  array &$services List of services that need to be validated.
-   * @return array            The validated list of services.
-   */
-  public function validate_services( &$services ) {
-    if ( empty( $services ) || ! is_array( $services ) ) {
-      $services = array();
-    } else {
-      array_walk( $services, 'sanitize_text_field' );
-    }
-    return $services;
+    return $aspects_services;
   }
 }

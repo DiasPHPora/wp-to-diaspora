@@ -174,18 +174,18 @@ class WP2D_Post {
     $status_markdown = new HTML_To_Markdown( $status_message );
     $status_message  = $status_markdown->output();
 
-    // Add services to share to via diaspora*.
-    $extra_data = array(
-      'services' => $this->services
-    );
-
     // Set up the connection to diaspora*.
-    if ( $conn = WP2D_Helpers::api_quick_connect() ) {
+    if ( ! empty( $status_message ) && $conn = WP2D_Helpers::api_quick_connect() ) {
       if ( $conn->last_error ) {
         // Save the post error as post meta data, so we can display it to the user.
         update_post_meta( $post_id, '_wp_to_diaspora_post_error', $conn->last_error );
         return false;
       }
+
+      // Add services to share to via diaspora*.
+      $extra_data = array(
+        'services' => $this->services
+      );
 
       // Try to post to diaspora*.
       if ( $response = $conn->post( $status_message, $this->aspects, $extra_data ) ) {
@@ -419,8 +419,8 @@ class WP2D_Post {
     <p><?php $options->display_render( $this->display ); ?></p>
     <p><?php $options->tags_to_post_render( $this->tags_to_post ); ?></p>
     <p><?php $options->custom_tags_render( $this->custom_tags ); ?></p>
-    <p><?php $options->aspects_render( $this->aspects ); ?></p>
-    <p><?php $options->services_render( $this->services ); ?></p>
+    <p><?php $options->aspects_services_render( array( 'aspects',  $this->aspects ) );  ?></p>
+    <p><?php $options->aspects_services_render( array( 'services', $this->services ) ); ?></p>
 
     <?php
   }
@@ -458,10 +458,10 @@ class WP2D_Post {
     $options->validate_tags( $meta_to_save['custom_tags'] );
 
     // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
-    $options->validate_aspects( $meta_to_save['aspects'] );
+    $options->validate_aspects_services( $meta_to_save['aspects'], array( 'public' ) );
 
     // Clean up the list of services.
-    $options->validate_services( $meta_to_save['services'] );
+    $options->validate_aspects_services( $meta_to_save['services'] );
 
     // Update the meta data for this post.
     update_post_meta( $post_id, '_wp_to_diaspora', $meta_to_save );
