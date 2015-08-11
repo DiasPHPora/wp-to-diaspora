@@ -352,11 +352,11 @@ class WP2D_API {
    * Get the list of aspects or connected services.
    *
    * @param  string  $type  Type of list to get.
-   * @param  array   $items The current list of items.
+   * @param  array   $list  The current list of items.
    * @param  boolean $force Force to fetch new list.
    * @return boolean        Was the list fetched successfully?
    */
-  private function _get_aspects_services( $type, $items, $force ) {
+  private function _get_aspects_services( $type, $list, $force ) {
     $error_message = '';
     switch ( $type ) {
       case 'aspects':
