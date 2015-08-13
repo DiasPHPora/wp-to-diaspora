@@ -1,5 +1,23 @@
 jQuery(document).ready(function ($) {
 
+  var onSettingsPage = ('settings_page_wp_to_diaspora' === adminpage);
+
+
+  $('.wrap').on('click', '.open-help-tab', function(e) {
+    e.preventDefault();
+    var tab = (onSettingsPage) ? $(this).attr('data-help-tab') : 'wp-to-diaspora';
+
+    if ('' != tab && $('#tab-link-'+tab).length) {
+      // Drop down the help window if it isn't open already.
+      if ('false' == $('#contextual-help-link').attr('aria-expanded')) {
+        $('#contextual-help-link').click();
+      }
+      // Select the tab.
+      $('#tab-link-'+tab).children('a').click();
+      $('html, body').animate({ scrollTop: 0 }, 'slow');
+    }
+  });
+
   // Tag-it
   $('.wp2dtags').tagit({
     removeConfirmation: true
@@ -7,24 +25,6 @@ jQuery(document).ready(function ($) {
 
   // Initialise chosen.
   $('.chosen').chosen();
-
-  // Refresh the list of pods and repopulate the autocomplete list.
-  $('#refresh-pod-list').click(function() {
-    var $refreshButton = $(this).hide();
-    var $spinner = $refreshButton.next('.spinner').show();
-
-    $.post(ajaxurl, { 'action': 'wp_to_diaspora_update_pod_list' }, function(pods) {
-      // Empty the current pod list and repopulate it.
-      var $podList = $('#pod-list').empty();
-      pods.forEach(function(pod) {
-        $podList.append( '<option data-secure="' + pod.secure + '" value="' + pod.domain + '"></option>' );
-      });
-
-      $spinner.hide();
-      $refreshButton.show();
-    });
-  });
-
 
   /**
    * Make the aspect checkboxes clever, giving the 'public' aspect the power to disable all others.
@@ -124,33 +124,64 @@ jQuery(document).ready(function ($) {
   });
 
 
-  // Check the pod connection status.
-  var $pcs = $('#pod-connection-status');
-  $pcs.parent().attr('title', WP2DL10n.conn_testing);
+  if (onSettingsPage) {
+    // Refresh the list of pods and repopulate the autocomplete list.
+    $('#refresh-pod-list').click(function() {
+      var $refreshButton = $(this).hide();
+      var $spinner = $refreshButton.next('.spinner').show();
 
-  $.post(ajaxurl, { 'action': 'wp_to_diaspora_check_pod_connection_status' }, function(status) {
+      $.post(ajaxurl, { 'action': 'wp_to_diaspora_update_pod_list' }, function(pods) {
+        // Empty the current pod list and repopulate it.
+        var $podList = $('#pod-list').empty();
+        pods.forEach(function(pod) {
+          $podList.append( '<option data-secure="' + pod.secure + '" value="' + pod.domain + '"></option>' );
+        });
 
-    // After testing the connection, mark the "Setup" tab appropriately.
-    $pcs.next('.spinner').hide();
-    var clr = '';
-    var msg = '';
-    switch ( status ) {
-      case 'success': status = 'yes'; clr = '#008000'; msg = WP2DL10n.conn_successful; break;
-      case 'failed':  status = 'no';  clr = '#800000'; msg = WP2DL10n.conn_failed;     break;
-      case 'notset':  return;
-    }
-    $pcs.parent().attr('title', msg);
-    $pcs.addClass('dashicons-' + status).css('color', clr).show();
-  });
+        $spinner.hide();
+        $refreshButton.show();
+      });
+    });
+
+    // Check the pod connection status.
+    var $pcs = $('#pod-connection-status');
+    $pcs.parent().attr('title', WP2DL10n.conn_testing);
+
+    $.post(ajaxurl, { 'action': 'wp_to_diaspora_check_pod_connection_status' })
+    .done(function(status) {
+
+      // After testing the connection, mark the "Setup" tab appropriately
+      // and output an error message if the connection failed.
+      var clr = '';
+      var msg = '';
+      if (true === status.success) {
+        status = 'yes';
+        clr = '#008000';
+        msg = WP2DL10n.conn_successful;
+      } else if(false === status.success) {
+        $('#wp2d_message').html('<p>' + status.data + '</p>').addClass('error').show();
+        status = 'no';
+        clr = '#800000';
+        msg = WP2DL10n.conn_failed;
+      } else {
+        return;
+      }
+
+      $pcs.parent().attr('title', msg);
+      $pcs.addClass('dashicons-' + status).css('color', clr).show();
+    })
+    .always(function() {
+      $pcs.next('.spinner').hide();
+    });
+
+    // Confirmation when resetting to default settings.
+    $('#reset-defaults').click(function() {
+      return confirm(WP2DL10n.sure_reset_defaults);
+    });
+  }
 
   // Enable all checkboxes on save, as disabled ones don't get saved.
   $('#submit, #submit-defaults, #save-post, #publish').click(function() {
     $('#aspects-container input[type="checkbox"]').removeAttr('disabled');
-  });
-
-  // Confirmation when resetting to default settings.
-  $('#reset-defaults').click(function() {
-    return confirm(WP2DL10n.sure_reset_defaults);
   });
 
 });

@@ -90,6 +90,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= 1.4.1 =
+* SSL CA bundle check and download option
+
 = 1.4.0 =
 * Split Settings page into tabs to give a better overview
 * The initial setup of the plugin is a lot easier now, requiring the connection details first, before being able to change default behaviour
