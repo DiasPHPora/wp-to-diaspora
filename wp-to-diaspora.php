@@ -104,7 +104,7 @@ class WP_To_Diaspora {
     add_action( 'admin_menu', array( 'WP2D_Options', 'setup' ) );
 
     // WP2D Post.
-    require_once WP2D_LIB . '/class-post.php';
+    require_once WP2D_LIB_DIR . '/class-post.php';
     add_action( 'admin_init', array( 'WP2D_Post', 'setup' ) );
 
 
