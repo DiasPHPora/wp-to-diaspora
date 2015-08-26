@@ -169,10 +169,18 @@ class WP2D_API {
 
     // Get and save the token.
     if ( null === $this->_fetch_token( $force_new_token ) ) {
-      $this->last_error = sprintf(
-        _x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp_to_diaspora' ),
-        $this->get_pod_url()
-      );
+      // Code 60 is a CA certificate problem.
+      if ( 60 === $this->_last_request->errno ) {
+        $this->last_error = sprintf(
+          _x( 'There seems to be a problem with your server\'s CA certificate bundle. %sHelp%s', 'Placeholders are HTML for a link.', 'wp_to_diaspora' ),
+          '<a href="#" class="open-help-tab" data-help-tab="ssl">', '</a>'
+        );
+      } else {
+        $this->last_error = sprintf(
+          _x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp_to_diaspora' ),
+          $this->get_pod_url()
+        );
+      }
       return false;
     }
     return true;
@@ -260,7 +268,7 @@ class WP2D_API {
     // If the request isn't successful, we are not logged in correctly.
     if ( 200 !== $req->info['http_code'] ) {
       // Login failed.
-      $this->last_error = __( 'Login failed.', 'wp_to_diaspora' );
+      $this->last_error = __( 'Login failed. Check your login details.', 'wp_to_diaspora' );
       return false;
     }
 
@@ -405,6 +413,11 @@ class WP2D_API {
     curl_setopt( $ch, CURLOPT_HEADER, true );
     curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
+    if ( file_exists( WP2D_DIR . '/cacert.pem' ) ) {
+      curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, true );
+      curl_setopt( $ch, CURLOPT_CAINFO, WP2D_DIR . '/cacert.pem' );
+    }
+
     if ( ! empty( $this->_cookie ) ) {
       curl_setopt( $ch, CURLOPT_COOKIE, $this->_cookie );
     }
@@ -432,6 +445,8 @@ class WP2D_API {
     $this->_last_request = new stdClass();
     $this->_last_request->headers  = $headers;
     $this->_last_request->response = $response;
+    $this->_last_request->error    = curl_error( $ch );
+    $this->_last_request->errno    = curl_errno( $ch );
     $this->_last_request->info     = curl_getinfo( $ch );
     curl_close( $ch );
 

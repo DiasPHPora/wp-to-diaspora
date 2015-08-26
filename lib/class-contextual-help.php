@@ -103,6 +103,39 @@ class WP2D_Contextual_Help {
                 <em>' . sprintf( esc_html__( 'Use the "%s" button to fetch the list of your connected services from diaspora*.', 'wp_to_diaspora' ), esc_html__( 'Refresh Services', 'wp_to_diaspora' ) ) . '</em>
           </ul>'
       ),
+      // Explain the importance of SSL connections to the pod and the CA certificate bundle.
+      'ssl' => array(
+        'title'   => esc_html__( 'SSL', 'wp_to_diaspora' ),
+        'content' => '<p><strong>' . esc_html__( 'WP to diaspora* makes sure the connection to your pod is secure!', 'wp_to_diaspora' ) . '</strong></p>
+          <p>' . esc_html__( 'Most diaspora* pods are secured using SSL (Secure Sockets Layer), which makes your connection encrypted. For this connection to work, your server needs to know that those SSL certificates can be trusted.', 'wp_to_diaspora' ) . '</p>
+          <p>' . esc_html__( 'Therefore, if your server does not have an up to date CA certificate bundle, WP to diaspora* may not work for you.', 'wp_to_diaspora' ) . '</p>
+          <p>' . esc_html__( 'Lucky for you though, we have you covered if this is the case for you!', 'wp_to_diaspora' ) . '</p>
+          <ul>
+            <li><strong>' . esc_html__( 'Get in touch with your hosting provider', 'wp_to_diaspora' ) . '</strong>: ' .
+              esc_html__( 'The best option is for you to get in touch with your hosting provider and ask them to update the bundle for you. They should know what you\'re talking about.', 'wp_to_diaspora' ) . '
+            <li><strong>' . esc_html__( 'Install the CA bundle yourself', 'wp_to_diaspora' ) . '</strong>: ' .
+              sprintf(
+                esc_html_x( 'If you maintain your own server, it\'s your job to keep the bundle up to date. You can find a short and simple way on how to do this %shere%s.', 'Placeholders are HTML for a link.', 'wp_to_diaspora' ),
+                '<a href="http://serverfault.com/a/394835" target="_blank">', '</a>'
+              ) . '
+            <li><strong>' . esc_html__( 'Quick "temporary" fix', 'wp_to_diaspora' ) . '</strong>: ' .
+              sprintf(
+                esc_html_x( 'As a temporary solution, you can download the up to date %sCA certificate bundle%s (Right-click &#8594; Save As...) and place the cacert.pem file at the top level of the WP to diaspora* plugin folder. This is a "last resort" option.', 'Placeholders are HTML for links.', 'wp_to_diaspora' ),
+                '<a href="http://curl.haxx.se/ca/cacert.pem" download>', '</a>'
+              )
+              . '<br><p>' .
+              // See if we can do this automatically.
+              ( ( ! array_diff( array( 'fopen', 'fwrite', 'fclose', 'file_get_contents', 'file_put_contents' ), get_defined_functions()['internal'] ) )
+                ? sprintf(
+                    esc_html_x( 'Your server should allow us to %sdo this%s for you :-)', 'Placeholders are HTML for links.', 'wp_to_diaspora' ),
+                    '<a href="' . add_query_arg( 'temp_ssl_fix', '' ) . '" class="button">', '</a>'
+                  )
+                : ''
+              )
+              . '</p>
+          </ul>
+          <p class="dashicons-before dashicons-info">' . esc_html__( 'NOTE: If you choose the temporary option, the copy procedure needs to be done every time the plugin is updated because all files get replaced!', 'wp_to_diaspora' ) . '</p>'
+      ),
       // Explain the meta box and the differences to the global defaults.
       'meta-box' => array(
         'title'   => esc_html__( 'Meta Box', 'wp_to_diaspora' ),

@@ -93,11 +93,6 @@ class WP2D_Options {
       return $instance;
     }
 
-    // Redirect away from setup tab if we just saved the setup settings.
-    if ( isset( $_GET['tab'], $_GET['settings-updated'] ) && 'setup' === $_GET['tab'] ) {
-      wp_redirect( '?page=wp_to_diaspora' );
-    }
-
     // Populate options array.
     $instance->get_option();
 
@@ -105,7 +100,7 @@ class WP2D_Options {
     $hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $instance, 'admin_options_page' ) );
 
     // Setup the contextual help menu after the options page has been loaded.
-    require_once WP2D_LIB . '/class-contextual-help.php';
+    require_once WP2D_LIB_DIR . '/class-contextual-help.php';
     add_action( 'load-' . $hook, array( 'WP2D_Contextual_Help', 'setup' ) );
 
     // Setup the contextual help menu tab for post types. Checks are made there!
@@ -182,6 +177,8 @@ class WP2D_Options {
     <div class="wrap">
       <h2>WP to diaspora*</h2>
 
+      <div id="wp2d_message" class="notice hidden"></div>
+
       <?php
         // Check the connection status to diaspora.
         if ( ! $this->is_pod_set_up() ) {
@@ -216,6 +213,26 @@ class WP2D_Options {
               }
 
               $this->save();
+            }
+          }
+
+          // Attempt to get the cacert.pem file and save it to the plugin's root directory.
+          if ( isset( $_GET['temp_ssl_fix'] ) ) {
+            $cacert_file = file_get_contents( 'http://curl.haxx.se/ca/cacert.pem' );
+            if ( $cacert_file && file_put_contents( WP2D_DIR . '/cacert.pem', $cacert_file ) ) {
+              add_settings_error(
+                'wp_to_diaspora_settings',
+                'wp_to_diaspora_temp_ssl_fix',
+                __( 'Successfully saved cacert.pem!', 'wp_to_diaspora' ),
+                'updated'
+              );
+            } else {
+              add_settings_error(
+                'wp_to_diaspora_settings',
+                'wp_to_diaspora_temp_ssl_fix',
+                __( 'Failed to save cacert.pem!', 'wp_to_diaspora' ),
+                'error'
+              );
             }
           }
         }

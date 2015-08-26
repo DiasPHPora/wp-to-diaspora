@@ -79,12 +79,13 @@ class WP_To_Diaspora {
     define( 'WP2D_DEBUGGING', isset( $_GET['debugging'] ) );
 
     // Define simple constants.
-    define( 'WP2D_LIB', dirname( __FILE__ ) . '/lib' );
+    define( 'WP2D_DIR', dirname( __FILE__ ) );
+    define( 'WP2D_LIB_DIR', WP2D_DIR . '/lib' );
 
     // Load necessary classes.
-    if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once WP2D_LIB . '/class-html-to-markdown.php';
-    require_once WP2D_LIB . '/class-helpers.php';
-    require_once WP2D_LIB . '/class-api.php';
+    if ( ! class_exists( 'HTML_To_Markdown' ) ) require_once WP2D_LIB_DIR . '/class-html-to-markdown.php';
+    require_once WP2D_LIB_DIR . '/class-helpers.php';
+    require_once WP2D_LIB_DIR . '/class-api.php';
 
     // Load languages.
     add_action( 'plugins_loaded', array( $instance, 'l10n' ) );
@@ -99,7 +100,7 @@ class WP_To_Diaspora {
     add_action( 'admin_enqueue_scripts', array( $instance, 'admin_load_scripts' ) );
 
     // Set up the options.
-    require_once WP2D_LIB . '/class-options.php';
+    require_once WP2D_LIB_DIR . '/class-options.php';
     add_action( 'admin_menu', array( 'WP2D_Options', 'setup' ) );
 
     // WP2D Post.
@@ -318,25 +319,25 @@ class WP_To_Diaspora {
   private function _check_pod_connection_status() {
     $options = WP2D_Options::get_instance();
 
-    $status = 'notset';
+    $status = null;
 
     if ( $options->is_pod_set_up() ) {
-      $api = $this->_load_api();
-      if ( ! $api || $api->last_error ) {
-        $status = 'failed';
-      } else {
-        $status = 'success';
-      }
+      $status = ! (bool) $this->_load_api()->last_error;
     }
 
     return $status;
   }
 
   /**
-   * Update the list of services and return them for use with AJAX.
+   * Check the connection to the pod and return the status for use with AJAX.
    */
   public function check_pod_connection_status_callback() {
-    wp_send_json( $this->_check_pod_connection_status() );
+    $status = $this->_check_pod_connection_status();
+    if ( true === $status ) {
+      wp_send_json_success();
+    } elseif ( false === $status ) {
+      wp_send_json_error( $this->_api->last_error );
+    }
   }
 }
 
