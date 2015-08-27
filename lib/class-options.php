@@ -199,7 +199,8 @@ class WP2D_Options {
           if ( empty( $aspects_list ) ) {
 
             // Set up the connection to diaspora*.
-            if ( $conn = WP2D_Helpers::api_quick_connect() ) {
+            $conn = WP2D_Helpers::api_quick_connect();
+            if ( empty( $conn->last_error ) ) {
               // Get the loaded aspects.
               if ( $aspects = $conn->get_aspects() ) {
                 // Save the new list of aspects.

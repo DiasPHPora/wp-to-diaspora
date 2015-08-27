@@ -7,7 +7,7 @@ jQuery(document).ready(function ($) {
     e.preventDefault();
     var tab = (onSettingsPage) ? $(this).attr('data-help-tab') : 'wp-to-diaspora';
 
-    if ('' != tab && $('#tab-link-'+tab).length) {
+    if ('' !== tab && $('#tab-link-'+tab).length) {
       // Drop down the help window if it isn't open already.
       if ('false' == $('#contextual-help-link').attr('aria-expanded')) {
         $('#contextual-help-link').click();
@@ -72,12 +72,12 @@ jQuery(document).ready(function ($) {
       for(var id in aspects) {
         if(aspects.hasOwnProperty(id)) {
           var checked = ( -1 !== $.inArray( id, aspectsSelected ) ) ? ' checked="checked"' : '';
-          $aspectsContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="' + id + '"' + checked + '>' + aspects[id] + '</label> ' )
+          $aspectsContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="' + id + '"' + checked + '>' + aspects[id] + '</label> ' );
         }
       }
       smartAspectSelection();
 
-      $spinner.hide();;
+      $spinner.hide();
       $refreshButton.show();
     });
   });
@@ -111,7 +111,7 @@ jQuery(document).ready(function ($) {
         for(var id in services) {
           if(services.hasOwnProperty(id)) {
             var checked = ( -1 !== $.inArray( id, servicesSelected ) ) ? ' checked="checked"' : '';
-            $servicesContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="' + id + '"' + checked + '>' + services[id] + '</label> ' )
+            $servicesContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="' + id + '"' + checked + '>' + services[id] + '</label> ' );
           }
         }
       } else {

@@ -111,8 +111,8 @@ class WP2D_Helpers {
     $password  = WP2D_Helpers::decrypt( (string) $options->get_option( 'password' ) );
 
     $api = new WP2D_API( $pod, $is_secure );
-    if ( ! ( $api->init() && $api->login( $username, $password ) ) ) {
-      return false;
+    if ( $api->init() ) {
+      $api->login( $username, $password );
     }
 
     return $api;

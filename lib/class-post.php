@@ -175,7 +175,8 @@ class WP2D_Post {
     $status_message  = $status_markdown->output();
 
     // Set up the connection to diaspora*.
-    if ( ! empty( $status_message ) && $conn = WP2D_Helpers::api_quick_connect() ) {
+    $conn = WP2D_Helpers::api_quick_connect();
+    if ( ! empty( $status_message ) ) {
       if ( $conn->last_error ) {
         // Save the post error as post meta data, so we can display it to the user.
         update_post_meta( $post_id, '_wp_to_diaspora_post_error', $conn->last_error );
