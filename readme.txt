@@ -92,6 +92,8 @@ Quite straightforward, right?
 
 = 1.4.1 =
 * SSL CA bundle check and download option
+* Move post related functionality to an own WP2D_Post class
+* Add a helper to facilitate API connections
 
 = 1.4.0 =
 * Split Settings page into tabs to give a better overview
