@@ -116,6 +116,59 @@ class WP2D_Options {
     return $instance;
   }
 
+
+  /**
+   * Get the currently selected tab.
+   *
+   * @param  string $default Tab to select if the current selection is invalid.
+   * @return string          Return the currently selected tab.
+   */
+  private function _current_tab( $default = 'defaults' ) {
+
+    $tab = ( isset ( $_GET['tab'] ) ? $_GET['tab'] : $default );
+
+    // If the pod settings aren't configured yet, open the 'Setup' tab.
+    if ( ! $this->is_pod_set_up() ) {
+      $tab = 'setup';
+    }
+
+    return $tab;
+  }
+
+  /**
+   * Output all options tabs and return an array of them all, if requested by $return.
+   *
+   * @param bool $return Define if the options tabs should be returned.
+   * @return array       (If requested) An array of the outputted options tabs.
+   */
+  private function _options_page_tabs( $return = false ) {
+    // The array defining all options sections to be shown as tabs.
+    $tabs = array();
+    if ( $this->is_pod_set_up() ) {
+      $tabs['defaults'] = __( 'Defaults', 'wp_to_diaspora' );
+    }
+
+    // Add the 'Setup' tab to the end of the list.
+    $tabs['setup'] = __( 'Setup', 'wp_to_diaspora' ) . '<span id="pod-connection-status" class="dashicons-before" style="display:none;"></span><span class="spinner"></span>';
+
+    // Container for all options tabs.
+    $out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
+    foreach ( $tabs as $tab => $name ) {
+      // The tab link.
+      $out .= '<a class="nav-tab' . ( ( $tab == $this->_current_tab() ) ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
+    }
+    $out .= '</h2>';
+
+    // Output the container with all tabs.
+    echo $out;
+
+    // Check if the tabs should be returned.
+    if ( $return ) {
+      return $tabs;
+    }
+  }
+
+
   /**
    * Set up admin options page.
    */
@@ -146,9 +199,8 @@ class WP2D_Options {
           if ( empty( $aspects_list ) ) {
 
             // Set up the connection to diaspora*.
-            $conn = new WP2D_API( $this->get_option( 'pod' ) );
-            if ( $conn->init() && $conn->login( $this->get_option( 'username' ), WP2D_Helpers::decrypt( $this->get_option( 'password' ) ) ) ) {
-
+            $conn = WP2D_Helpers::api_quick_connect();
+            if ( empty( $conn->last_error ) ) {
               // Get the loaded aspects.
               if ( $aspects = $conn->get_aspects() ) {
                 // Save the new list of aspects.
@@ -230,24 +282,6 @@ class WP2D_Options {
   }
 
   /**
-   * Get the currently selected tab.
-   *
-   * @param  string $default Tab to select if the current selection is invalid.
-   * @return string          Return the currently selected tab.
-   */
-  private function _current_tab( $default = 'defaults' ) {
-
-    $tab = ( isset ( $_GET['tab'] ) ? $_GET['tab'] : $default );
-
-    // If the pod settings aren't configured yet, open the 'Setup' tab.
-    if ( ! $this->is_pod_set_up() ) {
-      $tab = 'setup';
-    }
-
-    return $tab;
-  }
-
-  /**
    * Initialise the settings sections and fields of the currently selected tab.
    */
   public function register_settings() {
@@ -266,49 +300,6 @@ class WP2D_Options {
         break;
     }
   }
-
-
-
-
-  /**
-   * Output all options tabs and return an array of them all, if requested by $return.
-   *
-   * @param bool $return Define if the options tabs should be returned.
-   * @return array       (If requested) An array of the outputted options tabs.
-   */
-  private function _options_page_tabs( $return = false ) {
-    // The array defining all options sections to be shown as tabs.
-    $tabs = array();
-    if ( $this->is_pod_set_up() ) {
-      $tabs['defaults'] = __( 'Defaults', 'wp_to_diaspora' );
-    }
-
-    // Add the 'Setup' tab to the end of the list.
-    $tabs['setup'] = __( 'Setup', 'wp_to_diaspora' ) . '<span id="pod-connection-status" class="dashicons-before" style="display:none;"></span><span class="spinner"></span>';
-
-
-
-    // Container for all options tabs.
-    $out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
-    foreach ( $tabs as $tab => $name ) {
-      // The tab link.
-      $out .= '<a id="options-tab-' . $tab . '" class="nav-tab' . ( ( $tab == $this->_current_tab() ) ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
-    }
-    $out .= '</h2>';
-
-    // Output the container with all tabs.
-    echo $out;
-
-    // Check if the tabs should be returned.
-    if ( $return ) {
-      return $tabs;
-    }
-  }
-
-
-
-
-
 
 
   /**
@@ -334,7 +325,7 @@ class WP2D_Options {
     ?>
     https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo $this->get_option( 'pod' ); ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required> <a id="refresh-pod-list" class="button"><?php _e( 'Refresh pod list', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span>
     <datalist id="pod-list">
-    <?php foreach ( $this->get_option( 'pod_list' ) as $pod ) : ?>
+    <?php foreach ( (array) $this->get_option( 'pod_list' ) as $pod ) : ?>
       <option data-secure="<?php echo $pod['secure']; ?>" value="<?php echo $pod['domain']; ?>"></option>
     <?php endforeach; ?>
     </datalist>
@@ -391,10 +382,10 @@ class WP2D_Options {
     add_settings_field( 'global_tags', __( 'Global tags', 'wp_to_diaspora' ), array( $this, 'global_tags_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'global_tags' ) );
 
     // Aspects checkboxes.
-    add_settings_field( 'aspects', __( 'Aspects', 'wp_to_diaspora' ), array( $this, 'aspects_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'aspects' ) );
+    add_settings_field( 'aspects', __( 'Aspects', 'wp_to_diaspora' ), array( $this, 'aspects_services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', array( 'aspects', $this->get_option( 'aspects' ) ) );
 
     // Services checkboxes.
-    add_settings_field( 'services', __( 'Services', 'wp_to_diaspora' ), array( $this, 'services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'services' ) );
+    add_settings_field( 'services', __( 'Services', 'wp_to_diaspora' ), array( $this, 'aspects_services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', array( 'services', $this->get_option( 'services' ) ) );
   }
 
   /**
@@ -485,9 +476,7 @@ class WP2D_Options {
    * Render the "Global tags" field.
    */
   public function global_tags_render( $tags ) {
-    if ( is_array( $tags ) ) {
-      $tags = implode( ', ', $tags );
-    }
+    WP2D_Helpers::arr_to_str( $tags );
     ?>
     <input type="text" class="wp2dtags" name="wp_to_diaspora_settings[global_tags]" value="<?php echo $tags; ?>" placeholder="<?php _e( 'Global tags', 'wp_to_diaspora' ); ?>" class="regular-text">
     <p class="description"><?php _e( 'Custom tags to add to all posts being posted to diaspora*.', 'wp_to_diaspora' ); ?></p>
@@ -498,9 +487,7 @@ class WP2D_Options {
    * Render the "Custom tags" field.
    */
   public function custom_tags_render( $tags ) {
-    if ( is_array( $tags ) ) {
-      $tags = implode( ', ', $tags );
-    }
+    WP2D_Helpers::arr_to_str( $tags );
     ?>
     <label title="<?php _e( 'Custom tags to add to this post when it\'s posted to diaspora*.', 'wp_to_diaspora' ); ?>">
       <?php _e( 'Custom tags', 'wp_to_diaspora' ); ?>
@@ -511,74 +498,60 @@ class WP2D_Options {
   }
 
   /**
-   * Render the "Aspects" checkboxes.
+   * Render the "Aspects" and "Services" checkboxes.
+   *
+   * @param array $args Array containing the type and items to output as checkboxes.
    */
-  public function aspects_render( $aspects ) {
+  public function aspects_services_render( $args ) {
+    list( $type, $items ) = $args;
+    $items = array_filter( (array) $items ) ?: array();
+
+    $refresh_button = '';
+    $description    = '';
+    $empty_label    = '';
+
+    // This is where the 2 types show their differences.
+    switch ( $type ) {
+      case 'aspects':
+        $refresh_button = __( 'Refresh Aspects', 'wp_to_diaspora' );
+        $description    = __( 'Choose which aspects to share to.', 'wp_to_diaspora' );
+        $empty_label    = '<input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" checked="checked">' . __( 'Public' );
+        break;
+
+      case 'services':
+        $refresh_button = __( 'Refresh Services', 'wp_to_diaspora' );
+        $description    = sprintf( '%1$s<br><a href="%2$s" target="_blank">%3$s</a>',
+          __( 'Choose which services to share to.', 'wp_to_diaspora' ),
+          'https://' . $this->get_option( 'pod' ) . '/services',
+          __( 'Show available services on my pod.', 'wp_to_diaspora' )
+        );
+        $empty_label    = __( 'No services connected yet.', 'wp_to_diaspora' );
+        break;
+    }
+
     // Special case for this field if it's displayed on the settings page.
     $on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
-    $aspects          = ( ! empty( $aspects ) && is_array( $aspects ) ) ? $aspects : array();
-    $description      = __( 'Choose which aspects to share to.', 'wp_to_diaspora' );
 
     if ( ! $on_settings_page ) {
       echo $description;
+      $description = '';
     }
-    ?>
-    <div id="aspects-container" data-aspects-selected="<?php echo implode( ',', $aspects ); ?>">
-      <?php
-      if ( $aspects_list = $this->get_option( 'aspects_list' ) ) {
-        foreach ( $aspects_list as $aspect_id => $aspect_name ) {
-          ?>
-          <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="<?php echo $aspect_id; ?>" <?php checked( in_array( $aspect_id, $aspects ) ); ?>><?php echo $aspect_name; ?></label>
-          <?php
-        }
-      } else {
-        // Just add the default "Public" aspect.
-        ?>
-        <label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" <?php checked( true ); ?>><?php _e( 'Public' ); ?></label>
-        <?php
-      }
-      ?>
-    </div>
-    <p class="description"><?php if ( $on_settings_page ) { echo $description; } ?> <a id="refresh-aspects-list" class="button"><?php _e( 'Refresh Aspects', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span></p>
-    <?php
-  }
 
-  /**
-   * Render the "Services" checkboxes.
-   */
-  public function services_render( $services ) {
-    // Special case for this field if it's displayed on the settings page.
-    $on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
-    $services         = ( ! empty( $services ) && is_array( $services ) ) ? $services : array();
-    $description      = sprintf( '%1$s<br><a href="%2$s" target="_blank">%3$s</a>',
-      __( 'Choose which services to share to.', 'wp_to_diaspora' ),
-      'https://' . $this->get_option( 'pod' ) . '/services',
-      __( 'Show available services on my pod.', 'wp_to_diaspora' )
-    );
-    // Keep this for when we have a better pod selection which includes dropdown for HTTP/S.
-    // $link_to_services = sprintf( 'http%s://%s%s', ( $this->get_option( 'is_secure' ) ) ? 's' : '', $this->get_option( 'pod' ), '/services' );
-
-    if ( ! $on_settings_page ) {
-      echo $description;
-    }
     ?>
-    <div id="services-container" data-services-selected="<?php echo implode( ',', $services ); ?>">
-      <?php
-      if ( $services_list = $this->get_option( 'services_list' ) ) {
-        foreach ( $services_list as $service_id => $service_name ) {
-          ?>
-          <label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="<?php echo $service_id; ?>" <?php checked( in_array( $service_id, $services ) ); ?>><?php echo $service_name; ?></label>
-          <?php
-        }
-      } else {
-        // No services loaded yet.
-        ?>
-        <label><?php _e( 'No services connected yet.', 'wp_to_diaspora' ); ?></label>
-        <?php
-      }
-      ?>
+    <div id="<?php echo $type; ?>-container" data-<?php echo $type; ?>-selected="<?php echo implode( ',', $items ); ?>">
+      <?php if ( $list = (array) $this->get_option( $type . '_list' ) ) : ?>
+        <?php foreach ( $list as $id => $name ) : ?>
+          <label><input type="checkbox" name="wp_to_diaspora_settings[<?php echo $type; ?>][]" value="<?php echo $id; ?>" <?php checked( in_array( $id, $items ) ); ?>><?php echo $name; ?></label>
+        <?php endforeach; ?>
+      <?php else : ?>
+        <label><?php echo $empty_label; ?></label>
+      <?php endif; ?>
     </div>
-    <p class="description"><?php if ( $on_settings_page ) { echo $description; } ?> <a id="refresh-services-list" class="button"><?php _e( 'Refresh Services', 'wp_to_diaspora' ); ?></a><span class="spinner" style="display: none;"></span></p>
+    <p class="description">
+      <?php echo $description; ?>
+      <a id="refresh-<?php echo $type; ?>-list" class="button"><?php echo $refresh_button; ?></a>
+      <span class="spinner" style="display: none;"></span>
+    </p>
     <?php
   }
 
@@ -702,47 +675,22 @@ class WP2D_Options {
       }
 
       // Checkboxes.
-      foreach ( array( 'post_to_diaspora', 'fullentrylink' ) as $option ) {
-        $input[ $option ] = isset( $input[ $option ] );
-      }
+      $this->validate_checkboxes( array( 'post_to_diaspora', 'fullentrylink' ), $input );
 
       // Single Selects.
-      foreach ( array( 'display' ) as $option ) {
-        if ( isset( $input[ $option ] ) && ! $this->is_valid_value( $option, $input[ $option ] ) ) {
-          unset( $input[ $option ] );
-        }
-      }
+      $this->validate_single_selects( 'display', $input );
 
       // Multiple Selects.
-      foreach ( array( 'tags_to_post' ) as $option ) {
-        if ( isset( $input[ $option ] ) ) {
-          foreach ( (array) $input[ $option ] as $option_value ) {
-            if ( ! $this->is_valid_value( $option, $option_value ) ) {
-              unset( $input[ $option ] );
-              break;
-            }
-          }
-        } else {
-          $input[ $option ] = array();
-        }
-      }
+      $this->validate_multi_selects( 'tags_to_post', $input );
 
       // Get unique, non-empty, trimmed tags and clean them up.
-      $input['global_tags'] = WP2D_Helpers::get_clean_tags( $input['global_tags'] );
+      $this->validate_tags( $input['global_tags'] );
 
       // Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
-      if ( empty( $input['aspects'] ) || ! is_array( $input['aspects'] ) ) {
-        $input['aspects'] = array( 'public' );
-      } else {
-        array_walk( $input['aspects'], 'sanitize_text_field' );
-      }
+      $this->validate_aspects_services( $input['aspects'], array( 'public' ) );
 
       // Clean up the list of services.
-      if ( empty( $input['services'] ) || ! is_array( $input['services'] ) ) {
-        $input['services'] = array();
-      } else {
-        array_walk( $input['services'], 'sanitize_text_field' );
-      }
+      $this->validate_aspects_services( $input['services'] );
     }
 
     // Reset to defaults.
@@ -763,5 +711,104 @@ class WP2D_Options {
 
     // Parse inputs with default options and return.
     return wp_parse_args( $input, array_merge( self::$_default_options, self::$_options ) );
+  }
+
+  /**
+   * Validate checkboxes, make them either true or false.
+   *
+   * @param  string|array $checkboxes Checkboxes to validate.
+   * @param  array &$options          Options values themselves.
+   * @return array                    The validated options.
+   */
+  public function validate_checkboxes( $checkboxes, &$options ) {
+    foreach ( WP2D_Helpers::str_to_arr( $checkboxes ) as $checkbox ) {
+      $options[ $checkbox ] = isset( $options[ $checkbox ] );
+    }
+    return $options;
+  }
+
+  /**
+   * Validate single-select fields and make sure their selected value are valid.
+   *
+   * @param  string|array $selects  Name(s) of the select fields.
+   * @param  array        &$options Options values themselves.
+   * @return array                  The validated options.
+   */
+  public function validate_single_selects( $selects, &$options ) {
+    foreach ( WP2D_Helpers::str_to_arr( $selects ) as $select ) {
+      if ( isset( $options[ $select ] ) && ! $this->is_valid_value( $select, $options[ $select ] ) ) {
+        unset( $options[ $select ] );
+      }
+    }
+    return $options;
+  }
+
+  /**
+   * Validate multi-select fields and make sure their selected values are valid.
+   *
+   * @param  string|array $selects  Name(s) of the select fields.
+   * @param  array        &$options Options values themselves.
+   * @return array                  The validated options.
+   */
+  public function validate_multi_selects( $selects, &$options ) {
+    foreach ( WP2D_Helpers::str_to_arr( $selects ) as $select ) {
+      if ( isset( $options[ $select ] ) ) {
+        foreach ( (array) $options[ $select ] as $option_value ) {
+          if ( ! $this->is_valid_value( $select, $option_value ) ) {
+            unset( $options[ $select ] );
+            break;
+          }
+        }
+      } else {
+        $options[ $select ] = array();
+      }
+    }
+    return $options;
+  }
+
+  /**
+   * Clean up the passed tags. Keep only alphanumeric, hyphen and underscore characters.
+   *
+   * @param  array|string &$tags Tags to be cleaned as array or comma seperated values.
+   * @return array               The cleaned tags.
+   */
+  public function validate_tags( &$tags ) {
+    WP2D_Helpers::str_to_arr( $tags );
+
+    $tags = array_map( array( $this, 'validate_tag' ),
+      array_unique(
+        array_filter( $tags, 'trim' )
+      )
+    );
+    return $tags;
+  }
+
+  /**
+   * Clean up the passed tag. Keep only alphanumeric, hyphen and underscore characters.
+   *
+   * @todo   What about eastern characters? (chinese, indian, etc.)
+   *
+   * @param  string &$tag Tag to be cleaned.
+   * @return string       The clean tag.
+   */
+  public function validate_tag( &$tag ) {
+    $tag = preg_replace( '/[^\w $\-]/u', '', str_replace( ' ', '-', trim( $tag ) ) );
+    return $tag;
+  }
+
+  /**
+   * Validate the passed aspects or services.
+   *
+   * @param  array &$aspects_services List of aspects or services that need to be validated.
+   * @param  array $default           Default value if not valid.
+   * @return array                    The validated list of aspects or services.
+   */
+  public function validate_aspects_services( &$aspects_services, $default = array() ) {
+    if ( empty( $aspects_services ) || ! is_array( $aspects_services ) ) {
+      $aspects_services = $default;
+    } else {
+      array_walk( $aspects_services, 'sanitize_text_field' );
+    }
+    return $aspects_services;
   }
 }

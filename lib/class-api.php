@@ -224,7 +224,7 @@ class WP2D_API {
   }
 
   /**
-   * Log in to Diaspora.
+   * Log in to diaspora*.
    *
    * @param  string  $username Username used for login.
    * @param  string  $password Password used for login.
@@ -278,12 +278,12 @@ class WP2D_API {
   }
 
   /**
-   * Post to Diaspora.
+   * Post to diaspora*.
    *
    * @param  string         $text       The text to post.
    * @param  array|string   $aspects    The aspects to post to. (Array or comma seperated ids)
    * @param  array          $extra_data Any extra data to be added to the post call.
-   * @return boolean|string             Return the response data of the new diaspora* post if successfully posted, else false.
+   * @return boolean|object             Return the response data of the new diaspora* post if successfully posted, else false.
    */
   public function post( $text, $aspects = 'public', $extra_data = array() ) {
     // Are we logged in?
@@ -291,10 +291,9 @@ class WP2D_API {
       return false;
     }
 
-    // Put the aspects into an array.
-    if ( isset( $aspects ) && ! is_array( $aspects ) ) {
-      $aspects = array_filter( explode( ',', $aspects ) );
-    }
+    // Put the aspects into a clean array.
+    $aspects = array_filter( WP2D_Helpers::str_to_arr( $aspects ) );
+
     // If no aspects have been selected or the public one is also included, choose public only.
     if ( empty( $aspects ) || in_array( 'public', $aspects ) ) {
       $aspects = 'public';
@@ -330,6 +329,9 @@ class WP2D_API {
       return false;
     }
 
+    // Add additional info to our response.
+    $response->permalink = $this->get_pod_url( '/posts/' . $response->guid );
+
     return $response;
   }
 
@@ -341,20 +343,7 @@ class WP2D_API {
    * @return array          Array of aspect objects.
    */
   public function get_aspects( $force = false ) {
-    if ( ! $this->_check_login() ) {
-      return false;
-    }
-
-    // Fetch the new list of aspects if the current list is empty or a reload is forced.
-    if ( empty( $this->_aspects ) || (bool) $force ) {
-      $req = $this->_http_request( '/bookmarklet' );
-      if ( 200 !== $req->info['http_code'] ) {
-        $this->last_error = __( 'Error loading aspects.', 'wp_to_diaspora' );
-        return false;
-      }
-      // No need to parse for aspects, as it get's done for each http request anyway.
-    }
-    return $this->_aspects;
+    return ( $this->_get_aspects_services( 'aspects', $this->_aspects, $force ) ) ? $this->_aspects : false;
   }
 
   /**
@@ -364,20 +353,43 @@ class WP2D_API {
    * @return array          Array of service objects.
    */
   public function get_services( $force = false ) {
+    return ( $this->_get_aspects_services( 'services', $this->_services, $force ) ) ? $this->_services : false;
+  }
+
+  /**
+   * Get the list of aspects or connected services.
+   *
+   * @param  string  $type  Type of list to get.
+   * @param  array   $list  The current list of items.
+   * @param  boolean $force Force to fetch new list.
+   * @return boolean        Was the list fetched successfully?
+   */
+  private function _get_aspects_services( $type, $list, $force ) {
+    $error_message = '';
+    switch ( $type ) {
+      case 'aspects':
+        $error_message = __( 'Error loading aspects.', 'wp_to_diaspora' );
+        break;
+      case 'services':
+        $error_message = __( 'Error loading services.', 'wp_to_diaspora' );
+        break;
+    }
+
     if ( ! $this->_check_login() ) {
       return false;
     }
 
-    // Fetch the new list of services if the current list is empty or a reload is forced.
-    if ( empty( $this->_services ) || (bool) $force ) {
+    // Fetch the new list if the current list is empty or a reload is forced.
+    if ( empty( $list ) || (bool) $force ) {
       $req = $this->_http_request( '/bookmarklet' );
       if ( 200 !== $req->info['http_code'] ) {
-        $this->last_error = __( 'Error loading services.', 'wp_to_diaspora' );
+        $this->last_error = $error_message;
         return false;
       }
-      // No need to parse for services, as it get's done for each http request anyway.
+      // No need to parse the list, as it get's done for each http request anyway.
     }
-    return $this->_services;
+
+    return true;
   }
 
   /**

@@ -49,34 +49,29 @@ class WP2D_Helpers {
   }
 
   /**
-   * Clean up the passed tags. Keep only alphanumeric, hyphen and underscore characters.
+   * Convert a string with comma seperated values to an array.
    *
-   * @param  array|string $tags Tags to be cleaned as array or comma seperated values.
-   * @return array              The cleaned tags.
+   * @param  array|string &$input The string to be converted.
+   * @return array                The converted array.
    */
-  public static function get_clean_tags( $tags ) {
-    // Make sure we have an array of tags.
-    if ( ! is_array( $tags ) ) {
-      $tags = explode( ',', $tags );
+  public static function str_to_arr( &$input ) {
+    if ( ! is_array( $input ) ) {
+      $input = explode( ',', $input );
     }
-
-    return array_map( array( 'WP2D_Helpers', 'get_clean_tag' ),
-      array_unique(
-        array_filter( $tags, 'trim' )
-      )
-    );
+    return $input;
   }
 
   /**
-   * Clean up the passed tag. Keep only alphanumeric, hyphen and underscore characters.
+   * Convert an array to a string with comma seperated values.
    *
-   * @todo   What about eastern characters? (chinese, indian, etc.)
-   *
-   * @param  string $tag Tag to be cleaned.
-   * @return string      The clean tag.
+   * @param  array|string  &$input The array to be converted.
+   * @return string                The converted string.
    */
-  public static function get_clean_tag( $tag ) {
-    return preg_replace( '/[^\w $\-]/u', '', str_replace( ' ', '-', trim( $tag ) ) );
+  public static function arr_to_str( &$input ) {
+    if ( is_array( $input ) ) {
+      $input = implode( ',', $input );
+    }
+    return $input;
   }
 
   /**
@@ -101,5 +96,25 @@ class WP2D_Helpers {
   public static function decrypt( $input, $key = AUTH_KEY ) {
     global $wpdb;
     return $wpdb->get_var( $wpdb->prepare( "SELECT AES_DECRYPT(UNHEX(%s),%s)", $input, $key ) );
+  }
+
+  /**
+   * Set up and return an API connection using the currently saved options..
+   *
+   * @return WP2D_API|boolean If connected successfully, the API object, else false.
+   */
+  public static function api_quick_connect() {
+    $options   = WP2D_Options::get_instance();
+    $pod       = (string) $options->get_option( 'pod' );
+    $is_secure = true;
+    $username  = (string) $options->get_option( 'username' );
+    $password  = WP2D_Helpers::decrypt( (string) $options->get_option( 'password' ) );
+
+    $api = new WP2D_API( $pod, $is_secure );
+    if ( $api->init() ) {
+      $api->login( $username, $password );
+    }
+
+    return $api;
   }
 }
