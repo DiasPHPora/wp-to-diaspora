@@ -1,18 +1,18 @@
 .settings_page_wp_to_diaspora .spinner,
 #wp_to_diaspora_meta_box .spinner {
-  display: inline-block;
-  visibility: visible;
-  margin: 0;
-  float: none;
-  vertical-align: middle;
+	display: inline-block;
+	visibility: visible;
+	margin: 0;
+	float: none;
+	vertical-align: middle;
 }
 
 /* Modifications for chosen. */
 
 #enabled_post_types_chosen,
 #tags_to_post_chosen {
-  width: auto !important;
-  min-width: 10em;
+	width: auto !important;
+	min-width: 10em;
 }
 
 /* TAG-IT */
@@ -20,102 +20,103 @@
 /* Optional scoped theme for tag-it which mimics the zendesk widget. */
 
 ul.tagit {
-    margin: 0;
+	margin: 0;
 }
 
 ul.tagit li.tagit-choice {
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border: 1px solid #b4b4b4;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	border: 1px solid #b4b4b4;
 
-    background-color: #eeeeee;
-    background-image: none;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
-    background-image: -webkit-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-    background-image: -moz-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-    background-image: -o-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-    background-image: linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-    background-size: 100% 19px;
-    background-repeat: repeat-x;
-    background-clip: padding-box;
-    box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+	background-color: #eeeeee;
+	background-image: none;
+	background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
+	background-image: -webkit-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+	background-image: -moz-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+	background-image: -o-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+	background-image: linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+	background-size: 100% 19px;
+	background-repeat: repeat-x;
+	background-clip: padding-box;
+	box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
 
-    font-weight: 400;
-    font-family: sans-serif;
-    color: #333;
-    line-height: 13px;
+	font-weight: 400;
+	font-family: sans-serif;
+	color: #333;
+	line-height: 13px;
 
-    padding: 3px 18px 3px 6px;
+	padding: 3px 18px 3px 6px;
 }
 ul.tagit li.tagit-choice .tagit-label:not(a) {
-    color: #555;
+	color: #555;
 }
 ul.tagit li.tagit-choice a.tagit-close {
-    text-decoration: none;
+	text-decoration: none;
 }
 ul.tagit li.tagit-choice .tagit-close {
-    right: .4em;
+	right: .4em;
 }
 ul.tagit li.tagit-choice .ui-icon {
-    display: none;
+	display: none;
 }
 ul.tagit li.tagit-choice .tagit-close .text-icon {
-    display: inline;
-    font-family: arial, sans-serif;
-    font-size: 16px;
-    line-height: 16px;
-    color: #777;
+	display: inline;
+	font-family: arial, sans-serif;
+	font-size: 16px;
+	line-height: 16px;
+	color: #777;
 }
 ul.tagit li.tagit-choice.remove {
-    background-color: #D4D4D4;
-    background-image: none;
-    border-color: #b4b4b4;
+	background-color: #D4D4D4;
+	background-image: none;
+	border-color: #b4b4b4;
 }
+
 ul.tagit li.tagit-choice a.tagLabel:hover,
 ul.tagit li.tagit-choice a.tagit-close .text-icon:hover {
-    color: #222;
+	color: #222;
 }
 ul.tagit input[type="text"] {
-    color: #333333;
-    background: none;
+	color: #333333;
+	background: none;
 }
 .ui-widget {
-    font-size: 13px;
+	font-size: 13px;
 }
 
 /* Forked from a jQuery UI theme, so that we don't require the jQuery UI CSS as a dependency. */
 .tagit-autocomplete.ui-autocomplete { position: absolute; cursor: default; }
 * html .tagit-autocomplete.ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
 .tagit-autocomplete.ui-menu {
-    list-style:none;
-    padding: 2px;
-    margin: 0;
-    display:block;
-    float: left;
+	list-style:none;
+	padding: 2px;
+	margin: 0;
+	display:block;
+	float: left;
 }
 .tagit-autocomplete.ui-menu .ui-menu {
-    margin-top: -3px;
+	margin-top: -3px;
 }
 .tagit-autocomplete.ui-menu .ui-menu-item {
-    margin:0;
-    padding: 0;
-    zoom: 1;
-    float: left;
-    clear: left;
-    width: 100%;
+	margin:0;
+	padding: 0;
+	zoom: 1;
+	float: left;
+	clear: left;
+	width: 100%;
 }
 .tagit-autocomplete.ui-menu .ui-menu-item a {
-    text-decoration:none;
-    display:block;
-    padding:.2em .4em;
-    line-height:1.5;
-    zoom:1;
+	text-decoration:none;
+	display:block;
+	padding:.2em .4em;
+	line-height:1.5;
+	zoom:1;
 }
 .tagit-autocomplete .ui-menu .ui-menu-item a.ui-state-hover,
 .tagit-autocomplete .ui-menu .ui-menu-item a.ui-state-active {
-    font-weight: normal;
-    margin: -1px;
+	font-weight: normal;
+	margin: -1px;
 }
 .tagit-autocomplete.ui-widget-content { border: 1px solid #dddddd; background: #ffffff 50% 50% repeat-x; color: #222222; }
 .tagit-autocomplete.ui-corner-all, .tagit-autocomplete .ui-corner-all { -moz-border-radius: 4px; -webkit-border-radius: 4px; -khtml-border-radius: 4px; border-radius: 4px; }
