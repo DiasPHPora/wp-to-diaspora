@@ -191,7 +191,7 @@ class WP_To_Diaspora {
 	 * Set up i18n.
 	 */
 	public function l10n() {
-		load_plugin_textdomain( 'wp_to_diaspora', false, 'wp-to-diaspora/languages' );
+		load_plugin_textdomain( 'wp-to-diaspora', false, 'wp-to-diaspora/languages' );
 	}
 
 	/**
@@ -214,11 +214,11 @@ class WP_To_Diaspora {
 			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), array( 'jquery' ), false, true );
 			// Javascript-specific l10n.
 			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', array(
-				'no_services_connected' => __( 'No services connected yet.', 'wp_to_diaspora' ),
-				'sure_reset_defaults'   => __( 'Are you sure you want to reset to default values?', 'wp_to_diaspora' ),
-				'conn_testing'          => __( 'Testing connection...', 'wp_to_diaspora' ),
-				'conn_successful'       => __( 'Connection successful.', 'wp_to_diaspora' ),
-				'conn_failed'           => __( 'Connection failed.', 'wp_to_diaspora' ),
+				'no_services_connected' => __( 'No services connected yet.', 'wp-to-diaspora' ),
+				'sure_reset_defaults'   => __( 'Are you sure you want to reset to default values?', 'wp-to-diaspora' ),
+				'conn_testing'          => __( 'Testing connection...', 'wp-to-diaspora' ),
+				'conn_successful'       => __( 'Connection successful.', 'wp-to-diaspora' ),
+				'conn_failed'           => __( 'Connection failed.', 'wp-to-diaspora' ),
 			) );
 		}
 	}

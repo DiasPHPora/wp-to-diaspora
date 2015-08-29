@@ -349,7 +349,7 @@ class WP2D_Post {
 		$link = '';
 		if ( $this->fullentrylink ) {
 			$link = sprintf( '%1$s [%2$s](%2$s "%3$s")',
-				__( 'Originally posted at:', 'wp_to_diaspora' ),
+				__( 'Originally posted at:', 'wp-to-diaspora' ),
 				get_permalink( $this->ID ),
 				$this->post->post_title
 			);
@@ -464,7 +464,7 @@ class WP2D_Post {
 		if ( is_array( $this->post_history ) ) {
 			$latest_post = end( $this->post_history );
 			?>
-			<p><a href="<?php echo esc_attr( $latest_post['post_url'] ); ?>" target="_blank"><?php esc_html_e( 'Already posted to diaspora*.', 'wp_to_diaspora' ); ?></a></p>
+			<p><a href="<?php echo esc_attr( $latest_post['post_url'] ); ?>" target="_blank"><?php esc_html_e( 'Already posted to diaspora*.', 'wp-to-diaspora' ); ?></a></p>
 			<?php
 		}
 		?>
@@ -570,10 +570,10 @@ class WP2D_Post {
 		if ( $error = get_post_meta( $post->ID, '_wp_to_diaspora_post_error', true ) ) {
 			// This notice will only be shown if posting to diaspora* has failed.
 			printf( '<div class="error notice is-dismissible"><p>%1$s %2$s <a href="%3$s">%4$s</a></p></div>',
-				esc_html__( 'Failed to post to diaspora*.', 'wp_to_diaspora' ),
+				esc_html__( 'Failed to post to diaspora*.', 'wp-to-diaspora' ),
 				esc_html( $error ),
 				esc_url( add_query_arg( 'wp_to_diaspora_ignore_post_error', 'yes' ) ),
-				esc_html__( 'Ignore', 'wp_to_diaspora' )
+				esc_html__( 'Ignore', 'wp-to-diaspora' )
 			);
 		} elseif ( ( $diaspora_post_history = get_post_meta( $post->ID, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
 			// Get the latest post from the history.
@@ -582,7 +582,7 @@ class WP2D_Post {
 			// Only show if this post is showing a message and the post is a fresh share.
 			if ( isset( $_GET['message'] ) && $post->post_modified === $latest_post['created_at'] ) {
 				printf( '<div class="updated notice is-dismissible"><p>%1$s <a href="%2$s" target="_blank">%3$s</a></p></div>',
-					esc_html__( 'Successfully posted to diaspora*.', 'wp_to_diaspora' ),
+					esc_html__( 'Successfully posted to diaspora*.', 'wp-to-diaspora' ),
 					esc_url( $latest_post['post_url'] ),
 					esc_html__( 'View Post' )
 				);
