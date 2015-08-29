@@ -56,6 +56,8 @@ class WP2D_Helpers {
 	/**
 	 * Convert a string with comma seperated values to an array.
 	 *
+	 * @todo Make $input by value.
+	 *
 	 * @param array|string $input The string to be converted.
 	 * @return array The converted array.
 	 */
@@ -68,6 +70,8 @@ class WP2D_Helpers {
 
 	/**
 	 * Convert an array to a string with comma seperated values.
+	 *
+	 * @todo Make $input by value.
 	 *
 	 * @param array|string $input The array to be converted.
 	 * @return string The converted string.
@@ -106,7 +110,7 @@ class WP2D_Helpers {
 	/**
 	 * Set up and return an API connection using the currently saved options..
 	 *
-	 * @return WP2D_API|boolean If connected successfully, the API object, else false.
+	 * @return WP2D_API The API object.
 	 */
 	public static function api_quick_connect() {
 		$options   = WP2D_Options::get_instance();

@@ -343,7 +343,7 @@ class WP_To_Diaspora {
 		if ( true === $status ) {
 			wp_send_json_success();
 		} elseif ( false === $status ) {
-			wp_send_json_error( $this->_api->last_error );
+			wp_send_json_error( $this->_load_api()->last_error );
 		}
 	}
 }
