@@ -1,0 +1,14 @@
+<phpunit
+  backupGlobals="false"
+  bootstrap="tests/bootstrap.php"
+  colors="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  >
+	<testsuites>
+		<testsuite name="WP to diaspora*">
+			<directory prefix="tests-" suffix=".php">./tests/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
