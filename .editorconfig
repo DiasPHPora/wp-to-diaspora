@@ -4,10 +4,6 @@
 # WordPress Coding Standards
 # https://make.wordpress.org/core/handbook/coding-standards/
 
-# Based from https://github.com/ntwb/wp.editorconfig/blob/master/.editorconfig
-#
-# Need an IDE plugin? http://editorconfig.org/#download
-
 root = true
 
 [*]
@@ -17,13 +13,9 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = tab
 
-[*.json]
+[{.jshintrc,*.json,*.yml}]
 indent_style = space
 indent_size = 2
 
-[*.yml]
-indent_style = space
-indent_size = 4
-
-[*.txt,wp-config-sample.php]
+[{*.txt,wp-config-sample.php}]
 end_of_line = crlf
