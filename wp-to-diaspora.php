@@ -41,13 +41,6 @@ define( 'WP2D_VERSION', '1.4.1' );
 class WP_To_Diaspora {
 
 	/**
-	 * Has the plugin already been set up?
-	 *
-	 * @var boolean
-	 */
-	private static $_is_set_up = false;
-
-	/**
 	 * Only instance of this class.
 	 *
 	 * @var WP_To_Diaspora
@@ -66,69 +59,76 @@ class WP_To_Diaspora {
 	 *
 	 * @return WP_To_Diaspora Instance of this class.
 	 */
-	public static function get_instance() {
+	public static function instance() {
 		if ( ! isset( self::$_instance ) ) {
 			self::$_instance = new self();
+			self::$_instance->_constants();
+			self::$_instance->_includes();
+			self::$_instance->_setup();
 		}
 		return self::$_instance;
 	}
 
 	/**
-	 * Set up the plugin.
+	 * Define all the required constants.
+	 *
+	 * @since 1.5.0
 	 */
-	public static function setup() {
-		// If the instance is already set up, just return.
-		if ( self::$_is_set_up ) {
-			return;
-		}
-
-		// Get the unique instance.
-		$instance = self::get_instance();
-
+	private function _constants() {
 		// Are we in debugging mode?
 		define( 'WP2D_DEBUGGING', isset( $_GET['debugging'] ) );
 
-		// Define simple constants.
 		define( 'WP2D_DIR', dirname( __FILE__ ) );
 		define( 'WP2D_LIB_DIR', WP2D_DIR . '/lib' );
+	}
 
-		// Load necessary classes.
+	/**
+	 * Include all the required files.
+	 *
+	 * @since 1.5.0
+	 */
+	private function _includes() {
 		if ( ! class_exists( 'HTML_To_Markdown' ) ) {
 			require_once WP2D_LIB_DIR . '/class-html-to-markdown.php';
 		}
-		require_once WP2D_LIB_DIR . '/class-helpers.php';
 		require_once WP2D_LIB_DIR . '/class-api.php';
+		require_once WP2D_LIB_DIR . '/class-contextual-help.php';
+		require_once WP2D_LIB_DIR . '/class-helpers.php';
+		require_once WP2D_LIB_DIR . '/class-options.php';
+		require_once WP2D_LIB_DIR . '/class-post.php';
+	}
+
+
+	/**
+	 * Set up the plugin.
+	 */
+	private function _setup() {
 
 		// Load languages.
-		add_action( 'plugins_loaded', array( $instance, 'l10n' ) );
+		add_action( 'plugins_loaded', array( $this, 'l10n' ) );
 
 		// Add "Settings" link to plugin page.
-		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $instance, 'settings_link' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'settings_link' ) );
 
 		// Perform any necessary data upgrades.
-		add_action( 'admin_init', array( $instance, 'upgrade' ) );
+		add_action( 'admin_init', array( $this, 'upgrade' ) );
 
 		// Enqueue CSS and JS scripts.
-		add_action( 'admin_enqueue_scripts', array( $instance, 'admin_load_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_load_scripts' ) );
 
 		// Set up the options.
-		require_once WP2D_LIB_DIR . '/class-options.php';
-		add_action( 'admin_menu', array( 'WP2D_Options', 'setup' ) );
+		add_action( 'admin_menu', array( 'WP2D_Options', 'instance' ) );
 
 		// WP2D Post.
-		require_once WP2D_LIB_DIR . '/class-post.php';
 		add_action( 'admin_init', array( 'WP2D_Post', 'setup' ) );
 
 		// AJAX actions for loading pods, aspects and services.
-		add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', array( $instance, 'update_pod_list_callback' ) );
-		add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', array( $instance, 'update_aspects_list_callback' ) );
-		add_action( 'wp_ajax_wp_to_diaspora_update_services_list', array( $instance, 'update_services_list_callback' ) );
+		add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', array( $this, 'update_pod_list_callback' ) );
+		add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', array( $this, 'update_aspects_list_callback' ) );
+		add_action( 'wp_ajax_wp_to_diaspora_update_services_list', array( $this, 'update_services_list_callback' ) );
 
 		// Check the pod connection status on the options page.
-		add_action( 'wp_ajax_wp_to_diaspora_check_pod_connection_status', array( $instance, 'check_pod_connection_status_callback' ) );
-
-		// The instance has been set up.
-		self::$_is_set_up = true;
+		add_action( 'wp_ajax_wp_to_diaspora_check_pod_connection_status', array( $this, 'check_pod_connection_status_callback' ) );
 	}
 
 	/**
@@ -148,7 +148,7 @@ class WP_To_Diaspora {
 	 */
 	public function upgrade() {
 		// Get the current options, or assign defaults.
-		$options = WP2D_Options::get_instance();
+		$options = WP2D_Options::instance();
 		$version = $options->get_option( 'version' );
 
 		// If the versions differ, this is probably an update. Need to save updated options.
@@ -199,7 +199,7 @@ class WP_To_Diaspora {
 	 */
 	public function admin_load_scripts() {
 		// Get the enabled post types to load the script for.
-		$enabled_post_types = WP2D_Options::get_instance()->get_option( 'enabled_post_types', array() );
+		$enabled_post_types = WP2D_Options::instance()->get_option( 'enabled_post_types', array() );
 
 		// Get the screen to find out where we are.
 		$screen = get_current_screen();
@@ -256,7 +256,7 @@ class WP_To_Diaspora {
 					}
 				}
 
-				$options = WP2D_Options::get_instance();
+				$options = WP2D_Options::instance();
 				$options->set_option( 'pod_list', $pods );
 				$options->save();
 			}
@@ -279,7 +279,7 @@ class WP_To_Diaspora {
 	 * @return array The list of aspects or services.
 	 */
 	private function _update_aspects_services_list( $type ) {
-		$options = WP2D_Options::get_instance();
+		$options = WP2D_Options::instance();
 		$list    = $options->get_option( $type . '_list' );
 
 		// Make sure that we have at least the 'Public' aspect.
@@ -296,7 +296,7 @@ class WP_To_Diaspora {
 				$list = $api->get_services();
 			}
 			// So we have a new list.
-			$options = WP2D_Options::get_instance();
+			$options = WP2D_Options::instance();
 			$options->set_option( $type . '_list', $list );
 			$options->save();
 		}
@@ -324,7 +324,7 @@ class WP_To_Diaspora {
 	 * @return string The status of the connection.
 	 */
 	private function _check_pod_connection_status() {
-		$options = WP2D_Options::get_instance();
+		$options = WP2D_Options::instance();
 
 		$status = null;
 
@@ -349,4 +349,4 @@ class WP_To_Diaspora {
 }
 
 // Get the party started!
-WP_To_Diaspora::setup();
+WP_To_Diaspora::instance();
