@@ -3,7 +3,7 @@
  * A diaspora* flavoured WP Post class.
  *
  * @package WP_To_Diaspora\Post
- * @since 1.4.1
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Custom diaspora* post class to manage all post related things.
  *
- * @since 1.4.1
+ * @since 1.5.0
  */
 class WP2D_Post {
 
@@ -20,7 +20,7 @@ class WP2D_Post {
 	 * The original post object.
 	 *
 	 * @var WP_Posts
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $post = null;
 
@@ -28,7 +28,7 @@ class WP2D_Post {
 	 * The original post ID.
 	 *
 	 * @var int
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $ID = null;
 
@@ -36,7 +36,7 @@ class WP2D_Post {
 	 * If this post should be shared on diaspora*.
 	 *
 	 * @var bool
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $post_to_diaspora = null;
 
@@ -44,7 +44,7 @@ class WP2D_Post {
 	 * If a link back to the original post should be added.
 	 *
 	 * @var bool
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $fullentrylink = null;
 
@@ -52,7 +52,7 @@ class WP2D_Post {
 	 * What content gets posted.
 	 *
 	 * @var string
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $display = null;
 
@@ -60,7 +60,7 @@ class WP2D_Post {
 	 * The types of tags to post. (global,custom,post)
 	 *
 	 * @var array
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $tags_to_post = null;
 
@@ -68,7 +68,7 @@ class WP2D_Post {
 	 * The post's custom tags.
 	 *
 	 * @var array
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $custom_tags = null;
 
@@ -76,7 +76,7 @@ class WP2D_Post {
 	 * Aspects this post gets posted to.
 	 *
 	 * @var array
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $aspects = null;
 
@@ -84,7 +84,7 @@ class WP2D_Post {
 	 * Services this post gets posted to.
 	 *
 	 * @var array
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $services = null;
 
@@ -93,7 +93,7 @@ class WP2D_Post {
 	 * The post's history of diaspora* posts.
 	 *
 	 * @var array
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public $post_history = null;
 
@@ -108,7 +108,7 @@ class WP2D_Post {
 	/**
 	 * Setup all the necessary WP callbacks.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public static function setup() {
 		if ( self::$_is_set_up ) {
@@ -134,7 +134,7 @@ class WP2D_Post {
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @param int|WP_Post $post Post ID or the post itself.
 	 */
@@ -145,7 +145,7 @@ class WP2D_Post {
 	/**
 	 * Assign the original WP_Post object and all the custom meta data.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @param int|WP_Post $post Post ID or the post itself.
 	 */
@@ -173,7 +173,7 @@ class WP2D_Post {
 	/**
 	 * Post to diaspora* when saving a post.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @param integer $post_id ID of the post being saved.
 	 * @param WP_Post $post    Post object being saved.
@@ -243,7 +243,7 @@ class WP2D_Post {
 	/**
 	 * Get the title of the post linking to the post itself.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @return string Post title as a link.
 	 */
@@ -258,7 +258,7 @@ class WP2D_Post {
 	/**
 	 * Get the full post content with only default filters applied.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @return string The full post content.
 	 */
@@ -277,7 +277,7 @@ class WP2D_Post {
 	/**
 	 * Get the post's excerpt in a nice format.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @return string Post's excerpt.
 	 */
@@ -301,7 +301,7 @@ class WP2D_Post {
 	/**
 	 * Get a string of tags that have been added to the post.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @return string Tags added to the post.
 	 */
@@ -355,7 +355,7 @@ class WP2D_Post {
 	/**
 	 * Get the link to the original post.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @return string Original post link.
 	 */
@@ -375,7 +375,7 @@ class WP2D_Post {
 	/**
 	 * Save the details of the new diaspora* post to this post's history.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @param object $response Response from the API containing the diaspora* post details.
 	 */
@@ -401,7 +401,7 @@ class WP2D_Post {
 	/**
 	 * Return URL from [embed] shortcode instead of generated iframe.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 * @see WP_Embed::shortcode()
 	 *
 	 * @param mixed  $html The cached HTML result, stored in post meta.
@@ -415,7 +415,7 @@ class WP2D_Post {
 	/**
 	 * Removes '[embed]' and '[/embed]' left by embed_url.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 * @todo It would be great to fix it using only one filter.
 	 *       It's happening because embed filter is being removed by remove_all_filters('the_content') on WP2D_Post::post().
 	 *
@@ -434,7 +434,7 @@ class WP2D_Post {
 	/**
 	 * Adds a meta box to the main column on the enabled Post Types' edit screens.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public function add_meta_boxes() {
 		$options = WP2D_Options::instance();
@@ -453,7 +453,7 @@ class WP2D_Post {
 	/**
 	 * Prints the meta box content.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @param WP_Post $post The object for the current post.
 	 */
@@ -497,7 +497,7 @@ class WP2D_Post {
 	/**
 	 * When the post is saved, save our meta data.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @param integer $post_id The ID of the post being saved.
 	 */
@@ -541,7 +541,7 @@ class WP2D_Post {
 	/**
 	 * Perform all checks to see if we are allowed to save the meta data.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 *
 	 * @return boolean If the verification checks have passed.
 	 */
@@ -573,7 +573,7 @@ class WP2D_Post {
 	/**
 	 * Add admin notices when a post gets displayed.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public function admin_notices() {
 		global $post, $pagenow;
@@ -607,7 +607,7 @@ class WP2D_Post {
 	/**
 	 * Delete the error post meta data if it gets ignored.
 	 *
-	 * @since 1.4.1
+	 * @since 1.5.0
 	 */
 	public function ignore_post_error() {
 		// If "Ignore" link has been clicked, delete the post error meta data.
