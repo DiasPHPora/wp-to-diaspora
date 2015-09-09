@@ -90,7 +90,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= 1.4.1 =
+= 1.5.0 =
 * SSL CA bundle check and download option
 * Move post related functionality to an own WP2D_Post class
 * Add a helper to facilitate API connections

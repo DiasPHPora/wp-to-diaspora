@@ -195,7 +195,8 @@ class WP2D_Contextual_Help {
 								'<a href="' . add_query_arg( 'temp_ssl_fix', '' ) . '" class="button">', '</a>'
 							)
 							: ''
-						) . '</p>
+						)
+						. '</p>
 				</ul>
 				<p class="dashicons-before dashicons-info">' . esc_html__( 'NOTE: If you choose the temporary option, the copy procedure needs to be done every time the plugin is updated because all files get replaced!', 'wp-to-diaspora' ) . '</p>',
 		) );
