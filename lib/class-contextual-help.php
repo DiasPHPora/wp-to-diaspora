@@ -165,6 +165,8 @@ class WP2D_Contextual_Help {
 		) );
 
 		// Explain the importance of SSL connections to the pod and the CA certificate bundle.
+		$defined_functions = get_defined_functions();
+		$ssl_can_install = ( ! array_diff( array( 'fopen', 'fwrite', 'fclose', 'file_get_contents', 'file_put_contents' ), $defined_functions['internal'] ) );
 		$screen->add_help_tab( array(
 			'id'      => 'ssl',
 			'title'   => esc_html__( 'SSL', 'wp-to-diaspora' ),
@@ -187,14 +189,13 @@ class WP2D_Contextual_Help {
 						)
 						. '<br><p>' .
 						// See if we can do this automatically.
-						( ( ! array_diff( array( 'fopen', 'fwrite', 'fclose', 'file_get_contents', 'file_put_contents' ), get_defined_functions()['internal'] ) )
+						( ( $ssl_can_install )
 							? sprintf(
 								esc_html_x( 'Your server should allow us to %sdo this%s for you :-)', 'Placeholders are HTML for links.', 'wp-to-diaspora' ),
 								'<a href="' . add_query_arg( 'temp_ssl_fix', '' ) . '" class="button">', '</a>'
 							)
 							: ''
-						)
-						. '</p>
+						) . '</p>
 				</ul>
 				<p class="dashicons-before dashicons-info">' . esc_html__( 'NOTE: If you choose the temporary option, the copy procedure needs to be done every time the plugin is updated because all files get replaced!', 'wp-to-diaspora' ) . '</p>',
 		) );
