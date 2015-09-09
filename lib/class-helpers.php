@@ -113,7 +113,7 @@ class WP2D_Helpers {
 	 * @return WP2D_API The API object.
 	 */
 	public static function api_quick_connect() {
-		$options   = WP2D_Options::get_instance();
+		$options   = WP2D_Options::instance();
 		$pod       = (string) $options->get_option( 'pod' );
 		$is_secure = true;
 		$username  = (string) $options->get_option( 'username' );

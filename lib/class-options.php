@@ -15,13 +15,6 @@ defined( 'ABSPATH' ) || exit;
 class WP2D_Options {
 
 	/**
-	 * Have the options already been set up?
-	 *
-	 * @var boolean
-	 */
-	private static $_is_set_up = false;
-
-	/**
 	 * Only instance of this class.
 	 *
 	 * @var WP2D_Options
@@ -79,9 +72,10 @@ class WP2D_Options {
 	 *
 	 * @return WP2D_Options Instance of this class.
 	 */
-	public static function get_instance() {
+	public static function instance() {
 		if ( ! isset( self::$_instance ) ) {
 			self::$_instance = new self();
+			self::$_instance->_setup();
 		}
 		return self::$_instance;
 	}
@@ -89,36 +83,23 @@ class WP2D_Options {
 	/**
 	 * Set up the options menu.
 	 */
-	public static function setup() {
-		// Get the unique instance.
-		$instance = self::get_instance();
-
-		// If the instance is already set up, just return it.
-		if ( self::$_is_set_up ) {
-			return $instance;
-		}
+	private function _setup() {
 
 		// Populate options array.
-		$instance->get_option();
+		$this->get_option();
 
 		// Add options page.
-		$hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $instance, 'admin_options_page' ) );
+		$hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $this, 'admin_options_page' ) );
 
 		// Setup the contextual help menu after the options page has been loaded.
-		require_once WP2D_LIB_DIR . '/class-contextual-help.php';
-		add_action( 'load-' . $hook, array( 'WP2D_Contextual_Help', 'setup' ) );
+		add_action( 'load-' . $hook, array( 'WP2D_Contextual_Help', 'instance' ) );
 
 		// Setup the contextual help menu tab for post types. Checks are made there!
-		add_action( 'load-post.php', array( 'WP2D_Contextual_Help', 'setup' ) );
-		add_action( 'load-post-new.php', array( 'WP2D_Contextual_Help', 'setup' ) );
+		add_action( 'load-post.php', array( 'WP2D_Contextual_Help', 'instance' ) );
+		add_action( 'load-post-new.php', array( 'WP2D_Contextual_Help', 'instance' ) );
 
 		// Register all settings.
-		add_action( 'admin_init', array( $instance, 'register_settings' ) );
-
-		// The instance has been set up.
-		self::$_is_set_up = true;
-
-		return $instance;
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 	}
 
 

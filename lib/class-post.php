@@ -98,11 +98,23 @@ class WP2D_Post {
 	public $post_history = null;
 
 	/**
+	 * If the post actions have all been set up already.
+	 *
+	 * @var boolean
+	 * @since 1.5.0
+	 */
+	private static $_is_set_up = false;
+
+	/**
 	 * Setup all the necessary WP callbacks.
 	 *
 	 * @since 1.4.1
 	 */
 	public static function setup() {
+		if ( self::$_is_set_up ) {
+			return;
+		}
+
 		$instance = new WP2D_Post( null );
 
 		// Notices when a post has been shared or if it has failed.
@@ -115,6 +127,8 @@ class WP2D_Post {
 
 		// Add meta boxes.
 		add_action( 'add_meta_boxes', array( $instance, 'add_meta_boxes' ) );
+
+		self::$_is_set_up = true;
 	}
 
 	/**
@@ -139,7 +153,7 @@ class WP2D_Post {
 		if ( $this->post = get_post( $post ) ) {
 			$this->ID = $this->post->ID;
 
-			$options = WP2D_Options::get_instance();
+			$options = WP2D_Options::instance();
 
 			// Assign all meta values, expanding non-existent ones with the defaults..
 			$meta = wp_parse_args(
@@ -168,7 +182,7 @@ class WP2D_Post {
 	public function post( $post_id, $post ) {
 		$this->_assign_wp_post( $post );
 
-		$options = WP2D_Options::get_instance();
+		$options = WP2D_Options::instance();
 
 		// Is this post type enabled for posting?
 		if ( ! in_array( $post->post_type, $options->get_option( 'enabled_post_types' ) ) ) {
@@ -292,7 +306,7 @@ class WP2D_Post {
 	 * @return string Tags added to the post.
 	 */
 	private function _get_tags_to_add() {
-		$options = WP2D_Options::get_instance();
+		$options = WP2D_Options::instance();
 		$tags_to_post = $this->tags_to_post;
 		$custom_tags  = $this->custom_tags;
 		$tags_to_add  = '';
@@ -423,7 +437,7 @@ class WP2D_Post {
 	 * @since 1.4.1
 	 */
 	public function add_meta_boxes() {
-		$options = WP2D_Options::get_instance();
+		$options = WP2D_Options::instance();
 		foreach ( $options->get_option( 'enabled_post_types' ) as $post_type ) {
 			add_meta_box(
 				'wp_to_diaspora_meta_box',
@@ -450,7 +464,7 @@ class WP2D_Post {
 		wp_nonce_field( 'wp_to_diaspora_meta_box', 'wp_to_diaspora_meta_box_nonce' );
 
 		// Get the default values to use, but give priority to the meta data already set.
-		$options = WP2D_Options::get_instance();
+		$options = WP2D_Options::instance();
 
 		// Make sure we have some value for post meta fields.
 		$this->custom_tags = $this->custom_tags ?: array();
@@ -500,7 +514,7 @@ class WP2D_Post {
 
 		// Meta data to save.
 		$meta_to_save = $_POST['wp_to_diaspora_settings'];
-		$options = WP2D_Options::get_instance();
+		$options = WP2D_Options::instance();
 
 		// Checkboxes.
 		$options->validate_checkboxes( array( 'post_to_diaspora', 'fullentrylink' ), $meta_to_save );
