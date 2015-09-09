@@ -22,13 +22,6 @@ class WP2D_Contextual_Help {
 	private static $_instance = null;
 
 	/**
-	 * The tab information for the settings page including the content.
-	 *
-	 * @var array
-	 */
-	private $_settings_tabs = array();
-
-	/**
 	 * Create / Get the instance of this class.
 	 *
 	 * @return WP2D_Contextual_Help Instance of this class.
