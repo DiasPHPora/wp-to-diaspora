@@ -258,10 +258,17 @@ msgid ""
 "for the post itself. You will see that the default values are filled in "
 "automatically, allowing you to change individual ones as you please."
 msgstr ""
+"При создании или редактировании статьи, ты заметишь новое окошко под "
+"названием \"WP to diaspora*\", с несколькими опциями. Эти опции примерно "
+"такие же, как опции на вкладке \"Значения по умолчанию\" на странице "
+"настроек. Но эти опции специфичны для каждой статьи, т.е. они заменяют "
+"глобальные настройки для данной статьи. Ты увидишь, что застройки по "
+"умолчанию выставляются автоматически, что позволяет изменять отдельные "
+"значения по желанию."
 
 #: lib/class-contextual-help.php:111
 msgid "There are a few important differences to the settings page:"
-msgstr ""
+msgstr "Страница настроек претерпела несколько важных изменений:"
 
 #: lib/class-contextual-help.php:113
 msgid "Already posted to diaspora*"
@@ -272,12 +279,16 @@ msgid ""
 "If the post has already been posted to diaspora* a link to the diaspora* "
 "post will appear at the top."
 msgstr ""
+"Если статья уже была опубликована в diaspora*, вверху появится ссылка на "
+"сообщение в diaspora*."
 
 #: lib/class-contextual-help.php:116
 msgid ""
 "A list of tags that gets added to this post. Note that they are seperate "
 "from the WordPress post tags!"
 msgstr ""
+"Список тегов, которые будут добавлены к этому сообщению. Примечание: не "
+"перепутай с тегами к статьям в WordPress!"
 
 #: lib/class-contextual-help.php:118
 msgid ""
@@ -285,18 +296,21 @@ msgid ""
 "added to the \"Post types\" list on the settings page. Also make sure it has "
 "been selected from the \"Screen Options\" at the top of the screen."
 msgstr ""
+"Если окошко metabox не отображается, проверь, добавлен ли тип статьи в "
+"список \"Типы статей\" на странице настроек. Убедись также, что он был "
+"выбран в \"Настройках Экрана\" вверху страницы."
 
 #: lib/class-contextual-help.php:122
 msgid "Contributing"
-msgstr ""
+msgstr "Помощь проекту"
 
 #: lib/class-contextual-help.php:123
 msgid "So you feel like contributing to the WP to diaspora* plugin? Great!"
-msgstr ""
+msgstr "Хочешь помочь в разработке плагина WP to diaspora*? Отлично!"
 
 #: lib/class-contextual-help.php:124
 msgid "There are many different ways that you can help out with this plugin:"
-msgstr ""
+msgstr "Ты можешь помочь многими разными способами:"
 
 #: lib/class-contextual-help.php:126
 msgid "Report a bug"
@@ -325,6 +339,8 @@ msgid ""
 "For detailed information, refer to the contextual help on the %sWP to "
 "diaspora*%s settings page."
 msgstr ""
+"Более детальная информация содержится в контекстной помощи на странице "
+"настроек %sWP to diaspora*%s"
 
 #: lib/class-options.php:139
 msgid "First of all, set up the connection to your pod below."
