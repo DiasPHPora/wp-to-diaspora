@@ -308,7 +308,6 @@ class WP2D_Post {
 	private function _get_tags_to_add() {
 		$options = WP2D_Options::instance();
 		$tags_to_post = $this->tags_to_post;
-		$custom_tags  = $this->custom_tags;
 		$tags_to_add  = '';
 
 		// Add any diaspora* tags?
@@ -317,19 +316,20 @@ class WP2D_Post {
 			$diaspora_tags = array();
 
 			// Add global tags?
-			if ( in_array( 'global', $tags_to_post ) ) {
-				$diaspora_tags += array_flip( $options->get_option( 'global_tags' ) );
+			$global_tags = $options->get_option( 'global_tags' );
+			if ( in_array( 'global', $tags_to_post ) && is_array( $global_tags ) ) {
+				$diaspora_tags += array_flip( $global_tags );
 			}
 
 			// Add custom tags?
-			if ( in_array( 'custom', $tags_to_post ) ) {
-				$diaspora_tags += array_flip( $custom_tags );
+			if ( in_array( 'custom', $tags_to_post ) && is_array( $this->custom_tags ) ) {
+				$diaspora_tags += array_flip( $this->custom_tags );
 			}
 
 			// Add post tags?
-			if ( in_array( 'post', $tags_to_post ) ) {
-				// Clean up the post tags.
-				$diaspora_tags += array_flip( wp_get_post_tags( $this->ID, array( 'fields' => 'slugs' ) ) );
+			$post_tags = wp_get_post_tags( $this->ID, array( 'fields' => 'slugs' ) );
+			if ( in_array( 'post', $tags_to_post ) && is_array( $post_tags ) ) {
+				$diaspora_tags += array_flip( $post_tags );
 			}
 
 			// Get an array of cleaned up tags.

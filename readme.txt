@@ -97,6 +97,7 @@ Quite straightforward, right?
 * Make code adhere to WordPress coding standards
 * Make singleton classes initialisation and setup simpler
 * Simplify the contextual help class
+* Correct how tags are added to the post
 
 = 1.4.0 =
 * Split Settings page into tabs to give a better overview
