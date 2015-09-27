@@ -80,6 +80,7 @@ class WP_To_Diaspora {
 
 		define( 'WP2D_DIR', dirname( __FILE__ ) );
 		define( 'WP2D_LIB_DIR', WP2D_DIR . '/lib' );
+		define( 'WP2D_VENDOR_DIR', WP2D_DIR . '/vendor' );
 	}
 
 	/**
@@ -88,9 +89,7 @@ class WP_To_Diaspora {
 	 * @since 1.5.0
 	 */
 	private function _includes() {
-		if ( ! class_exists( 'HTML_To_Markdown' ) ) {
-			require_once WP2D_LIB_DIR . '/class-html-to-markdown.php';
-		}
+		require WP2D_VENDOR_DIR . '/autoload.php';
 		require_once WP2D_LIB_DIR . '/class-api.php';
 		require_once WP2D_LIB_DIR . '/class-contextual-help.php';
 		require_once WP2D_LIB_DIR . '/class-helpers.php';

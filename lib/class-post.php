@@ -9,6 +9,8 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+use League\HTMLToMarkdown\HtmlConverter;
+
 /**
  * Custom diaspora* post class to manage all post related things.
  *
@@ -210,8 +212,8 @@ class WP2D_Post {
 		// Add the original entry link to the post?
 		$status_message .= $this->_get_posted_at_link();
 
-		$status_markdown = new HTML_To_Markdown( $status_message );
-		$status_message  = $status_markdown->output();
+		$status_converter = new HtmlConverter();
+		$status_message  = $status_converter->convert( $status_message );
 
 		// Set up the connection to diaspora*.
 		$conn = WP2D_Helpers::api_quick_connect();
