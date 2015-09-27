@@ -1,3 +1,6 @@
+filter:
+  excluded_paths:
+    - 'vendor/*'
 tools:
   php_code_sniffer:
     config:
