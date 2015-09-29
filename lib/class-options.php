@@ -88,15 +88,8 @@ class WP2D_Options {
 		// Populate options array.
 		$this->get_option();
 
-		// Add options page.
-		$hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $this, 'admin_options_page' ) );
-
-		// Setup the contextual help menu after the options page has been loaded.
-		add_action( 'load-' . $hook, array( 'WP2D_Contextual_Help', 'instance' ) );
-
-		// Setup the contextual help menu tab for post types. Checks are made there!
-		add_action( 'load-post.php', array( 'WP2D_Contextual_Help', 'instance' ) );
-		add_action( 'load-post-new.php', array( 'WP2D_Contextual_Help', 'instance' ) );
+		// Setup Options page and Contextual Help
+		add_action( 'admin_init', array( $this, 'setup_wpadmin_pages' ) );
 
 		// Register all settings.
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
@@ -264,6 +257,22 @@ class WP2D_Options {
 	 */
 	public function is_pod_set_up() {
 		return ( $this->get_option( 'pod' ) && $this->get_option( 'username' ) && $this->get_option( 'password' ) );
+	}
+
+	/**
+	 * Setup Contextual Help and Options pages
+	 */
+	public function setup_wpadmin_pages(){
+
+		// Add options page.
+		$hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $this, 'admin_options_page' ) );
+
+		// Setup the contextual help menu after the options page has been loaded.
+		add_action( 'load-' . $hook, array( 'WP2D_Contextual_Help', 'instance' ) );
+
+		// Setup the contextual help menu tab for post types. Checks are made there!
+		add_action( 'load-post.php', array( 'WP2D_Contextual_Help', 'instance' ) );
+		add_action( 'load-post-new.php', array( 'WP2D_Contextual_Help', 'instance' ) );
 	}
 
 	/**

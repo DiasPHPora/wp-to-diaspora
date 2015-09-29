@@ -119,7 +119,7 @@ class WP_To_Diaspora {
 		add_action( 'admin_menu', array( 'WP2D_Options', 'instance' ) );
 
 		// WP2D Post.
-		add_action( 'admin_init', array( 'WP2D_Post', 'setup' ) );
+		add_action( 'init', array( 'WP2D_Post', 'setup' ) );
 
 		// AJAX actions for loading pods, aspects and services.
 		add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', array( $this, 'update_pod_list_callback' ) );
