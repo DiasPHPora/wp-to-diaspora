@@ -501,7 +501,11 @@ class WP2D_Options {
 	 */
 	public function aspects_services_render( $args ) {
 		list( $type, $items ) = $args;
-
+		
+		$refresh_button = '';
+		$description    = '';
+		$empty_label    = '';
+				
 		// This is where the 2 types show their differences.
 		switch ( $type ) {
 			case 'aspects':
@@ -521,9 +525,6 @@ class WP2D_Options {
 				break;
 
 			default:
-				$refresh_button = '';
-				$description    = '';
-				$empty_label    = '';
 				return;
 		}
 
