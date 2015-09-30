@@ -4,7 +4,7 @@ Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 Author URI: http://github.com/gutobenn
 Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
@@ -90,6 +90,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= 1.5.1 =
+* Fixed bug affecting scheduled posts
+
 = 1.5.0 =
 * SSL CA bundle check and download option
 * Move post related functionality to an own WP2D_Post class
@@ -167,4 +170,4 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
-* This version contains security improvements and includes and a debugger
+* This version fixes a bug in scheduled posts.
