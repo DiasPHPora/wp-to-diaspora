@@ -89,7 +89,7 @@ class WP2D_Options {
 		$this->get_option();
 
 		// Setup Options page and Contextual Help
-		add_action( 'admin_init', array( $this, 'setup_wpadmin_pages' ) );
+		add_action( 'admin_menu', array( $this, 'setup_wpadmin_pages' ) );
 
 		// Register all settings.
 		add_action( 'admin_init', array( $this, 'register_settings' ) );

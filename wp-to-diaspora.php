@@ -116,7 +116,7 @@ class WP_To_Diaspora {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_load_scripts' ) );
 
 		// Set up the options.
-		add_action( 'admin_menu', array( 'WP2D_Options', 'instance' ) );
+		add_action( 'init', array( 'WP2D_Options', 'instance' ) );
 
 		// WP2D Post.
 		add_action( 'init', array( 'WP2D_Post', 'setup' ) );
