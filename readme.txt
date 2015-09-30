@@ -92,6 +92,7 @@ Quite straightforward, right?
 
 = 1.5.1 =
 * Fixed bug affecting scheduled posts
+* Update html-to-markdown
 
 = 1.5.0 =
 * SSL CA bundle check and download option
