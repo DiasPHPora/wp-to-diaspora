@@ -90,6 +90,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= 1.5.2 =
+* Fixed scenario where old posts would get posted to diaspora* by default
+
 = 1.5.1 =
 * Fixed bug affecting scheduled posts
 * Update html-to-markdown

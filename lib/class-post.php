@@ -157,15 +157,23 @@ class WP2D_Post {
 
 			$options = WP2D_Options::instance();
 
-			// Assign all meta values, expanding non-existent ones with the defaults..
+			// Assign all meta values, expanding non-existent ones with the defaults.
+			$meta_current = get_post_meta( $this->ID, '_wp_to_diaspora', true );
 			$meta = wp_parse_args(
-				get_post_meta( $this->ID, '_wp_to_diaspora', true ),
+				$meta_current,
 				$options->get_options()
 			);
 			if ( $meta ) {
 				foreach ( $meta as $key => $value ) {
 					$this->$key = $value;
 				}
+			}
+
+			// If no WP2D meta data has been saved yet, this post shouldn't be published.
+			// This can happen if existing posts (before WP2D) get updated externally, not through the post edit screen.
+			// Check gutobenn/wp-to-diaspora#91 for reference.
+			if ( ! $meta_current ) {
+				$this->post_to_diaspora = false;
 			}
 
 			$this->post_history = get_post_meta( $this->ID, '_wp_to_diaspora_post_history', true );
