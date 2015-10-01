@@ -28,17 +28,17 @@ class WP2D_Helpers {
 	 */
 	public static function add_debugging( $text ) {
 		// Make sure we're in debug mode.
-		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
+		if ( defined( 'WP2D_DEBUGGING' ) ) {
 			$d = '';
 			foreach ( debug_backtrace() as $dbt ) {
 				extract( $dbt );
 				// Only trace back as far as the plugin goes.
 				if ( strstr( $file, plugin_dir_path( dirname( __FILE__ ) ) ) ) {
-					$d = sprintf( "%s%s%s[%s:%s]\n", $class, $type, $function, basename( $file ), $line ) . $d;
+					$d = sprintf( "%s%s%s [%s:%s]\n", $class, $type, $function, basename( $file ), $line ) . $d;
 				}
 			}
 
-			self::$_debugging .= sprintf( "%s - %s\n", date( 'YmdHis' ), $d . $text );
+			self::$_debugging .= sprintf( "%s\n%s\n", date( 'Y.m.d H:i:s' ), $d . $text );
 		}
 	}
 
@@ -48,9 +48,10 @@ class WP2D_Helpers {
 	 * @return string The debug output.
 	 */
 	public static function get_debugging() {
-		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
+		if ( defined( 'WP2D_DEBUGGING' ) ) {
 			return self::$_debugging;
 		}
+		return '';
 	}
 
 	/**

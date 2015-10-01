@@ -157,7 +157,7 @@ class WP2D_Options {
 		<div class="wrap">
 			<h2>WP to diaspora*</h2>
 
-			<div id="wp2d_message" class="notice hidden"></div>
+			<div id="wp2d-message" class="notice hidden" <?php echo ( defined( 'WP2D_DEBUGGING' ) ) ? ' data-debugging' : ''; ?>></div>
 
 			<?php
 			// Check the connection status to diaspora.
@@ -219,11 +219,6 @@ class WP2D_Options {
 				// Output success or error message.
 				settings_errors( 'wp_to_diaspora_settings' );
 			?>
-
-			<?php if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) : ?>
-				<h3>Debug Info</h3>
-				<textarea rows="5" cols="50"><?php echo esc_html( WP2D_Helpers::get_debugging() ); ?></textarea>
-			<?php endif; ?>
 
 			<?php $page_tabs = array_keys( $this->_options_page_tabs( true ) ); ?>
 

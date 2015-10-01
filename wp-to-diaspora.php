@@ -76,7 +76,9 @@ class WP_To_Diaspora {
 	 */
 	private function _constants() {
 		// Are we in debugging mode?
-		define( 'WP2D_DEBUGGING', isset( $_GET['debugging'] ) );
+		if ( isset( $_GET['debugging'] ) ) {
+			define( 'WP2D_DEBUGGING', true );
+		}
 
 		define( 'WP2D_DIR', dirname( __FILE__ ) );
 		define( 'WP2D_LIB_DIR', WP2D_DIR . '/lib' );
@@ -338,12 +340,24 @@ class WP_To_Diaspora {
 	 * Check the connection to the pod and return the status for use with AJAX.
 	 */
 	public function check_pod_connection_status_callback() {
-		$status = $this->_check_pod_connection_status();
-		if ( true === $status ) {
-			wp_send_json_success();
-		} elseif ( false === $status ) {
-			wp_send_json_error( $this->_load_api()->last_error );
+		if ( isset( $_REQUEST['debugging'] ) && ! defined( 'WP2D_DEBUGGING' ) ) {
+			define( 'WP2D_DEBUGGING', true );
 		}
+
+		$status = $this->_check_pod_connection_status();
+
+		$data = array(
+			'debug'   => esc_textarea( WP2D_Helpers::get_debugging() ),
+			'message' => __( 'Connection successful.', 'wp-to-diaspora' ),
+		);
+
+		if ( true === $status ) {
+			wp_send_json_success( $data );
+		} elseif ( false === $status ) {
+			$data['message'] = $this->_load_api()->last_error;
+			wp_send_json_error( $data );
+		}
+		// If $status === null, do nothing.
 	}
 }
 

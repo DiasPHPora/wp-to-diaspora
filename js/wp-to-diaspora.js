@@ -145,28 +145,41 @@ jQuery(document).ready(function ($) {
 		var $pcs = $('#pod-connection-status');
 		$pcs.parent().attr('title', WP2DL10n.conn_testing);
 
-		$.post(ajaxurl, { 'action': 'wp_to_diaspora_check_pod_connection_status' })
+		var $msg = $('#wp2d-message');
+		var show_debug = (typeof $msg.attr('data-debugging') !== 'undefined');
+		$.post(ajaxurl, {
+			'action': 'wp_to_diaspora_check_pod_connection_status',
+			'debugging': show_debug
+		})
 		.done(function(status) {
-
-			// After testing the connection, mark the "Setup" tab appropriately
-			// and output an error message if the connection failed.
-			var clr = '';
-			var msg = '';
-			if (true === status.success) {
-				status = 'yes';
-				clr = '#008000';
-				msg = WP2DL10n.conn_successful;
-			} else if(false === status.success) {
-				$('#wp2d_message').html('<p>' + status.data + '</p>').addClass('error').show();
-				status = 'no';
-				clr = '#800000';
-				msg = WP2DL10n.conn_failed;
-			} else {
+			if (typeof status.success === 'undefined') {
 				return;
 			}
 
-			$pcs.parent().attr('title', msg);
-			$pcs.addClass('dashicons-' + status).css('color', clr).show();
+			// After testing the connection, mark the "Setup" tab appropriately
+			// and output an error message if the connection failed.
+			var debug_msg = (show_debug) ? '<strong>Debug</strong><textarea rows="5" style="width:100%" readonly>' + status.data.debug + '</textarea>' : '';
+
+			if (status.success) {
+				$msg.addClass('updated');
+				$pcs.parent().attr('title', WP2DL10n.conn_successful);
+				$pcs.addClass('dashicons-yes')
+				.css('color', '#008000')
+				.show();
+			} else {
+				$msg.addClass('error');
+				$pcs.parent().attr('title', WP2DL10n.conn_failed);
+				$pcs.addClass('dashicons-no')
+				.css('color', '#800000')
+				.show();
+			}
+
+			// Show the message panel if the connection failed or debug is enabled.
+			if (show_debug || ! status.success) {
+				$msg.html('<p>' + status.data.message + '</p>')
+				.append(debug_msg)
+				.show();
+			}
 		})
 		.always(function() {
 			$pcs.next('.spinner').hide();
