@@ -259,9 +259,9 @@ class WP2D_Post {
 	 */
 	private function _get_title_link() {
 		return sprintf(
-			'<p><b><a href="%1$s" title="permalink to %2$s">%2$s</a></b></p>',
+			'<p><strong><a href="%1$s" title="%1$s">%2$s</a></strong></p>',
 			get_permalink( $this->ID ),
-			$this->post->post_title
+			esc_html( $this->post->post_title )
 		);
 	}
 
@@ -373,9 +373,9 @@ class WP2D_Post {
 		$link = '';
 		if ( $this->fullentrylink ) {
 			$link = sprintf( '%1$s [%2$s](%2$s "%3$s")',
-				__( 'Originally posted at:', 'wp-to-diaspora' ),
+				esc_html__( 'Originally posted at:', 'wp-to-diaspora' ),
 				get_permalink( $this->ID ),
-				$this->post->post_title
+				esc_html__( 'Permalink', 'wp-to-diaspora' )
 			);
 		}
 
