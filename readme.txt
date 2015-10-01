@@ -92,6 +92,7 @@ Quite straightforward, right?
 
 = 1.5.2 =
 * Fixed scenario where old posts would get posted to diaspora* by default
+* Fixed problem with special characters in the post title
 
 = 1.5.1 =
 * Fixed bug affecting scheduled posts
