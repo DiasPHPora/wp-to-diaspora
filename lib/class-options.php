@@ -157,7 +157,7 @@ class WP2D_Options {
 		<div class="wrap">
 			<h2>WP to diaspora*</h2>
 
-			<div id="wp2d_message" class="notice hidden" <?php echo ( defined( 'WP2D_DEBUGGING' ) ) ? ' data-debugging' : ''; ?>></div>
+			<div id="wp2d-message" class="notice hidden" <?php echo ( defined( 'WP2D_DEBUGGING' ) ) ? ' data-debugging' : ''; ?>></div>
 
 			<?php
 			// Check the connection status to diaspora.

@@ -145,7 +145,7 @@ jQuery(document).ready(function ($) {
 		var $pcs = $('#pod-connection-status');
 		$pcs.parent().attr('title', WP2DL10n.conn_testing);
 
-		var $msg = $('#wp2d_message');
+		var $msg = $('#wp2d-message');
 		var show_debug = (typeof $msg.attr('data-debugging') !== 'undefined');
 		$.post(ajaxurl, {
 			'action': 'wp_to_diaspora_check_pod_connection_status',
