@@ -88,7 +88,7 @@ class WP2D_Options {
 		// Populate options array.
 		$this->get_option();
 
-		// Setup Options page and Contextual Help
+		// Setup Options page and Contextual Help.
 		add_action( 'admin_menu', array( $this, 'setup_wpadmin_pages' ) );
 
 		// Register all settings.
@@ -255,10 +255,9 @@ class WP2D_Options {
 	}
 
 	/**
-	 * Setup Contextual Help and Options pages
+	 * Setup Contextual Help and Options pages.
 	 */
-	public function setup_wpadmin_pages(){
-
+	public function setup_wpadmin_pages() {
 		// Add options page.
 		$hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $this, 'admin_options_page' ) );
 
@@ -274,7 +273,7 @@ class WP2D_Options {
 	 * Initialise the settings sections and fields of the currently selected tab.
 	 */
 	public function register_settings() {
-			// Register the settings with validation callback.
+		// Register the settings with validation callback.
 		register_setting( 'wp_to_diaspora_settings', 'wp_to_diaspora_settings', array( $this, 'validate_settings' ) );
 
 		// Load only the sections of the selected tab.
@@ -505,11 +504,11 @@ class WP2D_Options {
 	 */
 	public function aspects_services_render( $args ) {
 		list( $type, $items ) = $args;
-		
+
 		$refresh_button = '';
 		$description    = '';
 		$empty_label    = '';
-				
+
 		// This is where the 2 types show their differences.
 		switch ( $type ) {
 			case 'aspects':

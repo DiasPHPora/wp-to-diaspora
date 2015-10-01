@@ -185,6 +185,8 @@ class WP2D_Post {
 	 *
 	 * @since 1.5.0
 	 *
+	 * @todo Maybe somebody wants to share a password protected post to a closed aspect.
+	 *
 	 * @param integer $post_id ID of the post being saved.
 	 * @param WP_Post $post    Post object being saved.
 	 * @return boolean If the post was posted successfully.
@@ -200,7 +202,6 @@ class WP2D_Post {
 		}
 
 		// Make sure we're posting to diaspora* and the post isn't password protected.
-		// TODO: Maybe somebody wants to share a password protected post to a closed aspect.
 		if ( ! ( $this->post_to_diaspora && 'publish' === $post->post_status && '' === $post->post_password ) ) {
 			return false;
 		}
