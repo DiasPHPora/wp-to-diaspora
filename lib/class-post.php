@@ -212,8 +212,7 @@ class WP2D_Post {
 		// Add the original entry link to the post?
 		$status_message .= $this->_get_posted_at_link();
 
-		$status_converter = new HtmlConverter();
-		$status_converter->setOption('strip_tags', true);
+		$status_converter = new HtmlConverter( array( 'strip_tags' => true ) );
 		$status_message  = $status_converter->convert( $status_message );
 
 		// Set up the connection to diaspora*.
