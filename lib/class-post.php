@@ -172,7 +172,7 @@ class WP2D_Post {
 			// If no WP2D meta data has been saved yet, this post shouldn't be published.
 			// This can happen if existing posts (before WP2D) get updated externally, not through the post edit screen.
 			// Check gutobenn/wp-to-diaspora#91 for reference.
-			if ( ! $meta_current ) {
+			if ( 'auto-draft' !== $this->post->post_status && ! $meta_current ) {
 				$this->post_to_diaspora = false;
 			}
 
