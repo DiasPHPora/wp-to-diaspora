@@ -90,6 +90,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= 1.5.3 =
+* Gallery images and single images with captions get a pretty caption added to them
+
 = 1.5.2 =
 * Fixed scenario where old posts would get posted to diaspora* by default
 * Fixed problem with special characters in the post title

@@ -274,15 +274,39 @@ class WP2D_Post {
 	 * @return string The full post content.
 	 */
 	private function _get_full_content() {
+		// Only allow certain shortcodes.
+		global $shortcode_tags;
+		$shortcode_tags_bkp = array();
+
+		foreach ( $shortcode_tags as $shortcode_tag => $shortcode_function ) {
+			if ( ! in_array( $shortcode_tag, array( 'wp_caption', 'caption', 'gallery' ) ) ) {
+				$shortcode_tags_bkp[ $shortcode_tag ] = $shortcode_function;
+				unset( $shortcode_tags[ $shortcode_tag ] );
+			}
+		}
+
 		// Disable all filters and then enable only defaults. This prevents additional filters from being posted to diaspora*.
 		remove_all_filters( 'the_content' );
-		foreach ( array( 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', array( $this, 'embed_remove' ) ) as $filter ) {
+		foreach ( array( 'do_shortcode', 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', array( $this, 'embed_remove' ) ) as $filter ) {
 			add_filter( 'the_content', $filter );
 		}
+
 		// Extract URLs from [embed] shortcodes.
 		add_filter( 'embed_oembed_html', array( $this, 'embed_url' ), 10, 2 );
 
-		return apply_filters( 'the_content', $this->post->post_content );
+		// Add the pretty caption after the images.
+		add_filter( 'img_caption_shortcode', array( $this, 'custom_img_caption' ), 10, 3 );
+
+		// Overwrite the native shortcode handler to add pretty captions.
+		// http://wordpress.stackexchange.com/a/74675/54456 for explanation.
+		add_shortcode( 'gallery', array( $this, 'custom_gallery_shortcode' ) );
+
+		$full_content = apply_filters( 'the_content', $this->post->post_content );
+
+		// Put the removed shortcode tags back again.
+		$shortcode_tags += $shortcode_tags_bkp;
+
+		return $full_content;
 	}
 
 	/**
@@ -435,6 +459,97 @@ class WP2D_Post {
 	 */
 	public function embed_remove( $content ) {
 		return str_replace( array( '[embed]', '[/embed]' ), array( '<p>', '</p>' ), $content );
+	}
+
+	/**
+	 * Prettify the image caption.
+	 *
+	 * @since 1.5.3
+	 *
+	 * @param string $caption Caption to be prettified.
+	 * @return string Prettified image caption.
+	 */
+	public function get_img_caption( $caption ) {
+		$caption = trim( $caption );
+		if ( '' === $caption ) {
+			return '';
+		}
+
+		/**
+		 * Filter the image caption to be displayed after images with captions.
+		 *
+		 * Must contain a placeholder (%s) for the caption text.
+		 *
+		 * @since 1.5.3
+		 *
+		 * @param string $wrapper The wrapper to be used for the caption.
+		 */
+		return sprintf(
+			apply_filters( 'wp2d_image_caption_wrapper', '<blockquote>%s</blockquote>' ),
+			trim( $caption )
+		);
+	}
+
+	/**
+	 * Filter the default caption shortcode output.
+	 *
+	 * @since 1.5.3
+	 * @see img_caption_shortcode()
+	 *
+	 * @param string $empty   The caption output. Default empty.
+	 * @param array  $attr    Attributes of the caption shortcode.
+	 * @param string $content The image element, possibly wrapped in a hyperlink.
+	 * @return string The caption shortcode output.
+	 */
+	public function custom_img_caption( $empty, $attr, $content ) {
+		$content = do_shortcode( $content );
+
+		// If a caption attribute is defined, we'll add it after the image.
+		if ( isset( $attr['caption'] ) && '' !== $attr['caption'] ) {
+			$content .= "\n" . $this->get_img_caption( $attr['caption'] );
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Create a custom gallery caption output.
+	 *
+	 * @since 1.5.3
+	 *
+	 * @param   array $attr Gallery attributes.
+	 * @return  string
+	 */
+	public function custom_gallery_shortcode( $attr ) {
+		// Default value in WordPress.
+		$captiontag = ( current_theme_supports( 'html5', 'gallery' ) ) ? 'figcaption' : 'dd';
+
+		// User value.
+		if ( isset( $attr['captiontag'] ) ) {
+			$captiontag = $attr['captiontag'];
+		}
+
+		// Let WordPress create the regular gallery.
+		$gallery = gallery_shortcode( $attr );
+
+		// Change the content of the captions.
+		$gallery = preg_replace_callback(
+			'~(<' . $captiontag . '.*>)(.*)(</' . $captiontag . '>)~mUus',
+			array( $this, 'custom_gallery_regex_callback' ),
+			$gallery
+		);
+
+		return $gallery;
+	}
+
+	/**
+	 * Change the result of the regex match from custom_gallery_shortcode.
+	 *
+	 * @param array $m Regex matches.
+	 * @return string Prettified gallery image caption.
+	 */
+	public function custom_gallery_regex_callback( $m ) {
+		return $this->get_img_caption( $m[2] );
 	}
 
 
