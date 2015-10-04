@@ -596,7 +596,7 @@ class WP2D_Post {
 			// This notice will only be shown if posting to diaspora* has failed.
 			printf( '<div class="error notice is-dismissible"><p>%1$s %2$s <a href="%3$s">%4$s</a></p></div>',
 				esc_html__( 'Failed to post to diaspora*.', 'wp-to-diaspora' ),
-				esc_html( $error ),
+				$error, // Is already escaped.
 				esc_url( add_query_arg( 'wp_to_diaspora_ignore_post_error', 'yes' ) ),
 				esc_html__( 'Ignore', 'wp-to-diaspora' )
 			);

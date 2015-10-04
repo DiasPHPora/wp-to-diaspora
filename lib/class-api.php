@@ -174,12 +174,12 @@ class WP2D_API {
 			// Code 60 is a CA certificate problem.
 			if ( 60 === $this->_last_request->errno ) {
 				$this->last_error = sprintf(
-					_x( 'There seems to be a problem with your server\'s CA certificate bundle. %sHelp%s', 'Placeholders are HTML for a link.', 'wp-to-diaspora' ),
+					esc_html_x( 'There seems to be a problem with your server\'s CA certificate bundle. %sHelp%s', 'Placeholders are HTML for a link.', 'wp-to-diaspora' ),
 					'<a href="#" class="open-help-tab" data-help-tab="ssl">', '</a>'
 				);
 			} else {
 				$this->last_error = sprintf(
-					_x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp-to-diaspora' ),
+					esc_html_x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp-to-diaspora' ),
 					$this->get_pod_url()
 				);
 			}
@@ -210,7 +210,7 @@ class WP2D_API {
 	 */
 	private function _check_login() {
 		if ( ! $this->is_logged_in() ) {
-			$this->last_error = __( 'Not logged in.', 'wp-to-diaspora' );
+			$this->last_error = esc_html__( 'Not logged in.', 'wp-to-diaspora' );
 			return false;
 		}
 		return true;
@@ -270,7 +270,7 @@ class WP2D_API {
 		// If the request isn't successful, we are not logged in correctly.
 		if ( 200 !== $req->info['http_code'] ) {
 			// Login failed.
-			$this->last_error = __( 'Login failed. Check your login details.', 'wp-to-diaspora' );
+			$this->last_error = esc_html__( 'Login failed. Check your login details.', 'wp-to-diaspora' );
 			return false;
 		}
 
@@ -327,7 +327,7 @@ class WP2D_API {
 		$req = $this->_http_request( '/status_messages', wp_json_encode( $post_data ), $headers );
 		$response = json_decode( $req->response );
 		if ( 201 !== $req->info['http_code'] ) {
-			$this->last_error = ( isset( $response->error ) ) ? $response->error : _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' );
+			$this->last_error = esc_html( ( isset( $response->error ) ) ? $response->error : _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
 			return false;
 		}
 
@@ -387,7 +387,7 @@ class WP2D_API {
 		if ( empty( $list ) || (bool) $force ) {
 			$req = $this->_http_request( '/bookmarklet' );
 			if ( 200 !== $req->info['http_code'] ) {
-				$this->last_error = $error_message;
+				$this->last_error = esc_html( $error_message );
 				return false;
 			}
 			// No need to parse the list, as it get's done for each http request anyway.
