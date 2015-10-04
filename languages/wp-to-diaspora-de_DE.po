@@ -423,11 +423,11 @@ msgstr ""
 
 #: lib/class-contextual-help.php:71
 msgid "Your diaspora* username (without the pod domain)."
-msgstr ""
+msgstr "Dein diaspora* Benutzername (ohne Pod Domäne)."
 
 #: lib/class-contextual-help.php:73
 msgid "Your diaspora* password."
-msgstr ""
+msgstr "Dein diaspora* Passwort."
 
 #: lib/class-contextual-help.php:79
 msgid "Define the default posting behaviour."
