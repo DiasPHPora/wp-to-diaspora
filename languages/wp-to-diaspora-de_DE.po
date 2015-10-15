@@ -385,15 +385,15 @@ msgstr "Übersicht"
 
 #: lib/class-contextual-help.php:54
 msgid "With WP to diaspora*, sharing your WordPress posts to diaspora* is as easy as ever."
-msgstr ""
+msgstr "Mit WP to diaspora* ist das Teilen deiner WordPress-Beiträge zu diaspora* so einfach wie nie."
 
 #: lib/class-contextual-help.php:56
 msgid "Enter your diaspora* login details on the \"Setup\" tab."
-msgstr ""
+msgstr "Gebe deine Logindaten für diaspora* im \"Setup\"-Tab ein."
 
 #: lib/class-contextual-help.php:57
 msgid "Define the default posting behaviour on the \"Defaults\" tab."
-msgstr ""
+msgstr "Lege das Posting-Standardverhalten im \"Defaults\"-Tab fest."
 
 #: lib/class-contextual-help.php:58
 #, fuzzy
@@ -407,7 +407,7 @@ msgstr "Wähle die Tags aus, die auf Diaspora* gepostet werden sollen."
 
 #: lib/class-contextual-help.php:65
 msgid "Enter your diaspora* login details to connect your account."
-msgstr ""
+msgstr "Gebe deine Logindaten für diaspora* ein, um dein Konto zu verknüpfen."
 
 #: lib/class-contextual-help.php:67
 msgid "diaspora* Pod"
@@ -415,11 +415,11 @@ msgstr "Diaspora* Pod"
 
 #: lib/class-contextual-help.php:68
 msgid "This is the domain name of the pod you are on (e.g. joindiaspora.com)"
-msgstr ""
+msgstr "Dies ist der Domainname des Pods, auf dem du bist (e.g. joindiaspora.com)"
 
 #: lib/class-contextual-help.php:69
 msgid "Use the \"%s\" button to prepopulate the input field to help choose your pod."
-msgstr ""
+msgstr "Benutze den \"%s\"-Button um das Eingabefeld vorauszufüllen und bei der Pod-Auswahl zu helfen."
 
 #: lib/class-contextual-help.php:71
 msgid "Your diaspora* username (without the pod domain)."
@@ -431,7 +431,7 @@ msgstr "Dein diaspora* Passwort."
 
 #: lib/class-contextual-help.php:79
 msgid "Define the default posting behaviour."
-msgstr ""
+msgstr "Lege das Posting-Standardverhalten fest."
 
 #: lib/class-contextual-help.php:82
 #, fuzzy
@@ -450,11 +450,11 @@ msgstr "Link zum Originalbeitrag mitposten."
 
 #: lib/class-contextual-help.php:88
 msgid "Choose whether you would like to post the whole post or just the excerpt."
-msgstr ""
+msgstr "Entscheide, ob du den ganzen Beitrag kopieren möchtest, oder nur einen Anreißer."
 
 #: lib/class-contextual-help.php:90
 msgid "You can add tags to your post to make it easier to find on diaspora*."
-msgstr ""
+msgstr "Du kannst deinen Post taggen, damit er in diaspora* einfacher gefunden werden kann."
 
 #: lib/class-contextual-help.php:92
 msgid "Tags that apply to all posts."
@@ -476,15 +476,15 @@ msgstr "Standard-WordPress-Tags der einzelnen Posts"
 
 #: lib/class-contextual-help.php:97
 msgid "A list of tags that gets added to every post."
-msgstr ""
+msgstr "Eine Liste der Tags, die zu jedem Post hinzugefügt werden."
 
 #: lib/class-contextual-help.php:99
 msgid "Decide which of your diaspora* aspects can see your posts."
-msgstr ""
+msgstr "Entscheide, welche deiner diaspora*-Aspekte deine Posts sehen können."
 
 #: lib/class-contextual-help.php:100
 msgid "Use the \"%s\" button to load your aspects from diaspora*."
-msgstr ""
+msgstr "Benutze den \"%s\"-Button um deine Aspekte von diaspora* zu laden."
 
 #: lib/class-contextual-help.php:102
 #, fuzzy
@@ -493,23 +493,23 @@ msgstr "Aspekte zum Teilen auswählen."
 
 #: lib/class-contextual-help.php:103
 msgid "Use the \"%s\" button to fetch the list of your connected services from diaspora*."
-msgstr ""
+msgstr "Benutze den \"%s\"-Button um die Liste der verbunden Dienste von diaspora* zu laden."
 
 #: lib/class-contextual-help.php:108
 msgid "Meta Box"
-msgstr ""
+msgstr "Meta-Box"
 
 #: lib/class-contextual-help.php:109
 msgid "The Meta Box is the new \"WP to diaspora*\" box you see when editing a post."
-msgstr ""
+msgstr "Die Meta-Box ist die neue \"WP to diaspora*\"-Box, die du beim Editieren eines Beitrags siehts."
 
 #: lib/class-contextual-help.php:110
 msgid "When creating or editing a post, you will notice a new meta box called \"WP to diaspora*\" which has some options. These options are almost the same as the options you can find in the \"Defaults\" tab on the settings page. These options are post-specific though, meaning they override the global defaults for the post itself. You will see that the default values are filled in automatically, allowing you to change individual ones as you please."
-msgstr ""
+msgstr "Wenn du einen Beitrag erstellst oder bearbeitest, wirst du eine neue Meta-Box namens \"WP to diaspora*\" mit einigen Optionen sehen. Diese Optionen sind fast die selben, wie im \"Standards\"-Tab der Einstellungsseite, aber spezifisch für den Beitrag. Das bedeutet, dass sie sich über die globalen Standards für diesen Beitrag hinwegsetzen. Die Standardwerte werden zwar automatisch eingetragen, aber du kannst sie individuell ändern, wie du möchtest."
 
 #: lib/class-contextual-help.php:111
 msgid "There are a few important differences to the settings page:"
-msgstr ""
+msgstr "Es gibt einige wichtige Unterschiede auf der Einstellungsseite:"
 
 #: lib/class-contextual-help.php:113
 #, fuzzy
@@ -518,53 +518,53 @@ msgstr "Wurde schon auf Diaspora* gepostet."
 
 #: lib/class-contextual-help.php:114
 msgid "If the post has already been posted to diaspora* a link to the diaspora* post will appear at the top."
-msgstr ""
+msgstr "Wenn der Beitrag schon zu diaspora* kopierte wurde, wird ein Link zum diaspora*-Post oben auftauchen."
 
 #: lib/class-contextual-help.php:116
 msgid "A list of tags that gets added to this post. Note that they are seperate from the WordPress post tags!"
-msgstr ""
+msgstr "Eine liste der Tags, die zu diesem Beitrag hinzugefügt werden. Beachte, dass es nicht die selben des WordPress-Beitrags sind."
 
 #: lib/class-contextual-help.php:118
 msgid "If you don't see the meta box, make sure the post type you're on has been added to the \"Post types\" list on the settings page. Also make sure it has been selected from the \"Screen Options\" at the top of the screen."
-msgstr ""
+msgstr "Wenn du die Meta-Box nicht siehst, stelle bitte sicher, dass du den aktuell bearbeitet Beitragstyp auf der Einstellungsseite in der \"Beitragstypen\"-Liste hinzugefügt hast. Beachte bitte auch, dass \"WP to disaspora*\" in der \"Optionen\"-Leiste am oberen Bildschirmrand aktiviert ist."
 
 #: lib/class-contextual-help.php:122
 msgid "Contributing"
-msgstr ""
+msgstr "Mithelfen"
 
 #: lib/class-contextual-help.php:123
 msgid "So you feel like contributing to the WP to diaspora* plugin? Great!"
-msgstr ""
+msgstr "Du möchtest also etwas zu WP to diaspora* beitragen? Großartig!"
 
 #: lib/class-contextual-help.php:124
 msgid "There are many different ways that you can help out with this plugin:"
-msgstr ""
+msgstr "Es gibt viele Möglichkeiten, wie du der Entwicklung dieses Plugins helfen kannst:"
 
 #: lib/class-contextual-help.php:126
 msgid "Report a bug"
-msgstr ""
+msgstr "Melde einen Fehler"
 
 #: lib/class-contextual-help.php:127
 msgid "Suggest a new feature"
-msgstr ""
+msgstr "Schlage eine Funktion vor"
 
 #: lib/class-contextual-help.php:128
 #: lib/class-contextual-help.php:192
 msgid "Help with translations"
-msgstr ""
+msgstr "Helfe bei den Übersetzungen"
 
 #: lib/class-contextual-help.php:129
 #: lib/class-contextual-help.php:193
 msgid "Make a donation"
-msgstr ""
+msgstr "Spende etwas"
 
 #: lib/class-contextual-help.php:228
 msgid "For detailed information, refer to the contextual help on the %sWP to diaspora*%s settings page."
-msgstr ""
+msgstr "Für weitere Informationen, bitte lies' die Kontexthilfen auf der %sWP to diaspora*%s Einstellungsseite."
 
 #: lib/class-options.php:396
 msgid "None"
-msgstr ""
+msgstr "Keine"
 
 #: lib/class-options.php:402
 #, fuzzy
