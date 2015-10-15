@@ -390,7 +390,7 @@ msgstr ""
 
 #: lib/class-contextual-help.php:54
 msgid "With WP to diaspora*, sharing your WordPress posts to diaspora* is as easy as ever."
-msgstr ""
+msgstr "Con WP to diaspora*, condividere i tuoi articoli Wordpress su diaspora* non è mai stato così facile."
 
 #: lib/class-contextual-help.php:56
 msgid "Enter your diaspora* login details on the \"Setup\" tab."
@@ -429,11 +429,11 @@ msgstr ""
 
 #: lib/class-contextual-help.php:71
 msgid "Your diaspora* username (without the pod domain)."
-msgstr ""
+msgstr "Il tuo utente diaspora* (senza il dominio del pod)"
 
 #: lib/class-contextual-help.php:73
 msgid "Your diaspora* password."
-msgstr ""
+msgstr "La tua password diaspora*"
 
 #: lib/class-contextual-help.php:79
 msgid "Define the default posting behaviour."
@@ -464,7 +464,7 @@ msgstr ""
 
 #: lib/class-contextual-help.php:92
 msgid "Tags that apply to all posts."
-msgstr ""
+msgstr "Tags applicati a tutti i posts"
 
 #: lib/class-contextual-help.php:93
 msgid "Tags that apply to individual posts (can be set on each post)."
@@ -478,11 +478,11 @@ msgstr "Nessun tag"
 
 #: lib/class-contextual-help.php:94
 msgid "Default WordPress Tags of individual posts."
-msgstr ""
+msgstr "Tags Wordpress predefiniti per post singoli"
 
 #: lib/class-contextual-help.php:97
 msgid "A list of tags that gets added to every post."
-msgstr ""
+msgstr "Una list di tags che vengono aggiunti a tutti i post"
 
 #: lib/class-contextual-help.php:99
 msgid "Decide which of your diaspora* aspects can see your posts."
@@ -502,7 +502,7 @@ msgstr ""
 
 #: lib/class-contextual-help.php:108
 msgid "Meta Box"
-msgstr ""
+msgstr "Meta Box"
 
 #: lib/class-contextual-help.php:109
 msgid "The Meta Box is the new \"WP to diaspora*\" box you see when editing a post."
@@ -535,7 +535,7 @@ msgstr ""
 
 #: lib/class-contextual-help.php:122
 msgid "Contributing"
-msgstr ""
+msgstr "Contribuire"
 
 #: lib/class-contextual-help.php:123
 msgid "So you feel like contributing to the WP to diaspora* plugin? Great!"
@@ -547,21 +547,21 @@ msgstr ""
 
 #: lib/class-contextual-help.php:126
 msgid "Report a bug"
-msgstr ""
+msgstr "Riporta un bug"
 
 #: lib/class-contextual-help.php:127
 msgid "Suggest a new feature"
-msgstr ""
+msgstr "Suggerisci una nuova funzione"
 
 #: lib/class-contextual-help.php:128
 #: lib/class-contextual-help.php:192
 msgid "Help with translations"
-msgstr ""
+msgstr "Contribuisci con le traduzioni"
 
 #: lib/class-contextual-help.php:129
 #: lib/class-contextual-help.php:193
 msgid "Make a donation"
-msgstr ""
+msgstr "Fai una donazione"
 
 #: lib/class-contextual-help.php:228
 msgid "For detailed information, refer to the contextual help on the %sWP to diaspora*%s settings page."
@@ -569,7 +569,7 @@ msgstr ""
 
 #: lib/class-options.php:396
 msgid "None"
-msgstr ""
+msgstr "Nessuno"
 
 #: lib/class-options.php:402
 #, fuzzy
