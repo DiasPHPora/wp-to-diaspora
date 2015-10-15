@@ -197,7 +197,7 @@ msgstr "Serviços"
 #: lib/class-options.php:537
 #, fuzzy
 msgid "Choose which services to share to."
-msgstr "Escolha para quais aspectos compartilhar."
+msgstr "Escolha para quais serviços compartilhar."
 
 #: lib/class-api.php:173
 msgctxt "Placeholder is the full pod URL."
@@ -491,7 +491,7 @@ msgstr "Use o botão \"%s\" para carregar seus aspectos do diaspora*. "
 #: lib/class-contextual-help.php:102
 #, fuzzy
 msgid "Choose the services your new diaspora* post gets shared to."
-msgstr "Escolha para quais aspectos compartilhar."
+msgstr "Escolha em quais serviços seu post será compartilhado."
 
 #: lib/class-contextual-help.php:103
 msgid "Use the \"%s\" button to fetch the list of your connected services from diaspora*."
