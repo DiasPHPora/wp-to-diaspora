@@ -217,6 +217,27 @@ class WP2D_Contextual_Help {
 				<p class="dashicons-before dashicons-info">' . esc_html__( 'If you don\'t see the meta box, make sure the post type you\'re on has been added to the "Post types" list on the settings page. Also make sure it has been selected from the "Screen Options" at the top of the screen.', 'wp-to-diaspora' ) . '</p>',
 		) );
 
+		// Troubleshooting.
+		$screen->add_help_tab( array(
+			'id' => 'troubleshooting',
+			'title'   => esc_html__( 'Troubleshooting', 'wp-to-diaspora' ),
+			'content' => '<p><strong>' . esc_html__( 'Troubleshooting common errors.', 'wp-to-diaspora' ) . '</strong></p>
+				<p>' . esc_html__( 'Here are a few common errors and their possible solutions:', 'wp-to-diaspora' ) . '</p>
+				<ul>
+					<li><strong>' . esc_html( sprintf( __( 'Failed to initialise connection to pod "%s"', 'wp-to-diaspora' ), 'xyz' ) ) . '</strong>: ' .
+						esc_html__( 'This could have multiple reasons.' ) . '
+						<ul>
+							<li>' . esc_html__( 'Make sure that your pod domain is entered correctly.', 'wp-to-diaspora' ) . '
+							<li>' .
+								esc_html__( 'It might be an SSL problem.', 'wp-to-diaspora' ) .
+								sprintf( ' <a href="#" class="open-help-tab" data-help-tab="ssl">%s</a>', esc_html__( 'Learn More', 'wp-to-diaspora' ) ) . '
+							<li>' . esc_html__( 'The pod might be offline at the moment.', 'wp-to-diaspora' ) . '
+						</ul>
+					<li><strong>' . esc_html__( 'Login failed. Check your login details.', 'wp-to-diaspora' ) . '</strong>: ' .
+						esc_html__( 'Make sure that your username and password are entered correctly.', 'wp-to-diaspora' ) . '
+				</ul>',
+		) );
+
 		// Show different ways to contribute to the plugin.
 		$screen->add_help_tab( array(
 			'id' => 'contributing',

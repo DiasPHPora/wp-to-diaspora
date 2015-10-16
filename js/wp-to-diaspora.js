@@ -2,7 +2,7 @@ jQuery(document).ready(function ($) {
 
 	var onSettingsPage = ('settings_page_wp_to_diaspora' === adminpage);
 
-	$('.wrap').on('click', '.open-help-tab', function(e) {
+	$('.wrap, .contextual-help-tabs-wrap').on('click', '.open-help-tab', function(e) {
 		e.preventDefault();
 		var tab = (onSettingsPage) ? $(this).attr('data-help-tab') : 'wp-to-diaspora';
 
