@@ -1,6 +1,6 @@
 <?php
 /**
- * API-like class to deal with HTTP(S) requests to diaspora* using cURL.
+ * API-like class to deal with HTTP(S) requests to diaspora* using WP_HTTP API.
  *
  * Basic functionality includes:
  * - Logging in to diaspora*
@@ -410,7 +410,7 @@ class WP2D_API {
 	}
 
 	/**
-	 * Send an http(s) request via cURL.
+	 * Send an http(s) request via WP_HTTP API.
 	 *
 	 * @param string       $url     The URL to request.
 	 * @param array|string $data    Data to be posted with the request.

@@ -21,7 +21,7 @@ With the focus on being **intuitive**, sharing your posts to diaspora* is made *
 Simply write your post and have it shared to diaspora* at the same time you publish it on your website.
 
 = Minimum requirements =
-WordPress 3.5, PHP 5.3 with [cURL extension](https://php.net/manual/book.curl.php).
+WordPress 3.5, PHP 5.3.
 
 = Getting started =
 After installing and activating the plugin, be sure to visit the plugin's settings page at 'Settings -> WP to diaspora' on your WordPress Admin page.
@@ -89,6 +89,10 @@ Basically, the server your WordPress installation is set up on makes a connectio
 Quite straightforward, right?
 
 == Changelog ==
+
+= 1.6.0 =
+* API now uses the WP_HTTP API for requests, cURL no longer required
+* Contextual help updated with troubleshooting tips.
 
 = 1.5.3 =
 * Gallery images and single images with captions get a pretty caption added to them
