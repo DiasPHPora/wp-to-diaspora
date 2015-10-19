@@ -170,20 +170,16 @@ class WP2D_API {
 
 		// Get and save the token.
 		if ( null === $this->_fetch_token( $force_new_token ) ) {
-			if ( is_wp_error( $this->_last_request ) ) {
-				$this->_error( 'wp2d_init_failed',
-					sprintf(
-						"%s\n%s",
-						sprintf(
-							_x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp-to-diaspora' ),
-							$this->get_pod_url()
-						),
-						$this->_last_request->get_error_message()
-					),
-					array( 'help_tab' => 'troubleshooting' )
-				);
-				return false;
-			}
+			$error = ( is_wp_error( $this->last_error ) ) ? ' ' . $this->last_error->get_error_message() : '';
+			$this->_error( 'wp2d_init_failed',
+				sprintf(
+					_x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp-to-diaspora' ),
+					$this->get_pod_url()
+				) . $error,
+				array( 'help_tab' => 'troubleshooting' )
+			);
+
+			return false;
 		}
 		return true;
 	}
@@ -341,6 +337,7 @@ class WP2D_API {
 
 		// Submit the post.
 		$response = $this->_request( '/status_messages', wp_json_encode( $post_data ), $headers );
+
 		if ( is_wp_error( $response ) ) {
 			$this->_error( 'wp2d_post_failed', $response->get_error_message() );
 			return false;
