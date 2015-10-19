@@ -338,6 +338,8 @@ class WP_To_Diaspora {
 
 	/**
 	 * Check the connection to the pod and return the status for use with AJAX.
+	 *
+	 * @todo esc_html
 	 */
 	public function check_pod_connection_status_callback() {
 		if ( isset( $_REQUEST['debugging'] ) && ! defined( 'WP2D_DEBUGGING' ) ) {
@@ -354,7 +356,7 @@ class WP_To_Diaspora {
 		if ( true === $status ) {
 			wp_send_json_success( $data );
 		} elseif ( false === $status && is_wp_error( $this->_load_api()->last_error ) ) {
-			$data['message'] = $this->_load_api()->last_error->get_error_message();
+			$data['message'] = $this->_load_api()->last_error->get_error_message() . ' ' . WP2D_Contextual_Help::get_help_tab_quick_link( $this->_load_api()->last_error );
 			wp_send_json_error( $data );
 		}
 		// If $status === null, do nothing.

@@ -266,4 +266,26 @@ class WP2D_Contextual_Help {
 			) . '</p>',
 		) );
 	}
+
+	/**
+	 * Get a link that directly opens a help tab via JS.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @param WP_Error|string $error The WP_Error object with the tab id as data or the tab id itself.
+	 * @return string HTML link.
+	 */
+	public static function get_help_tab_quick_link( $error ) {
+		$help_tab = '';
+		if ( is_wp_error( $error ) && ( $error_data = $error->get_error_data() ) && array_key_exists( 'help_tab', $error_data ) ) {
+			$help_tab = $error_data['help_tab'];
+		} elseif ( is_string( $error ) ) {
+			$help_tab = $error;
+		}
+		if ( '' !== $help_tab ) {
+			return sprintf( '<a href="#" class="open-help-tab" data-help-tab="%1$s">%2$s</a>', $help_tab, esc_html__( 'Help', 'wp-to-diaspora' ) );
+		}
+
+		return '';
+	}
 }

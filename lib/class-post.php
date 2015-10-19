@@ -700,6 +700,8 @@ class WP2D_Post {
 	 * Add admin notices when a post gets displayed.
 	 *
 	 * @since 1.5.0
+	 *
+	 * @todo Ignore post error with AJAX.
 	 */
 	public function admin_notices() {
 		global $post, $pagenow;
@@ -709,13 +711,10 @@ class WP2D_Post {
 
 		if ( ( $error = get_post_meta( $post->ID, '_wp_to_diaspora_post_error', true ) ) && is_wp_error( $error ) ) {
 			// Are we adding a help tab link to this notice?
-			$help_link = '';
-			if ( ( $error_data = $error->get_error_data() ) && array_key_exists( 'help_tab', $error_data ) ) {
-				$help_link = sprintf( '<a href="#" class="open-help-tab" data-help-tab="%1$s">%2$s</a> ', $error_data['help_tab'], esc_html__( 'Help', 'wp-to-diaspora' ) );
-			}
+			$help_link = WP2D_Contextual_Help::get_help_tab_quick_link( $error );
 
 			// This notice will only be shown if posting to diaspora* has failed.
-			printf( '<div class="error notice is-dismissible"><p>%1$s %2$s %3$s<a href="%4$s">%5$s</a></p></div>',
+			printf( '<div class="error notice is-dismissible"><p>%1$s %2$s %3$s <a href="%4$s">%5$s</a></p></div>',
 				esc_html__( 'Failed to post to diaspora*.', 'wp-to-diaspora' ),
 				esc_html__( $error->get_error_message() ),
 				$help_link,
