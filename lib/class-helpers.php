@@ -122,9 +122,13 @@ class WP2D_Helpers {
 
 		$api = new WP2D_API( $pod, $is_secure );
 
-		// This is necessary for correct error handline!
+		// This is necessary for correct error handling!
 		if ( $api->init() ) {
 			$api->login( $username, $password );
+		}
+
+		if ( is_wp_error( $api->last_error ) ) {
+			self::add_debugging( $api->last_error->get_error_message() );
 		}
 
 		return $api;
