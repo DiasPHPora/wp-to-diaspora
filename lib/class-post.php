@@ -227,7 +227,7 @@ class WP2D_Post {
 		// Set up the connection to diaspora*.
 		$conn = WP2D_Helpers::api_quick_connect();
 		if ( ! empty( $status_message ) ) {
-			if ( $conn->last_error ) {
+			if ( is_wp_error( $conn->last_error ) ) {
 				// Save the post error as post meta data, so we can display it to the user.
 				update_post_meta( $post_id, '_wp_to_diaspora_post_error', $conn->last_error );
 				return false;
@@ -707,11 +707,18 @@ class WP2D_Post {
 			return;
 		}
 
-		if ( $error = get_post_meta( $post->ID, '_wp_to_diaspora_post_error', true ) ) {
+		if ( ( $error = get_post_meta( $post->ID, '_wp_to_diaspora_post_error', true ) ) && is_wp_error( $error ) ) {
+			// Are we adding a help tab link to this notice?
+			$help_link = '';
+			if ( ( $error_data = $error->get_error_data() ) && array_key_exists( 'help_tab', $error_data ) ) {
+				$help_link = sprintf( '<a href="#" class="open-help-tab" data-help-tab="%1$s">%2$s</a> ', $error_data['help_tab'], esc_html__( 'Help', 'wp-to-diaspora' ) );
+			}
+
 			// This notice will only be shown if posting to diaspora* has failed.
-			printf( '<div class="error notice is-dismissible"><p>%1$s %2$s <a href="%3$s">%4$s</a></p></div>',
+			printf( '<div class="error notice is-dismissible"><p>%1$s %2$s %3$s<a href="%4$s">%5$s</a></p></div>',
 				esc_html__( 'Failed to post to diaspora*.', 'wp-to-diaspora' ),
-				$error, // Is already escaped.
+				esc_html__( $error->get_error_message() ),
+				$help_link,
 				esc_url( add_query_arg( 'wp_to_diaspora_ignore_post_error', 'yes' ) ),
 				esc_html__( 'Ignore', 'wp-to-diaspora' )
 			);

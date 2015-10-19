@@ -290,7 +290,7 @@ class WP_To_Diaspora {
 
 		// Set up the connection to diaspora*.
 		$api = $this->_load_api();
-		if ( ! $api->last_error ) {
+		if ( ! is_wp_error( $api->last_error ) ) {
 			if ( 'aspects' === $type ) {
 				$list = $api->get_aspects();
 			} elseif ( 'services' === $type ) {
@@ -330,7 +330,7 @@ class WP_To_Diaspora {
 		$status = null;
 
 		if ( $options->is_pod_set_up() ) {
-			$status = ! (bool) $this->_load_api()->last_error;
+			$status = ! is_wp_error( $this->_load_api()->last_error );
 		}
 
 		return $status;
@@ -353,8 +353,8 @@ class WP_To_Diaspora {
 
 		if ( true === $status ) {
 			wp_send_json_success( $data );
-		} elseif ( false === $status ) {
-			$data['message'] = $this->_load_api()->last_error;
+		} elseif ( false === $status && is_wp_error( $this->_load_api()->last_error ) ) {
+			$data['message'] = $this->_load_api()->last_error->get_error_message();
 			wp_send_json_error( $data );
 		}
 		// If $status === null, do nothing.
