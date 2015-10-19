@@ -718,7 +718,7 @@ class WP2D_Post {
 				esc_html__( 'Failed to post to diaspora*.', 'wp-to-diaspora' ),
 				esc_html__( $error->get_error_message() ),
 				$help_link,
-				esc_url( add_query_arg( 'wp_to_diaspora_ignore_post_error', 'yes' ) ),
+				esc_url( add_query_arg( 'wp2d_ignore_post_error', '' ) ),
 				esc_html__( 'Ignore', 'wp-to-diaspora' )
 			);
 		} elseif ( ( $diaspora_post_history = get_post_meta( $post->ID, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
@@ -743,7 +743,7 @@ class WP2D_Post {
 	 */
 	public function ignore_post_error() {
 		// If "Ignore" link has been clicked, delete the post error meta data.
-		if ( isset( $_GET['wp_to_diaspora_ignore_post_error'], $_GET['post'] ) && 'yes' === $_GET['wp_to_diaspora_ignore_post_error'] ) {
+		if ( isset( $_GET['wp2d_ignore_post_error'], $_GET['post'] ) ) {
 			delete_post_meta( $_GET['post'], '_wp_to_diaspora_post_error' );
 		}
 	}

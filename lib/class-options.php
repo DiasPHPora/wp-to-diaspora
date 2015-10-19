@@ -196,7 +196,7 @@ class WP2D_Options {
 				}
 
 				// Attempt to get the cacert.pem file and save it to the plugin's root directory.
-				if ( isset( $_GET['temp_ssl_fix'] ) ) {
+				if ( isset( $_GET['wp2d_temp_ssl_fix'] ) ) {
 					$cacert_file = file_get_contents( 'http://curl.haxx.se/ca/cacert.pem' );
 					if ( $cacert_file && file_put_contents( WP2D_DIR . '/cacert.pem', $cacert_file ) ) {
 						add_settings_error(
