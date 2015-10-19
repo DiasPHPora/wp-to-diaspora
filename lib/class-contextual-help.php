@@ -167,16 +167,29 @@ class WP2D_Contextual_Help {
 		// Explain the importance of SSL connections to the pod and the CA certificate bundle.
 		$defined_functions = get_defined_functions();
 		$ssl_can_install = ( ! array_diff( array( 'fopen', 'fwrite', 'fclose', 'file_get_contents', 'file_put_contents' ), $defined_functions['internal'] ) );
+		$ssl_cert_is_installed = ( file_exists( WP2D_DIR . '/cacert.pem' ) );
+
+		$ssl_install_output = '';
+		if ( $ssl_cert_is_installed ) {
+			$ssl_install_output = esc_html__( 'Looks like you already have a custom bundle installed!', 'wp-to-diaspora' );
+		} elseif ( $ssl_can_install ) {
+			$ssl_install_output = sprintf(
+				esc_html_x( 'Your server should allow us to %sdo this%s for you :-)', 'Placeholders are HTML for links.', 'wp-to-diaspora' ),
+				'<a href="' . add_query_arg( 'wp2d_temp_ssl_fix', '' ) . '" class="button">', '</a>'
+			);
+		}
 		$screen->add_help_tab( array(
 			'id'      => 'ssl',
 			'title'   => esc_html__( 'SSL', 'wp-to-diaspora' ),
 			'content' => '<p><strong>' . esc_html__( 'WP to diaspora* makes sure the connection to your pod is secure!', 'wp-to-diaspora' ) . '</strong></p>
 				<p>' . esc_html__( 'Most diaspora* pods are secured using SSL (Secure Sockets Layer), which makes your connection encrypted. For this connection to work, your server needs to know that those SSL certificates can be trusted.', 'wp-to-diaspora' ) . '</p>
-				<p>' . esc_html__( 'Therefore, if your server does not have an up to date CA certificate bundle, WP to diaspora* may not work for you.', 'wp-to-diaspora' ) . '</p>
+				<p>' . esc_html__( 'Therefore, if your WordPress installation or server does not have an up to date CA certificate bundle, WP to diaspora* may not work for you.', 'wp-to-diaspora' ) . '</p>
 				<p>' . esc_html__( 'Lucky for you though, we have you covered if this is the case for you!', 'wp-to-diaspora' ) . '</p>
-				<ul>
+				<ol>
+					<li><strong>' . esc_html__( 'Check the WordPress certificate bundle', 'wp-to-diaspora' ) . '</strong>: ' .
+						esc_html__( 'The best option is to make sure that the WordPress internal certificate bundle is available and accessible. You should be able to find it here: "wp-includes/certificates/ca-bundle.crt".', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Get in touch with your hosting provider', 'wp-to-diaspora' ) . '</strong>: ' .
-						esc_html__( 'The best option is for you to get in touch with your hosting provider and ask them to update the bundle for you. They should know what you\'re talking about.', 'wp-to-diaspora' ) . '
+						esc_html__( 'Get in touch with your hosting provider and ask them to update the bundle on the server for you. They should know what you\'re talking about.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Install the CA bundle yourself', 'wp-to-diaspora' ) . '</strong>: ' .
 						sprintf(
 							esc_html_x( 'If you maintain your own server, it\'s your job to keep the bundle up to date. You can find a short and simple way on how to do this %shere%s.', 'Placeholders are HTML for a link.', 'wp-to-diaspora' ),
@@ -188,14 +201,7 @@ class WP2D_Contextual_Help {
 							'<a href="http://curl.haxx.se/ca/cacert.pem" download>', '</a>'
 						)
 						. '<br><p>' .
-						// See if we can do this automatically.
-						( ( $ssl_can_install )
-							? sprintf(
-								esc_html_x( 'Your server should allow us to %sdo this%s for you :-)', 'Placeholders are HTML for links.', 'wp-to-diaspora' ),
-								'<a href="' . add_query_arg( 'temp_ssl_fix', '' ) . '" class="button">', '</a>'
-							)
-							: ''
-						)
+						$ssl_install_output
 						. '</p>
 				</ul>
 				<p class="dashicons-before dashicons-info">' . esc_html__( 'NOTE: If you choose the temporary option, the copy procedure needs to be done every time the plugin is updated because all files get replaced!', 'wp-to-diaspora' ) . '</p>',
