@@ -92,6 +92,7 @@ Quite straightforward, right?
 
 = 1.5.4 =
 * Requires at least version 3.9.2 due to WordPress repository structure and PHP 7 compatibility
+* Add minimum WordPress and PHP version checks
 
 = 1.5.3 =
 * Gallery images and single images with captions get a pretty caption added to them
