@@ -257,8 +257,13 @@ class WP2D_API {
 			'authenticity_token' => $this->_fetch_token(),
 		);
 
+		$args = array(
+			'method' => 'POST',
+			'body'   => $params,
+		);
+
 		// Try to sign in.
-		$this->_request( '/users/sign_in', $params );
+		$this->_request( '/users/sign_in', $args );
 
 		// Can we load the bookmarklet to make sure we're logged in?
 		$response = $this->_request( '/bookmarklet' );
@@ -328,24 +333,27 @@ class WP2D_API {
 				$post_data += $extra_data;
 		}
 
-		// Prepare headers.
-		$headers = array(
-			'Accept'       => 'application/json',
-			'Content-Type' => 'application/json',
-			'X-CSRF-Token' => $this->_fetch_token(),
+		$args = array(
+			'method'  => 'POST',
+			'body'    => wp_json_encode( $post_data ),
+			'headers' => array(
+				'Accept'       => 'application/json',
+				'Content-Type' => 'application/json',
+				'X-CSRF-Token' => $this->_fetch_token(),
+			),
 		);
 
 		// Submit the post.
-		$response = $this->_request( '/status_messages', wp_json_encode( $post_data ), $headers );
+		$response = $this->_request( '/status_messages', $args );
 
 		if ( is_wp_error( $response ) ) {
-			$this->_error( 'wp2d_post_failed', $response->get_error_message() );
+			$this->_error( 'wp2d_api_post_failed', $response->get_error_message() );
 			return false;
 		}
 
 		$diaspost = json_decode( $response->body );
 		if ( 201 !== $response->code ) {
-			$this->_error( 'wp2d_post_failed', ( isset( $diaspost->error ) ) ? $diaspost->error : _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
+			$this->_error( 'wp2d_api_post_failed', ( isset( $diaspost->error ) ) ? $diaspost->error : _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
 			return false;
 		}
 
@@ -412,47 +420,38 @@ class WP2D_API {
 	/**
 	 * Send an http(s) request via WP_HTTP API.
 	 *
-	 * @param string       $url     The URL to request.
-	 * @param array|string $data    Data to be posted with the request.
-	 * @param array        $headers Headers to assign to the request.
+	 * @see WP_Http::request()
+	 *
+	 * @param string $url  The URL to request.
+	 * @param array  $args Arguments to be posted with the request.
 	 * @return object An object containing details about this request.
 	 */
-	private function _request( $url, $data = array(), $headers = array() ) {
+	private function _request( $url, $args = array() ) {
 		// Prefix the full pod URL if necessary.
 		if ( 0 === strpos( $url, '/' ) ) {
 			$url = $this->get_pod_url( $url );
 		}
 
 		// Disable redirections so we can verify HTTP response codes.
-		$args = array(
+		$defaults = array(
 			'redirection' => 0,
 			'sslverify'   => true,
-			'timeout'     => 30,
+			'timeout'     => 60,
+			'method'      => 'GET',
 		);
 
 		// If the certificate bundle has been downloaded manually, use that instead.
 		// NOTE: This should actually never be necessary, it's a fallback!
 		if ( file_exists( WP2D_DIR . '/cacert.pem' ) ) {
-			$args['sslcertificates'] = WP2D_DIR . '/cacert.pem';
+			$defaults['sslcertificates'] = WP2D_DIR . '/cacert.pem';
 		}
 
 		// Set the correct cookie.
 		if ( ! empty( $this->_cookies ) ) {
-			$args['cookies'] = $this->_cookies;
+			$defaults['cookies'] = $this->_cookies;
 		}
 
-		// Add the passed headers.
-		if ( ! empty( $headers ) ) {
-			$args['headers'] = $headers;
-		}
-
-		// Add the passed post data.
-		if ( ! empty( $data ) ) {
-			$args['method'] = 'POST';
-			$args['body'] = $data;
-		} else {
-			$args['method'] = 'GET';
-		}
+		$args = wp_parse_args( $args, $defaults );
 
 		// Get the response from the WordPress request.
 		$response = wp_remote_request( $url, $args );
