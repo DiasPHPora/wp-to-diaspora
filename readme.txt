@@ -2,7 +2,7 @@
 Contributors: gutobenn, noplanman
 Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
-Requires at least: 3.7
+Requires at least: 3.9.2
 Tested up to: 4.3.1
 Stable tag: 1.5.3
 Author URI: http://github.com/gutobenn
@@ -21,7 +21,7 @@ With the focus on being **intuitive**, sharing your posts to diaspora* is made *
 Simply write your post and have it shared to diaspora* at the same time you publish it on your website.
 
 = Minimum requirements =
-WordPress 3.7, PHP 5.3 with [cURL extension](https://php.net/manual/book.curl.php).
+WordPress 3.9.2, PHP 5.3 with [cURL extension](https://php.net/manual/book.curl.php).
 
 = Getting started =
 After installing and activating the plugin, be sure to visit the plugin's settings page at 'Settings -> WP to diaspora' on your WordPress Admin page.
@@ -91,7 +91,7 @@ Quite straightforward, right?
 == Changelog ==
 
 = 1.5.4 =
-* Requires at least version 3.7 due to WordPress repository structure
+* Requires at least version 3.9.2 due to WordPress repository structure and PHP 7 compatibility
 
 = 1.5.3 =
 * Gallery images and single images with captions get a pretty caption added to them
@@ -184,4 +184,4 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
-* Gallery images and single images with captions get a pretty caption added to them
+* WordPress 3.9.2 is the new minimum version! Only upgrade if you are on 3.9.2 or over.
