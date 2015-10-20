@@ -536,14 +536,14 @@ class WP2D_API {
 	 * @param array $response The response from the WP_HTTP request.
 	 */
 	private function _load_aspects( &$response ) {
-		if ( $this->is_logged_in() ) {
+		if ( $this->_check_login() ) {
 			// Load the aspects.
 			$aspects_raw = json_decode( $this->_parse_regex( 'aspects', wp_remote_retrieve_body( $response ) ) );
 			if ( empty( $this->_aspects ) && $aspects_raw ) {
 				// Add the 'public' aspect, as it's global and not user specific.
 				$aspects = array( 'public' => __( 'Public', 'wp-to-diaspora' ) );
 
-				// Create an array of all the aspects and save them to the settings.
+				// Add all user specific aspects.
 				foreach ( $aspects_raw as $aspect ) {
 					$aspects[ $aspect->id ] = $aspect->name;
 				}
@@ -560,7 +560,7 @@ class WP2D_API {
 	 * @param array $response The response from the WP_HTTP request.
 	 */
 	private function _load_services( &$response ) {
-		if ( $this->is_logged_in() ) {
+		if ( $this->_check_login() ) {
 			// Load the services.
 			$services_raw = json_decode( $this->_parse_regex( 'services', wp_remote_retrieve_body( $response ) ) );
 			if ( empty( $this->_services ) && $services_raw ) {
