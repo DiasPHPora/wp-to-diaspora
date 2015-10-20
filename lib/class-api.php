@@ -363,6 +363,66 @@ class WP2D_API {
 		return $diaspost;
 	}
 
+	/**
+	 * Delete a post or comment from diaspora*.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @param string $what What to delete, 'post' or 'comment'.
+	 * @param string $id The ID of the post or comment to delete.
+	 * @return boolean If the deletion was successful.
+	 */
+	public function delete( $what, $id ) {
+		// Are we logged in?
+		if ( ! $this->_check_login() ) {
+			return false;
+		}
+
+		// For now, only deleting posts and comments is allowed.
+		if ( ! in_array( $what, array( 'post', 'comment' ) ) ) {
+			$this->_error( 'wp2d_api_delete_failed', __( 'You can only delete posts and comments.', 'wp-to-diaspora' ) );
+			return false;
+		}
+
+		$args = array(
+			'method'  => 'DELETE',
+			'headers' => array(
+				'Accept'       => 'application/json',
+				'Content-Type' => 'application/json',
+				'X-CSRF-Token' => $this->_fetch_token(),
+			),
+		);
+
+		// Try to delete the post or comment.
+		$response = $this->_request( '/' . $what . 's/' . $id, $args );
+
+		$error_message = '';
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+		} else {
+			switch ( $response->code ) {
+				case 204:
+					return true;
+				case 403:
+					$error_message = ( 'post' === $what )
+						? __( 'The post you tried to delete does not belong to you.', 'wp-to-diaspora' )
+						: __( 'The comment you tried to delete does not belong to you.', 'wp-to-diaspora' );
+					break;
+				case 404:
+					$error_message = ( 'post' === $what )
+						? __( 'The post you tried to delete does not exist.', 'wp-to-diaspora' )
+						: __( 'The comment you tried to delete does not exist.', 'wp-to-diaspora' );
+					break;
+				default:
+					$error_message = _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' );
+					break;
+			}
+		}
+
+		$this->_error( 'wp2d_api_delete_' . $what . '_failed', $error_message );
+		return false;
+	}
 
 	/**
 	 * Get the list of aspects.
