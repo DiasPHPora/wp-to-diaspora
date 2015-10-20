@@ -29,7 +29,7 @@ class WP2D_API {
 	/**
 	 * The last http request error that occurred.
 	 *
-	 * @var string
+	 * @var WP_Error
 	 */
 	public $last_error;
 
@@ -288,7 +288,7 @@ class WP2D_API {
 	public function logout() {
 		$this->last_error = null;
 		$this->_token = null;
-		$this->_cookies = null;
+		$this->_cookies = array();
 		$this->_last_request = null;
 		$this->_username = null;
 		$this->_password = null;
