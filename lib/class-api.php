@@ -392,7 +392,7 @@ class WP2D_API {
 	 * @param boolean $force Force to fetch new list.
 	 * @return boolean Was the list fetched successfully?
 	 */
-	private function _get_aspects_services( $type, $list, $force ) {
+	private function _get_aspects_services( $type, &$list, $force ) {
 		if ( ! $this->_check_login() ) {
 			return false;
 		}
@@ -400,6 +400,7 @@ class WP2D_API {
 		// Fetch the new list if the current list is empty or a reload is forced.
 		if ( empty( $list ) || (bool) $force ) {
 			$response = $this->_request( '/bookmarklet' );
+
 			if ( is_wp_error( $response ) || 200 !== $response->code ) {
 				switch ( $type ) {
 					case 'aspects':
@@ -412,12 +413,32 @@ class WP2D_API {
 						$this->_error( 'wp2d_api_getting_aspects_services_failed', _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
 						break;
 				}
-
 				return false;
 			}
-			// No need to parse the list, as it get's done for each request anyway.
-		}
 
+			// Load the aspects or services.
+			if ( $raw_list = json_decode( $this->_parse_regex( $type, $response->body ) ) ) {
+				// In case this fetch is forced, empty the list.
+				$list = array();
+
+				switch ( $type ) {
+					case 'aspects':
+						// Add the 'public' aspect, as it's global and not user specific.
+						$list['public'] = __( 'Public', 'wp-to-diaspora' );
+
+						// Add all user specific aspects.
+						foreach ( $raw_list as $aspect ) {
+							$list[ $aspect->id ] = $aspect->name;
+						}
+						break;
+					case 'services':
+						foreach ( $raw_list as $service ) {
+							$list[ $service ] = ucfirst( $service );
+						}
+						break;
+				}
+			}
+		}
 		return true;
 	}
 
@@ -457,7 +478,7 @@ class WP2D_API {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		// Get the response from the WordPress request.
+		// Get the response from the WP_HTTP request.
 		$response = wp_remote_request( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
@@ -478,16 +499,12 @@ class WP2D_API {
 		$this->_last_request->code     = wp_remote_retrieve_response_code( $response );
 
 		// Save the new token.
-		$this->_load_token( $response );
+		if ( $token = $this->_parse_regex( 'token', $body ) ) {
+			$this->_token = $token;
+		}
 
 		// Save the latest cookies.
-		$this->_load_cookies( $response );
-
-		// Load the aspects if possible.
-		$this->_load_aspects( $response );
-
-		// Load the services if possible.
-		$this->_load_services( $response );
+		$this->_cookies = $response['cookies'];
 
 		// Return the last request details.
 		return $this->_last_request;
@@ -511,76 +528,6 @@ class WP2D_API {
 		) );
 		$this->last_error = new WP_Error( $code, $message, $data );
 	}
-
-	/**
-	 * Save the CSRF token from the WP_HTTP response.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $response The response from the WP_HTTP request.
-	 */
-	private function _load_token( &$response ) {
-		if ( $token = $this->_parse_regex( 'token', wp_remote_retrieve_body( $response ) ) ) {
-			$this->_token = $token;
-		}
-	}
-
-	/**
-	 * Save the cookies from the WP_HTTP response.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $response The response from the WP_HTTP request.
-	 */
-	private function _load_cookies( &$response ) {
-		$this->_cookies = $response['cookies'];
-	}
-
-	/**
-	 * Load the diaspora* aspects from the WP_HTTP response.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $response The response from the WP_HTTP request.
-	 */
-	private function _load_aspects( &$response ) {
-		if ( $this->_check_login() ) {
-			// Load the aspects.
-			$aspects_raw = json_decode( $this->_parse_regex( 'aspects', wp_remote_retrieve_body( $response ) ) );
-			if ( empty( $this->_aspects ) && $aspects_raw ) {
-				// Add the 'public' aspect, as it's global and not user specific.
-				$aspects = array( 'public' => __( 'Public', 'wp-to-diaspora' ) );
-
-				// Add all user specific aspects.
-				foreach ( $aspects_raw as $aspect ) {
-					$aspects[ $aspect->id ] = $aspect->name;
-				}
-				$this->_aspects = $aspects;
-			}
-		}
-	}
-
-	/**
-	 * Load the diaspora* connected services from the WP_HTTP response.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $response The response from the WP_HTTP request.
-	 */
-	private function _load_services( &$response ) {
-		if ( $this->_check_login() ) {
-			// Load the services.
-			$services_raw = json_decode( $this->_parse_regex( 'services', wp_remote_retrieve_body( $response ) ) );
-			if ( empty( $this->_services ) && $services_raw ) {
-				$services = array();
-				foreach ( $services_raw as $service ) {
-					$services[ $service ] = ucfirst( $service );
-				}
-				$this->_services = $services;
-			}
-		}
-	}
-
 
 	/**
 	 * Parse the regex and return the found string.
