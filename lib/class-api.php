@@ -393,10 +393,6 @@ class WP2D_API {
 	 * @return boolean Was the list fetched successfully?
 	 */
 	private function _get_aspects_services( $type, $list, $force ) {
-		if ( ! in_array( $type, array( 'aspects', 'services' ) ) ) {
-			return;
-		}
-
 		if ( ! $this->_check_login() ) {
 			return false;
 		}
@@ -405,10 +401,18 @@ class WP2D_API {
 		if ( empty( $list ) || (bool) $force ) {
 			$response = $this->_request( '/bookmarklet' );
 			if ( is_wp_error( $response ) || 200 !== $response->code ) {
-				$error_message = ( 'aspects' === $type )
-					? __( 'Error loading aspects.', 'wp-to-diaspora' )
-					: __( 'Error loading services.', 'wp-to-diaspora' );
-				$this->_error( 'wp2d_failed_loading_' . $type, $error_message );
+				switch ( $type ) {
+					case 'aspects':
+						$this->_error( 'wp2d_api_failed_getting_aspects', __( 'Error loading aspects.', 'wp-to-diaspora' ) );
+						break;
+					case 'services':
+						$this->_error( 'wp2d_api_failed_getting_services', __( 'Error loading services.', 'wp-to-diaspora' ) );
+						break;
+					default:
+						$this->_error( 'wp2d_api_failed_getting_aspects_services', _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
+						break;
+				}
+
 				return false;
 			}
 			// No need to parse the list, as it get's done for each request anyway.
