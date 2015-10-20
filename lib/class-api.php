@@ -171,7 +171,7 @@ class WP2D_API {
 		// Get and save the token.
 		if ( null === $this->_fetch_token( $force_new_token ) ) {
 			$error = ( is_wp_error( $this->last_error ) ) ? ' ' . $this->last_error->get_error_message() : '';
-			$this->_error( 'wp2d_init_failed',
+			$this->_error( 'wp2d_api_init_failed',
 				sprintf(
 					_x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp-to-diaspora' ),
 					$this->get_pod_url()
@@ -206,7 +206,7 @@ class WP2D_API {
 	 */
 	private function _check_login() {
 		if ( ! $this->is_logged_in() ) {
-			$this->_error( 'wp2d_not_logged_in', __( 'Not logged in.', 'wp-to-diaspora' ) );
+			$this->_error( 'wp2d_api_not_logged_in', __( 'Not logged in.', 'wp-to-diaspora' ) );
 			return false;
 		}
 		return true;
@@ -271,7 +271,7 @@ class WP2D_API {
 		// If the request isn't successful, we are not logged in correctly.
 		if ( is_wp_error( $response ) || 200 !== $response->code ) {
 			// Login failed.
-			$this->_error( 'wp2d_login_failed', __( 'Login failed. Check your login details.', 'wp-to-diaspora' ), array( 'help_tab' => 'troubleshooting' ) );
+			$this->_error( 'wp2d_api_login_failed', __( 'Login failed. Check your login details.', 'wp-to-diaspora' ), array( 'help_tab' => 'troubleshooting' ) );
 			return false;
 		}
 
@@ -403,13 +403,13 @@ class WP2D_API {
 			if ( is_wp_error( $response ) || 200 !== $response->code ) {
 				switch ( $type ) {
 					case 'aspects':
-						$this->_error( 'wp2d_api_failed_getting_aspects', __( 'Error loading aspects.', 'wp-to-diaspora' ) );
+						$this->_error( 'wp2d_api_getting_aspects_failed', __( 'Error loading aspects.', 'wp-to-diaspora' ) );
 						break;
 					case 'services':
-						$this->_error( 'wp2d_api_failed_getting_services', __( 'Error loading services.', 'wp-to-diaspora' ) );
+						$this->_error( 'wp2d_api_getting_services_failed', __( 'Error loading services.', 'wp-to-diaspora' ) );
 						break;
 					default:
-						$this->_error( 'wp2d_api_failed_getting_aspects_services', _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
+						$this->_error( 'wp2d_api_getting_aspects_services_failed', _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
 						break;
 				}
 
@@ -504,6 +504,11 @@ class WP2D_API {
 	 * @param  mixed      $data    Error data.
 	 */
 	private function _error( $code, $message, $data = '' ) {
+		// Always add the code and message of the last request.
+		$data = array_merge( array_filter( (array) $data ), array(
+			'code'    => $this->_last_request->code,
+			'message' => $this->_last_request->message,
+		) );
 		$this->last_error = new WP_Error( $code, $message, $data );
 	}
 
