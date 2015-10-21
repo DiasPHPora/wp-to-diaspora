@@ -4,7 +4,7 @@ Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
 Requires at least: 3.9.2
 Tested up to: 4.3.1
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 Author URI: http://github.com/gutobenn
 Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
@@ -93,6 +93,7 @@ Quite straightforward, right?
 = 1.5.4 =
 * Requires at least version 3.9.2 due to WordPress repository structure and PHP 7 compatibility
 * Add minimum WordPress and PHP version checks
+* Add filter for post title and "Originally posted at:" styling
 
 = 1.5.3 =
 * Gallery images and single images with captions get a pretty caption added to them

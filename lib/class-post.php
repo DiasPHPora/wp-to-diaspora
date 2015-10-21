@@ -260,9 +260,13 @@ class WP2D_Post {
 	 */
 	private function _get_title_link() {
 		return sprintf(
-			'<p><strong><a href="%1$s" title="%1$s">%2$s</a></strong></p>',
+			apply_filters( 'wp2d_title_filter', 
+				'<p><strong><a href="%1$s" title="%1$s">%2$s</a></strong></p>',
+				get_permalink( $this->ID ),
+				esc_html( $this->post->post_title ) 
+			),
 			get_permalink( $this->ID ),
-			esc_html( $this->post->post_title )
+			esc_html( $this->post->post_title ) 
 		);
 	}
 
@@ -397,10 +401,16 @@ class WP2D_Post {
 	private function _get_posted_at_link() {
 		$link = '';
 		if ( $this->fullentrylink ) {
-			$link = sprintf( '%1$s [%2$s](%2$s "%3$s")',
-				esc_html__( 'Originally posted at:', 'wp-to-diaspora' ),
-				get_permalink( $this->ID ),
-				esc_html__( 'Permalink', 'wp-to-diaspora' )
+
+			$link = sprintf( 
+				apply_filters( 'wp2d_posted_at_link_filter', 
+					'%1$s [%2$s](%2$s "Permalink")',
+					esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
+					get_permalink( $this->ID ),
+					esc_html( $this->post->post_title )
+			       	),
+				esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
+				get_permalink( $this->ID )
 			);
 		}
 
@@ -551,7 +561,6 @@ class WP2D_Post {
 	public function custom_gallery_regex_callback( $m ) {
 		return $this->get_img_caption( $m[2] );
 	}
-
 
 	/*
 	 * META BOX
