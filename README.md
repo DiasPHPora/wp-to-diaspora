@@ -5,6 +5,8 @@ Automatically share WordPress posts on diaspora*
 
 https://wordpress.org/plugins/wp-to-diaspora/
 
+Wiki includes additional documentation: https://github.com/gutobenn/wp-to-diaspora/wiki
+
 ### Translations
 - Portuguese (Brazil)
 - Russian -- contributed by [Vitalie Ciubotaru](http://ciubotaru.tk)
