@@ -30,6 +30,8 @@ Simply add your diaspora* pod, username and password to get started.
 On this page you can also define the default behaviour when publishing new posts.
 These settings can easily be adjusted for each individual post by using the meta box that has been added to the post types that you have selected.
 
+Additional documentation can be found in our [wiki](https://github.com/gutobenn/wp-to-diaspora/wiki)
+
 = What's diaspora*? =
 diaspora* is a decentralized social network. More about it on https://diasporafoundation.org/
 
