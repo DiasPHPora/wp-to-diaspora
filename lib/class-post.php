@@ -261,7 +261,7 @@ class WP2D_Post {
 	private function _get_title_link() {
 		return sprintf(
 			apply_filters( 'wp2d_title_filter', 
-				'[ **%2$s** ](%1$s "%1$s")',
+				'<p><strong><a href="%1$s" title="%1$s">%2$s</a></strong></p>',
 				get_permalink( $this->ID ),
 				esc_html( $this->post->post_title ) 
 			),
@@ -404,15 +404,15 @@ class WP2D_Post {
 
 			$link = sprintf( 
 				apply_filters( 'wp2d_posted_at_link_filter', 
-					'%1$s [%2$s](%2$s "%3$s")',
+					'<p><strong><a href="%2$s" title="%3$s">%1$s</a></strong></p>',
 					esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
 					get_permalink( $this->ID ),
 					esc_html( $this->post->post_title ),
-					"Permalink"
+					esc_html( "Permalink", 'wp-to-diaspora' )
 			       	),
 				esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
 				get_permalink( $this->ID ),
-				"Permalink"
+				esc_html( "Permalink", 'wp-to-diaspora' )
 			);
 		}
 
