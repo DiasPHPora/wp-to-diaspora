@@ -261,7 +261,7 @@ class WP2D_Post {
 	private function _get_title_link() {
 		return sprintf(
 			apply_filters( 'wp2d_title_filter', 
-				'[**%2$s**](%1$s %1$s")',
+				'[ **%2$s** ](%1$s "%1$s")',
 				get_permalink( $this->ID ),
 				esc_html( $this->post->post_title ) 
 			),
@@ -283,7 +283,7 @@ class WP2D_Post {
 		$shortcode_tags_bkp = array();
 
 		foreach ( $shortcode_tags as $shortcode_tag => $shortcode_function ) {
-			if ( ! in_array( $shortcode_tag, array( 'wp_caption', 'caption', 'gallery' ) ) ) {
+			if ( ! in_array( $shortcode_tag, apply_filters( 'wp2d_shortcodes_filter', array( 'wp_caption', 'caption', 'gallery' ) ) ) ) {
 				$shortcode_tags_bkp[ $shortcode_tag ] = $shortcode_function;
 				unset( $shortcode_tags[ $shortcode_tag ] );
 			}
@@ -291,7 +291,7 @@ class WP2D_Post {
 
 		// Disable all filters and then enable only defaults. This prevents additional filters from being posted to diaspora*.
 		remove_all_filters( 'the_content' );
-		foreach ( array( 'do_shortcode', 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', array( $this, 'embed_remove' ) ) as $filter ) {
+		foreach ( apply_filters( 'wp2d_content_filters_filter', array( 'do_shortcode', 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', array( $this, 'embed_remove' ) ) ) as $filter ) {
 			add_filter( 'the_content', $filter );
 		}
 
@@ -404,7 +404,7 @@ class WP2D_Post {
 
 			$link = sprintf( 
 				apply_filters( 'wp2d_posted_at_link_filter', 
-					'%1$s [%2$s](%2$s %3$s")',
+					'%1$s [%2$s](%2$s "%3$s")',
 					esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
 					get_permalink( $this->ID ),
 					esc_html( $this->post->post_title ),
