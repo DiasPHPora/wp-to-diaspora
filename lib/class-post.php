@@ -404,7 +404,7 @@ class WP2D_Post {
 
 			$link = sprintf( 
 				apply_filters( 'wp2d_posted_at_link_filter', 
-					'<p><strong><a href="%2$s" title="%3$s">%1$s</a></strong></p>',
+					'<p><a href="%2$s" title="%3$s">%1$s</a></strong>',
 					esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
 					get_permalink( $this->ID ),
 					esc_html( $this->post->post_title ),
