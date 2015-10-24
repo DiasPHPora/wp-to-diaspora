@@ -95,7 +95,7 @@ Quite straightforward, right?
 = 1.5.4 =
 * Requires at least version 3.9.2 due to WordPress repository structure and PHP 7 compatibility
 * Add minimum WordPress and PHP version checks
-* Add filter for post title and "Originally posted at:" styling
+* Add four filters for: post title,"Originally posted at:", content shortcodes and content filters. Usage information available in wp-to-diaspora's github wiki.
 
 = 1.5.3 =
 * Gallery images and single images with captions get a pretty caption added to them
