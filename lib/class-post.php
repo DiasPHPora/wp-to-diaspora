@@ -259,15 +259,22 @@ class WP2D_Post {
 	 * @return string Post title as a link.
 	 */
 	private function _get_title_link() {
-		return sprintf(
-			apply_filters( 'wp2d_title_filter', 
-				'<p><strong><a href="%1$s" title="%1$s">%2$s</a></strong></p>',
-				get_permalink( $this->ID ),
-				esc_html( $this->post->post_title ) 
-			),
-			get_permalink( $this->ID ),
-			esc_html( $this->post->post_title ) 
-		);
+		$title = esc_html( $this->post->post_title );
+		$permalink = get_permalink( $this->ID );
+		$link = sprintf( '<strong><a href="%2$s" title="%2$s">%1$s</a></strong>', $title, $permalink );
+
+		/**
+		 * Filter the title link at the top of the post.
+		 *
+		 * @since 1.5.4.1
+		 *
+		 * @param string $link      The whole HTML of the title link to be outputted.
+		 * @param string $title     The title of the original post.
+		 * @param string $permalink The permalink of the original post.
+		 */
+		$link = apply_filters( 'wp2d_title_filter', $link, $title, $permalink );
+
+		return '<p>' . $link . '</p>';
 	}
 
 	/**
@@ -402,18 +409,24 @@ class WP2D_Post {
 		$link = '';
 		if ( $this->fullentrylink ) {
 
-			$link = sprintf( 
-				apply_filters( 'wp2d_posted_at_link_filter', 
-					'<p><a href="%2$s" title="%3$s">%1$s</a></strong>',
-					esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
-					get_permalink( $this->ID ),
-					esc_html( $this->post->post_title ),
-					esc_html( "Permalink", 'wp-to-diaspora' )
-			       	),
-				esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
-				get_permalink( $this->ID ),
-				esc_html( "Permalink", 'wp-to-diaspora' )
-			);
+			$text = esc_html( 'Originally posted at:', 'wp-to-diaspora' );
+			$permalink = get_permalink( $this->ID );
+			$title = esc_html( 'Permalink', 'wp-to-diaspora' );
+			$link = sprintf( '%1$s <a href="%2$s" title="%3$s">%2$s</a>', $text, $permalink, $title );
+
+			/**
+			 * Filter the "Originally posted at" link at the bottom of the post.
+			 *
+			 * @since 1.5.4.1
+			 *
+			 * @param string $link      The whole HTML of the text and link to be outputted.
+			 * @param string $text      The "Originally posted at:" text before the link.
+			 * @param string $permalink The permalink of the original post.
+			 * @param string $title     The "Permalink" title of the link.
+			 */
+			$link = apply_filters( 'wp2d_posted_at_link_filter', $link, $text, $permalink, $title );
+
+			$link = '<p>' . $link . '</p>';
 		}
 
 		return $link;
@@ -478,28 +491,26 @@ class WP2D_Post {
 	 *
 	 * @since 1.5.3
 	 *
-	 * @param string $caption Caption to be prettified.
+	 * @param string $text Caption text to be prettified.
 	 * @return string Prettified image caption.
 	 */
-	public function get_img_caption( $caption ) {
-		$caption = trim( $caption );
-		if ( '' === $caption ) {
+	public function get_img_caption( $text ) {
+		$text = trim( $text );
+		if ( '' === $text ) {
 			return '';
 		}
+
+		$caption = sprintf( '<blockquote>%s</blockquote>',  $text );
 
 		/**
 		 * Filter the image caption to be displayed after images with captions.
 		 *
-		 * Must contain a placeholder (%s) for the caption text.
-		 *
 		 * @since 1.5.3
 		 *
-		 * @param string $wrapper The wrapper to be used for the caption.
+		 * @param string $caption The whole HTML of the caption.
+		 * @param string $text    The caption text.
 		 */
-		return sprintf(
-			apply_filters( 'wp2d_image_caption_wrapper', '<blockquote>%s</blockquote>' ),
-			trim( $caption )
-		);
+		return apply_filters( 'wp2d_image_caption', $caption, $text );
 	}
 
 	/**

@@ -4,7 +4,7 @@ Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
 Requires at least: 3.9.2
 Tested up to: 4.3.1
-Stable tag: 1.5.4
+Stable tag: 1.5.4.1
 Author URI: http://github.com/gutobenn
 Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
@@ -91,6 +91,9 @@ Basically, the server your WordPress installation is set up on makes a connectio
 Quite straightforward, right?
 
 == Changelog ==
+
+= 1.5.4.1 =
+* Fix and correct filters
 
 = 1.5.4 =
 * Requires at least version 3.9.2 due to WordPress repository structure and PHP 7 compatibility
@@ -188,4 +191,4 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
-* WordPress 3.9.2 is the new minimum version! Only upgrade if you are on 3.9.2 or over.
+* Important update that fixes and corrects filters!
