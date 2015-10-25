@@ -231,7 +231,8 @@ class WP2D_API {
 	 */
 	public function login( $username, $password, $force = false ) {
 		// Are we trying to log in as a different user?
-		if ( $username !== $this->_username || $password !== $this->_password ) {
+		if ( ( isset( $this->_username ) && $username !== $this->_username )
+			|| ( isset( $this->_password ) && $password !== $this->_password ) ) {
 			$this->logout();
 		}
 
@@ -564,7 +565,9 @@ class WP2D_API {
 		}
 
 		// Save the latest cookies.
-		$this->_cookies = $response['cookies'];
+		if ( isset( $response['cookies'] ) ) {
+			$this->_cookies = $response['cookies'];
+		}
 
 		// Return the last request details.
 		return $this->_last_request;
@@ -583,8 +586,8 @@ class WP2D_API {
 	private function _error( $code, $message, $data = '' ) {
 		// Always add the code and message of the last request.
 		$data = array_merge( array_filter( (array) $data ), array(
-			'code'    => $this->_last_request->code,
-			'message' => $this->_last_request->message,
+			'code'    => ( isset( $this->_last_request->code ) ) ? $this->_last_request->code : null,
+			'message' => ( isset( $this->_last_request->message ) ) ? $this->_last_request->message : null,
 		) );
 		$this->last_error = new WP_Error( $code, $message, $data );
 	}
