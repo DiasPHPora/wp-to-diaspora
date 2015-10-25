@@ -259,11 +259,22 @@ class WP2D_Post {
 	 * @return string Post title as a link.
 	 */
 	private function _get_title_link() {
-		return sprintf(
-			'<p><strong><a href="%1$s" title="%1$s">%2$s</a></strong></p>',
-			get_permalink( $this->ID ),
-			esc_html( $this->post->post_title )
-		);
+		$title = esc_html( $this->post->post_title );
+		$permalink = get_permalink( $this->ID );
+		$link = sprintf( '<strong><a href="%2$s" title="%2$s">%1$s</a></strong>', $title, $permalink );
+
+		/**
+		 * Filter the title link at the top of the post.
+		 *
+		 * @since 1.5.4.1
+		 *
+		 * @param string $link      The whole HTML of the title link to be outputted.
+		 * @param string $title     The title of the original post.
+		 * @param string $permalink The permalink of the original post.
+		 */
+		$link = apply_filters( 'wp2d_title_filter', $link, $title, $permalink );
+
+		return '<p>' . $link . '</p>';
 	}
 
 	/**
@@ -279,7 +290,7 @@ class WP2D_Post {
 		$shortcode_tags_bkp = array();
 
 		foreach ( $shortcode_tags as $shortcode_tag => $shortcode_function ) {
-			if ( ! in_array( $shortcode_tag, array( 'wp_caption', 'caption', 'gallery' ) ) ) {
+			if ( ! in_array( $shortcode_tag, apply_filters( 'wp2d_shortcodes_filter', array( 'wp_caption', 'caption', 'gallery' ) ) ) ) {
 				$shortcode_tags_bkp[ $shortcode_tag ] = $shortcode_function;
 				unset( $shortcode_tags[ $shortcode_tag ] );
 			}
@@ -287,7 +298,7 @@ class WP2D_Post {
 
 		// Disable all filters and then enable only defaults. This prevents additional filters from being posted to diaspora*.
 		remove_all_filters( 'the_content' );
-		foreach ( array( 'do_shortcode', 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', array( $this, 'embed_remove' ) ) as $filter ) {
+		foreach ( apply_filters( 'wp2d_content_filters_filter', array( 'do_shortcode', 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', array( $this, 'embed_remove' ) ) ) as $filter ) {
 			add_filter( 'the_content', $filter );
 		}
 
@@ -397,11 +408,25 @@ class WP2D_Post {
 	private function _get_posted_at_link() {
 		$link = '';
 		if ( $this->fullentrylink ) {
-			$link = sprintf( '%1$s [%2$s](%2$s "%3$s")',
-				esc_html__( 'Originally posted at:', 'wp-to-diaspora' ),
-				get_permalink( $this->ID ),
-				esc_html__( 'Permalink', 'wp-to-diaspora' )
-			);
+
+			$text = esc_html( 'Originally posted at:', 'wp-to-diaspora' );
+			$permalink = get_permalink( $this->ID );
+			$title = esc_html( 'Permalink', 'wp-to-diaspora' );
+			$link = sprintf( '%1$s <a href="%2$s" title="%3$s">%2$s</a>', $text, $permalink, $title );
+
+			/**
+			 * Filter the "Originally posted at" link at the bottom of the post.
+			 *
+			 * @since 1.5.4.1
+			 *
+			 * @param string $link      The whole HTML of the text and link to be outputted.
+			 * @param string $text      The "Originally posted at:" text before the link.
+			 * @param string $permalink The permalink of the original post.
+			 * @param string $title     The "Permalink" title of the link.
+			 */
+			$link = apply_filters( 'wp2d_posted_at_link_filter', $link, $text, $permalink, $title );
+
+			$link = '<p>' . $link . '</p>';
 		}
 
 		return $link;
@@ -466,28 +491,26 @@ class WP2D_Post {
 	 *
 	 * @since 1.5.3
 	 *
-	 * @param string $caption Caption to be prettified.
+	 * @param string $text Caption text to be prettified.
 	 * @return string Prettified image caption.
 	 */
-	public function get_img_caption( $caption ) {
-		$caption = trim( $caption );
-		if ( '' === $caption ) {
+	public function get_img_caption( $text ) {
+		$text = trim( $text );
+		if ( '' === $text ) {
 			return '';
 		}
+
+		$caption = sprintf( '<blockquote>%s</blockquote>',  $text );
 
 		/**
 		 * Filter the image caption to be displayed after images with captions.
 		 *
-		 * Must contain a placeholder (%s) for the caption text.
-		 *
 		 * @since 1.5.3
 		 *
-		 * @param string $wrapper The wrapper to be used for the caption.
+		 * @param string $caption The whole HTML of the caption.
+		 * @param string $text    The caption text.
 		 */
-		return sprintf(
-			apply_filters( 'wp2d_image_caption_wrapper', '<blockquote>%s</blockquote>' ),
-			trim( $caption )
-		);
+		return apply_filters( 'wp2d_image_caption', $caption, $text );
 	}
 
 	/**
@@ -551,7 +574,6 @@ class WP2D_Post {
 	public function custom_gallery_regex_callback( $m ) {
 		return $this->get_img_caption( $m[2] );
 	}
-
 
 	/*
 	 * META BOX

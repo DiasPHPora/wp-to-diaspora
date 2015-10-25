@@ -3,7 +3,7 @@
  * Plugin Name: WP to diaspora*
  * Plugin URI:  https://github.com/gutobenn/wp-to-diaspora
  * Description: Automatically shares WordPress posts on diaspora*
- * Version:     1.5.3
+ * Version:     1.5.4.1
  * Author:      Augusto Bennemann
  * Author URI:  https://github.com/gutobenn
  * Text Domain: wp-to-diaspora
@@ -22,7 +22,7 @@
  * to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *
  * @package   WP_To_Diaspora
- * @version   1.5.3
+ * @version   1.5.4.1
  * @author    Augusto Bennemann <gutobenn@gmail.com>
  * @copyright Copyright (c) 2015, Augusto Bennemann
  * @link      https://github.com/gutobenn/wp-to-diaspora
@@ -33,7 +33,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Set the current version.
-define( 'WP2D_VERSION', '1.5.3' );
+define( 'WP2D_VERSION', '1.5.4.1' );
 
 /**
  * WP to diaspora* main plugin class.
@@ -46,6 +46,24 @@ class WP_To_Diaspora {
 	 * @var WP_To_Diaspora
 	 */
 	private static $_instance = null;
+
+	/**
+	 * The minimum required WordPress version.
+	 *
+	 * @since 1.5.4
+	 *
+	 * @var string
+	 */
+	private $_min_wp = '3.9.2';
+
+	/**
+	 * The minimum required PHP version.
+	 *
+	 * @since 1.5.4
+	 *
+	 * @var string
+	 */
+	private $_min_php = '5.3';
 
 	/**
 	 * Instance of the API class.
@@ -63,8 +81,12 @@ class WP_To_Diaspora {
 		if ( ! isset( self::$_instance ) ) {
 			self::$_instance = new self();
 			self::$_instance->_constants();
-			self::$_instance->_includes();
-			self::$_instance->_setup();
+			if ( self::$_instance->_version_check() ) {
+				self::$_instance->_includes();
+				self::$_instance->_setup();
+			} else {
+				self::$_instance = null;
+			}
 		}
 		return self::$_instance;
 	}
@@ -86,6 +108,44 @@ class WP_To_Diaspora {
 	}
 
 	/**
+	 * Check the minimum WordPress and PHP requirements.
+	 *
+	 * @since 1.5.4
+	 *
+	 * @return bool If version requirements are met.
+	 */
+	private function _version_check() {
+		// Check for version requirements.
+		if ( version_compare( $GLOBALS['wp_version'], $this->_min_wp, '<' )
+			|| version_compare( PHP_VERSION, $this->_min_php, '<' ) ) {
+			add_action( 'admin_notices', array( $this, 'deactivate' ) );
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Callback to deactivate plugin and display admin notice.
+	 *
+	 * @since 1.5.4
+	 */
+	public function deactivate() {
+		// First of all, deactivate the plugin.
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+
+		// Get rid of the "Plugin activated" message.
+		unset( $_GET['activate'] );
+
+		// Then display the admin notice.
+		?>
+		<div class="error">
+			<p><?php echo esc_html( sprintf( 'WP to diaspora* requires at least WordPress %1$s (you have %2$s) and PHP %3$s (you have %4$s)!', $this->_min_wp, $GLOBALS['wp_version'], $this->_min_php, PHP_VERSION ) ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Include all the required files.
 	 *
 	 * @since 1.5.0
@@ -98,7 +158,6 @@ class WP_To_Diaspora {
 		require_once WP2D_LIB_DIR . '/class-options.php';
 		require_once WP2D_LIB_DIR . '/class-post.php';
 	}
-
 
 	/**
 	 * Set up the plugin.

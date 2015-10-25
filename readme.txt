@@ -4,7 +4,7 @@ Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
 Requires at least: 3.9.2
 Tested up to: 4.3.1
-Stable tag: 1.5.3
+Stable tag: 1.5.4.1
 Author URI: http://github.com/gutobenn
 Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
@@ -29,6 +29,8 @@ Simply add your diaspora* pod, username and password to get started.
 
 On this page you can also define the default behaviour when publishing new posts.
 These settings can easily be adjusted for each individual post by using the meta box that has been added to the post types that you have selected.
+
+Additional documentation can be found in our [wiki](https://github.com/gutobenn/wp-to-diaspora/wiki)
 
 = What's diaspora*? =
 diaspora* is a decentralized social network. More about it on https://diasporafoundation.org/
@@ -92,10 +94,16 @@ Quite straightforward, right?
 
 = 1.6.0 =
 * API now uses the WP_HTTP API for requests, cURL no longer required
-* Contextual help updated with troubleshooting tips.
+* Contextual help updated with troubleshooting tips
+* Add initial unit tests for WP2D_API
+
+= 1.5.4.1 =
+* Fix and correct filters
 
 = 1.5.4 =
 * Requires at least version 3.9.2 due to WordPress repository structure and PHP 7 compatibility
+* Add minimum WordPress and PHP version checks
+* Add four filters for: post title,"Originally posted at:", content shortcodes and content filters. Usage information available in wp-to-diaspora's github wiki.
 
 = 1.5.3 =
 * Gallery images and single images with captions get a pretty caption added to them
@@ -188,4 +196,4 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
-* WordPress 3.9.2 is the new minimum version! Only upgrade if you are on 3.9.2 or over.
+* Important update that fixes and corrects filters!
