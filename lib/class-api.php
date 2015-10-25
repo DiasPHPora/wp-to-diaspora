@@ -334,9 +334,14 @@ class WP2D_API {
 				$post_data += $extra_data;
 		}
 
+		// Check if we can use the new wp_json_encode function.
+		$post_data = ( function_exists( 'wp_json_encode' ) )
+			? wp_json_encode( $post_data )
+			: json_encode( $post_data );
+
 		$args = array(
 			'method'  => 'POST',
-			'body'    => wp_json_encode( $post_data ),
+			'body'    => $post_data,
 			'headers' => array(
 				'Accept'       => 'application/json',
 				'Content-Type' => 'application/json',
