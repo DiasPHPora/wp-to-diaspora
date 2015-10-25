@@ -410,7 +410,7 @@ class WP2D_Post {
 			/**
 			 * Filter the "Originally posted at" link at the bottom of the post.
 			 *
-			 * @since 1.5.4
+			 * @since 1.5.4.1
 			 *
 			 * @param string $link      The whole HTML of the text and link to be outputted.
 			 * @param string $text      The "Originally posted at:" text before the link.
