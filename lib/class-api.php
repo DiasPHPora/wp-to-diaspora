@@ -405,16 +405,26 @@ class WP2D_API {
 			switch ( $response->code ) {
 				case 204:
 					return true;
-				case 403:
-					$error_message = ( 'post' === $what )
-						? __( 'The post you tried to delete does not belong to you.', 'wp-to-diaspora' )
-						: __( 'The comment you tried to delete does not belong to you.', 'wp-to-diaspora' );
-					break;
 				case 404:
 					$error_message = ( 'post' === $what )
 						? __( 'The post you tried to delete does not exist.', 'wp-to-diaspora' )
 						: __( 'The comment you tried to delete does not exist.', 'wp-to-diaspora' );
 					break;
+
+				// Due to diaspora* returning a proper 403 when trying to delete a foreign comment
+				// but returning a 500 when trying to delete a foreign post, this needs some special attention.
+				case 403:
+					if ( 'comment' === $what ) {
+						$error_message = __( 'The comment you tried to delete does not belong to you.', 'wp-to-diaspora' );
+						break;
+					}
+					// Fall through...
+				case 500:
+					if ( 'post' === $what ) {
+						$error_message = __( 'The post you tried to delete does not belong to you.', 'wp-to-diaspora' );
+						break;
+					}
+					// Fall through...
 				default:
 					$error_message = _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' );
 					break;
