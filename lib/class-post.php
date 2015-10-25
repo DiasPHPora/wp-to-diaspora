@@ -259,15 +259,22 @@ class WP2D_Post {
 	 * @return string Post title as a link.
 	 */
 	private function _get_title_link() {
-		return sprintf(
-			apply_filters( 'wp2d_title_filter', 
-				'<p><strong><a href="%1$s" title="%1$s">%2$s</a></strong></p>',
-				get_permalink( $this->ID ),
-				esc_html( $this->post->post_title ) 
-			),
-			get_permalink( $this->ID ),
-			esc_html( $this->post->post_title ) 
-		);
+		$title = esc_html( $this->post->post_title );
+		$permalink = get_permalink( $this->ID );
+		$link = sprintf( '<strong><a href="%2$s" title="%2$s">%1$s</a></strong>', $title, $permalink );
+
+		/**
+		 * Filter the title link at the top of the post.
+		 *
+		 * @since 1.5.4.1
+		 *
+		 * @param string $link      The whole HTML of the title link to be outputted.
+		 * @param string $title     The title of the original post.
+		 * @param string $permalink The permalink of the original post.
+		 */
+		$link = apply_filters( 'wp2d_title_filter', $link, $title, $permalink );
+
+		return '<p>' . $link . '</p>';
 	}
 
 	/**
