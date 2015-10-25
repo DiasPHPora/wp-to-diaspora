@@ -491,28 +491,26 @@ class WP2D_Post {
 	 *
 	 * @since 1.5.3
 	 *
-	 * @param string $caption Caption to be prettified.
+	 * @param string $text Caption text to be prettified.
 	 * @return string Prettified image caption.
 	 */
-	public function get_img_caption( $caption ) {
-		$caption = trim( $caption );
-		if ( '' === $caption ) {
+	public function get_img_caption( $text ) {
+		$text = trim( $text );
+		if ( '' === $text ) {
 			return '';
 		}
+
+		$caption = sprintf( '<blockquote>%s</blockquote>',  $text );
 
 		/**
 		 * Filter the image caption to be displayed after images with captions.
 		 *
-		 * Must contain a placeholder (%s) for the caption text.
-		 *
 		 * @since 1.5.3
 		 *
-		 * @param string $wrapper The wrapper to be used for the caption.
+		 * @param string $caption The whole HTML of the caption.
+		 * @param string $text    The caption text.
 		 */
-		return sprintf(
-			apply_filters( 'wp2d_image_caption_wrapper', '<blockquote>%s</blockquote>' ),
-			trim( $caption )
-		);
+		return apply_filters( 'wp2d_image_caption', $caption, $text );
 	}
 
 	/**
