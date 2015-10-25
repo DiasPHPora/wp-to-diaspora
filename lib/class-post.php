@@ -402,18 +402,24 @@ class WP2D_Post {
 		$link = '';
 		if ( $this->fullentrylink ) {
 
-			$link = sprintf( 
-				apply_filters( 'wp2d_posted_at_link_filter', 
-					'<p><a href="%2$s" title="%3$s">%1$s</a></strong>',
-					esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
-					get_permalink( $this->ID ),
-					esc_html( $this->post->post_title ),
-					esc_html( "Permalink", 'wp-to-diaspora' )
-			       	),
-				esc_html( 'Originally posted at:', 'wp-to-diaspora' ),
-				get_permalink( $this->ID ),
-				esc_html( "Permalink", 'wp-to-diaspora' )
-			);
+			$text = esc_html( 'Originally posted at:', 'wp-to-diaspora' );
+			$permalink = get_permalink( $this->ID );
+			$title = esc_html( 'Permalink', 'wp-to-diaspora' );
+			$link = sprintf( '%1$s <a href="%2$s" title="%3$s">%2$s</a>', $text, $permalink, $title );
+
+			/**
+			 * Filter the "Originally posted at" link at the bottom of the post.
+			 *
+			 * @since 1.5.4
+			 *
+			 * @param string $link      The whole HTML of the text and link to be outputted.
+			 * @param string $text      The "Originally posted at:" text before the link.
+			 * @param string $permalink The permalink of the original post.
+			 * @param string $title     The "Permalink" title of the link.
+			 */
+			$link = apply_filters( 'wp2d_posted_at_link_filter', $link, $text, $permalink, $title );
+
+			$link = '<p>' . $link . '</p>';
 		}
 
 		return $link;
