@@ -92,6 +92,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= 1.6.0 =
+* Fixed a bug: the posts were published on diaspora every time edited via Quick Edit 
+
 = 1.5.4.1 =
 * Fix and correct filters
 

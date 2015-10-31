@@ -245,6 +245,10 @@ class WP2D_Post {
 
 				// If there is still a previous post error around, remove it.
 				delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
+
+				// Set post_to_diaspora false to prevent publishing again on diaspora* when
+				// the post is edited via quick edit
+				update_post_meta( $post_id, '_wp_to_diaspora_post_to_diaspora', false );
 			}
 		} else {
 			return false;
