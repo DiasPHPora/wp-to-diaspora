@@ -167,16 +167,29 @@ class WP2D_Contextual_Help {
 		// Explain the importance of SSL connections to the pod and the CA certificate bundle.
 		$defined_functions = get_defined_functions();
 		$ssl_can_install = ( ! array_diff( array( 'fopen', 'fwrite', 'fclose', 'file_get_contents', 'file_put_contents' ), $defined_functions['internal'] ) );
+		$ssl_cert_is_installed = ( file_exists( WP2D_DIR . '/cacert.pem' ) );
+
+		$ssl_install_output = '';
+		if ( $ssl_cert_is_installed ) {
+			$ssl_install_output = esc_html__( 'Looks like you already have a custom bundle installed!', 'wp-to-diaspora' );
+		} elseif ( $ssl_can_install ) {
+			$ssl_install_output = sprintf(
+				esc_html_x( 'Your server should allow us to %sdo this%s for you :-)', 'Placeholders are HTML for links.', 'wp-to-diaspora' ),
+				'<a href="' . add_query_arg( 'wp2d_temp_ssl_fix', '' ) . '" class="button">', '</a>'
+			);
+		}
 		$screen->add_help_tab( array(
 			'id'      => 'ssl',
 			'title'   => esc_html__( 'SSL', 'wp-to-diaspora' ),
 			'content' => '<p><strong>' . esc_html__( 'WP to diaspora* makes sure the connection to your pod is secure!', 'wp-to-diaspora' ) . '</strong></p>
 				<p>' . esc_html__( 'Most diaspora* pods are secured using SSL (Secure Sockets Layer), which makes your connection encrypted. For this connection to work, your server needs to know that those SSL certificates can be trusted.', 'wp-to-diaspora' ) . '</p>
-				<p>' . esc_html__( 'Therefore, if your server does not have an up to date CA certificate bundle, WP to diaspora* may not work for you.', 'wp-to-diaspora' ) . '</p>
+				<p>' . esc_html__( 'Therefore, if your WordPress installation or server does not have an up to date CA certificate bundle, WP to diaspora* may not work for you.', 'wp-to-diaspora' ) . '</p>
 				<p>' . esc_html__( 'Lucky for you though, we have you covered if this is the case for you!', 'wp-to-diaspora' ) . '</p>
-				<ul>
+				<ol>
+					<li><strong>' . esc_html__( 'Check the WordPress certificate bundle', 'wp-to-diaspora' ) . '</strong>: ' .
+						esc_html__( 'The best option is to make sure that the WordPress internal certificate bundle is available and accessible. You should be able to find it here: "wp-includes/certificates/ca-bundle.crt".', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Get in touch with your hosting provider', 'wp-to-diaspora' ) . '</strong>: ' .
-						esc_html__( 'The best option is for you to get in touch with your hosting provider and ask them to update the bundle for you. They should know what you\'re talking about.', 'wp-to-diaspora' ) . '
+						esc_html__( 'Get in touch with your hosting provider and ask them to update the bundle on the server for you. They should know what you\'re talking about.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Install the CA bundle yourself', 'wp-to-diaspora' ) . '</strong>: ' .
 						sprintf(
 							esc_html_x( 'If you maintain your own server, it\'s your job to keep the bundle up to date. You can find a short and simple way on how to do this %shere%s.', 'Placeholders are HTML for a link.', 'wp-to-diaspora' ),
@@ -188,14 +201,7 @@ class WP2D_Contextual_Help {
 							'<a href="http://curl.haxx.se/ca/cacert.pem" download>', '</a>'
 						)
 						. '<br><p>' .
-						// See if we can do this automatically.
-						( ( $ssl_can_install )
-							? sprintf(
-								esc_html_x( 'Your server should allow us to %sdo this%s for you :-)', 'Placeholders are HTML for links.', 'wp-to-diaspora' ),
-								'<a href="' . add_query_arg( 'temp_ssl_fix', '' ) . '" class="button">', '</a>'
-							)
-							: ''
-						)
+						$ssl_install_output
 						. '</p>
 				</ul>
 				<p class="dashicons-before dashicons-info">' . esc_html__( 'NOTE: If you choose the temporary option, the copy procedure needs to be done every time the plugin is updated because all files get replaced!', 'wp-to-diaspora' ) . '</p>',
@@ -215,6 +221,27 @@ class WP2D_Contextual_Help {
 						esc_html__( 'A list of tags that gets added to this post. Note that they are seperate from the WordPress post tags!', 'wp-to-diaspora' ) . '
 				</ul>
 				<p class="dashicons-before dashicons-info">' . esc_html__( 'If you don\'t see the meta box, make sure the post type you\'re on has been added to the "Post types" list on the settings page. Also make sure it has been selected from the "Screen Options" at the top of the screen.', 'wp-to-diaspora' ) . '</p>',
+		) );
+
+		// Troubleshooting.
+		$screen->add_help_tab( array(
+			'id' => 'troubleshooting',
+			'title'   => esc_html__( 'Troubleshooting', 'wp-to-diaspora' ),
+			'content' => '<p><strong>' . esc_html__( 'Troubleshooting common errors.', 'wp-to-diaspora' ) . '</strong></p>
+				<p>' . esc_html__( 'Here are a few common errors and their possible solutions:', 'wp-to-diaspora' ) . '</p>
+				<ul>
+					<li><strong>' . esc_html( sprintf( __( 'Failed to initialise connection to pod "%s"', 'wp-to-diaspora' ), 'xyz' ) ) . '</strong>: ' .
+						esc_html__( 'This could have multiple reasons.' ) . '
+						<ul>
+							<li>' . esc_html__( 'Make sure that your pod domain is entered correctly.', 'wp-to-diaspora' ) . '
+							<li>' .
+								esc_html__( 'It might be an SSL problem.', 'wp-to-diaspora' ) .
+								sprintf( ' <a href="#" class="open-help-tab" data-help-tab="ssl">%s</a>', esc_html__( 'Learn More', 'wp-to-diaspora' ) ) . '
+							<li>' . esc_html__( 'The pod might be offline at the moment.', 'wp-to-diaspora' ) . '
+						</ul>
+					<li><strong>' . esc_html__( 'Login failed. Check your login details.', 'wp-to-diaspora' ) . '</strong>: ' .
+						esc_html__( 'Make sure that your username and password are entered correctly.', 'wp-to-diaspora' ) . '
+				</ul>',
 		) );
 
 		// Show different ways to contribute to the plugin.
@@ -244,5 +271,27 @@ class WP2D_Contextual_Help {
 				'<a href="options-general.php?page=wp_to_diaspora" target="_blank">', '</a>'
 			) . '</p>',
 		) );
+	}
+
+	/**
+	 * Get a link that directly opens a help tab via JS.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @param WP_Error|string $error The WP_Error object with the tab id as data or the tab id itself.
+	 * @return string HTML link.
+	 */
+	public static function get_help_tab_quick_link( $error ) {
+		$help_tab = '';
+		if ( is_wp_error( $error ) && ( $error_data = $error->get_error_data() ) && array_key_exists( 'help_tab', $error_data ) ) {
+			$help_tab = $error_data['help_tab'];
+		} elseif ( is_string( $error ) ) {
+			$help_tab = $error;
+		}
+		if ( '' !== $help_tab ) {
+			return sprintf( '<a href="#" class="open-help-tab" data-help-tab="%1$s">%2$s</a>', $help_tab, esc_html__( 'Help', 'wp-to-diaspora' ) );
+		}
+
+		return '';
 	}
 }
