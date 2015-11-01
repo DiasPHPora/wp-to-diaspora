@@ -172,7 +172,9 @@ class WP2D_Post {
 			// If no WP2D meta data has been saved yet, this post shouldn't be published.
 			// This can happen if existing posts (before WP2D) get updated externally, not through the post edit screen.
 			// Check gutobenn/wp-to-diaspora#91 for reference.
-			if ( 'auto-draft' !== $this->post->post_status && ! $meta_current ) {
+			// Also, when we have a post scheduled for publishing, don't touch it.
+			// This is important when modifying scheduled posts using Quick Edit.
+			if ( ! in_array( $this->post->post_status, array( 'auto-draft', 'future' ) ) && ! $meta_current ) {
 				$this->post_to_diaspora = false;
 			}
 
@@ -246,9 +248,10 @@ class WP2D_Post {
 				// If there is still a previous post error around, remove it.
 				delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
 
-				// Set post_to_diaspora false to prevent publishing again on diaspora* when
-				// the post is edited via quick edit
-				update_post_meta( $post_id, '_wp_to_diaspora_post_to_diaspora', false );
+				// Unset post_to_diaspora meta field to prevent mistakenly republishing to diaspora*.
+				$meta = get_post_meta( $post_id, '_wp_to_diaspora', true );
+				$meta['post_to_diaspora'] = false;
+				update_post_meta( $post_id, '_wp_to_diaspora', $meta );
 			}
 		} else {
 			return false;
