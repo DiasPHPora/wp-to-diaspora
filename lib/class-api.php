@@ -1,6 +1,6 @@
 <?php
 /**
- * API-like class to deal with HTTP(S) requests to diaspora* using cURL.
+ * API-like class to deal with HTTP(S) requests to diaspora* using WP_HTTP API.
  *
  * Basic functionality includes:
  * - Logging in to diaspora*
@@ -29,7 +29,7 @@ class WP2D_API {
 	/**
 	 * The last http request error that occurred.
 	 *
-	 * @var string
+	 * @var WP_Error
 	 */
 	public $last_error;
 
@@ -46,6 +46,13 @@ class WP2D_API {
 	 * @var string
 	 */
 	private $_token;
+
+	/**
+	 * Save the cookies for the requests.
+	 *
+	 * @var array
+	 */
+	private $_cookies;
 
 	/**
 	 * The last http request made to diaspora*.
@@ -84,13 +91,6 @@ class WP2D_API {
 	private $_password;
 
 	/**
-	 * Save the cookie string for the requests.
-	 *
-	 * @var string
-	 */
-	private $_cookie;
-
-	/**
 	 * Remember the current login state.
 	 *
 	 * @var boolean
@@ -118,7 +118,6 @@ class WP2D_API {
 	 */
 	private $_regexes = array(
 		'token'    => '/content="(.*?)" name="csrf-token"|name="csrf-token" content="(.*?)"/',
-		'cookie'   => '/Set-Cookie: (.*?);/',
 		'aspects'  => '/"aspects"\:(\[.+?\])/',
 		'services' => '/"configured_services"\:(\[.+?\])/',
 	);
@@ -171,18 +170,15 @@ class WP2D_API {
 
 		// Get and save the token.
 		if ( null === $this->_fetch_token( $force_new_token ) ) {
-			// Code 60 is a CA certificate problem.
-			if ( 60 === $this->_last_request->errno ) {
-				$this->last_error = sprintf(
-					esc_html_x( 'There seems to be a problem with your server\'s CA certificate bundle. %sHelp%s', 'Placeholders are HTML for a link.', 'wp-to-diaspora' ),
-					'<a href="#" class="open-help-tab" data-help-tab="ssl">', '</a>'
-				);
-			} else {
-				$this->last_error = sprintf(
-					esc_html_x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp-to-diaspora' ),
+			$error = ( is_wp_error( $this->last_error ) ) ? ' ' . $this->last_error->get_error_message() : '';
+			$this->_error( 'wp2d_api_init_failed',
+				sprintf(
+					_x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp-to-diaspora' ),
 					$this->get_pod_url()
-				);
-			}
+				) . $error,
+				array( 'help_tab' => 'troubleshooting' )
+			);
+
 			return false;
 		}
 		return true;
@@ -197,8 +193,8 @@ class WP2D_API {
 	private function _fetch_token( $force = false ) {
 		if ( ! isset( $this->_token ) || (bool) $force ) {
 			// Go directly to the sign in page, as it would redirect to there anyway.
-			// Since _http_request function automatically saves the new token, just call it with no data.
-			$this->_http_request( '/users/sign_in' );
+			// Since _request function automatically saves the new token, just call it with no data.
+			$this->_request( '/users/sign_in' );
 		}
 		return $this->_token;
 	}
@@ -210,7 +206,7 @@ class WP2D_API {
 	 */
 	private function _check_login() {
 		if ( ! $this->is_logged_in() ) {
-			$this->last_error = esc_html__( 'Not logged in.', 'wp-to-diaspora' );
+			$this->_error( 'wp2d_api_not_logged_in', __( 'Not logged in.', 'wp-to-diaspora' ) );
 			return false;
 		}
 		return true;
@@ -235,8 +231,9 @@ class WP2D_API {
 	 */
 	public function login( $username, $password, $force = false ) {
 		// Are we trying to log in as a different user?
-		if ( $username !== $this->_username || $password !== $this->_password ) {
-			$this->_is_logged_in = false;
+		if ( ( isset( $this->_username ) && $username !== $this->_username )
+			|| ( isset( $this->_password ) && $password !== $this->_password ) ) {
+			$this->logout();
 		}
 
 		// If we are already logged in and not forcing a relogin, return.
@@ -244,13 +241,13 @@ class WP2D_API {
 			return true;
 		}
 
-		// Set the uername and password.
-		$this->_username = ( isset( $username ) && '' !== $username ) ? $username : null;
-		$this->_password = ( isset( $password ) && '' !== $password ) ? $password : null;
+		// Set the username and password.
+		( isset( $username ) && '' !== $username ) && $this->_username = $username;
+		( isset( $password ) && '' !== $password ) && $this->_password = $password;
 
 		// Do we have the necessary credentials?
 		if ( ! isset( $this->_username, $this->_password ) ) {
-			$this->_is_logged_in = false;
+			$this->logout();
 			return false;
 		}
 
@@ -261,22 +258,44 @@ class WP2D_API {
 			'authenticity_token' => $this->_fetch_token(),
 		);
 
+		$args = array(
+			'method' => 'POST',
+			'body'   => $params,
+		);
+
 		// Try to sign in.
-		$this->_http_request( '/users/sign_in', $params );
+		$this->_request( '/users/sign_in', $args );
 
 		// Can we load the bookmarklet to make sure we're logged in?
-		$req = $this->_http_request( '/bookmarklet' );
+		$response = $this->_request( '/bookmarklet' );
 
 		// If the request isn't successful, we are not logged in correctly.
-		if ( 200 !== $req->info['http_code'] ) {
+		if ( is_wp_error( $response ) || 200 !== $response->code ) {
 			// Login failed.
-			$this->last_error = esc_html__( 'Login failed. Check your login details.', 'wp-to-diaspora' );
+			$this->_error( 'wp2d_api_login_failed', __( 'Login failed. Check your login details.', 'wp-to-diaspora' ), array( 'help_tab' => 'troubleshooting' ) );
 			return false;
 		}
 
 		// Login succeeded.
 		$this->_is_logged_in = true;
 		return true;
+	}
+
+	/**
+	 * Perform a logout, resetting all class variables.
+	 *
+	 * @since 1.6.0
+	 */
+	public function logout() {
+		$this->last_error = null;
+		$this->_token = null;
+		$this->_cookies = array();
+		$this->_last_request = null;
+		$this->_username = null;
+		$this->_password = null;
+		$this->_is_logged_in = false;
+		$this->_aspects = array();
+		$this->_services = array();
 	}
 
 	/**
@@ -315,28 +334,111 @@ class WP2D_API {
 				$post_data += $extra_data;
 		}
 
-		// Prepare headers.
-		// MUST fetch new token for this to work!
-		$headers = array(
-			'Accept: application/json',
-			'Content-Type: application/json',
-			'X-CSRF-Token: ' . $this->_fetch_token( true ),
+		// Check if we can use the new wp_json_encode function.
+		$post_data = ( function_exists( 'wp_json_encode' ) )
+			? wp_json_encode( $post_data )
+			: json_encode( $post_data );
+
+		$args = array(
+			'method'  => 'POST',
+			'body'    => $post_data,
+			'headers' => array(
+				'Accept'       => 'application/json',
+				'Content-Type' => 'application/json',
+				'X-CSRF-Token' => $this->_fetch_token(),
+			),
 		);
 
 		// Submit the post.
-		$req = $this->_http_request( '/status_messages', wp_json_encode( $post_data ), $headers );
-		$response = json_decode( $req->response );
-		if ( 201 !== $req->info['http_code'] ) {
-			$this->last_error = esc_html( ( isset( $response->error ) ) ? $response->error : _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
+		$response = $this->_request( '/status_messages', $args );
+
+		if ( is_wp_error( $response ) ) {
+			$this->_error( 'wp2d_api_post_failed', $response->get_error_message() );
 			return false;
 		}
 
-		// Add additional info to our response.
-		$response->permalink = $this->get_pod_url( '/posts/' . $response->guid );
+		$diaspost = json_decode( $response->body );
+		if ( 201 !== $response->code ) {
+			$this->_error( 'wp2d_api_post_failed', ( isset( $diaspost->error ) ) ? $diaspost->error : _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
+			return false;
+		}
 
-		return $response;
+		// Add additional info to our diaspora post object.
+		$diaspost->permalink = $this->get_pod_url( '/posts/' . $diaspost->guid );
+
+		return $diaspost;
 	}
 
+	/**
+	 * Delete a post or comment from diaspora*.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @param string $what What to delete, 'post' or 'comment'.
+	 * @param string $id The ID of the post or comment to delete.
+	 * @return boolean If the deletion was successful.
+	 */
+	public function delete( $what, $id ) {
+		// Are we logged in?
+		if ( ! $this->_check_login() ) {
+			return false;
+		}
+
+		// For now, only deleting posts and comments is allowed.
+		if ( ! in_array( $what, array( 'post', 'comment' ) ) ) {
+			$this->_error( 'wp2d_api_delete_failed', __( 'You can only delete posts and comments.', 'wp-to-diaspora' ) );
+			return false;
+		}
+
+		$args = array(
+			'method'  => 'DELETE',
+			'headers' => array(
+				'Accept'       => 'application/json',
+				'Content-Type' => 'application/json',
+				'X-CSRF-Token' => $this->_fetch_token(),
+			),
+		);
+
+		// Try to delete the post or comment.
+		$response = $this->_request( '/' . $what . 's/' . $id, $args );
+
+		$error_message = '';
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+		} else {
+			switch ( $response->code ) {
+				case 204:
+					return true;
+				case 404:
+					$error_message = ( 'post' === $what )
+						? __( 'The post you tried to delete does not exist.', 'wp-to-diaspora' )
+						: __( 'The comment you tried to delete does not exist.', 'wp-to-diaspora' );
+					break;
+
+				// Due to diaspora* returning a proper 403 when trying to delete a foreign comment
+				// but returning a 500 when trying to delete a foreign post, this needs some special attention.
+				case 403:
+					if ( 'comment' === $what ) {
+						$error_message = __( 'The comment you tried to delete does not belong to you.', 'wp-to-diaspora' );
+						break;
+					}
+					// Fall through...
+				case 500:
+					if ( 'post' === $what ) {
+						$error_message = __( 'The post you tried to delete does not belong to you.', 'wp-to-diaspora' );
+						break;
+					}
+					// Fall through...
+				default:
+					$error_message = _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' );
+					break;
+			}
+		}
+
+		$this->_error( 'wp2d_api_delete_' . $what . '_failed', $error_message );
+		return false;
+	}
 
 	/**
 	 * Get the list of aspects.
@@ -361,138 +463,148 @@ class WP2D_API {
 	/**
 	 * Get the list of aspects or connected services.
 	 *
-	 * @todo  No need for the switch case, just make a simple if when last_error gets set.
-	 *
 	 * @param string  $type  Type of list to get.
 	 * @param array   $list  The current list of items.
 	 * @param boolean $force Force to fetch new list.
 	 * @return boolean Was the list fetched successfully?
 	 */
-	private function _get_aspects_services( $type, $list, $force ) {
-		$error_message = '';
-		switch ( $type ) {
-			case 'aspects':
-				$error_message = __( 'Error loading aspects.', 'wp-to-diaspora' );
-				break;
-			case 'services':
-				$error_message = __( 'Error loading services.', 'wp-to-diaspora' );
-				break;
-		}
-
+	private function _get_aspects_services( $type, &$list, $force ) {
 		if ( ! $this->_check_login() ) {
 			return false;
 		}
 
 		// Fetch the new list if the current list is empty or a reload is forced.
 		if ( empty( $list ) || (bool) $force ) {
-			$req = $this->_http_request( '/bookmarklet' );
-			if ( 200 !== $req->info['http_code'] ) {
-				$this->last_error = esc_html( $error_message );
+			$response = $this->_request( '/bookmarklet' );
+
+			if ( is_wp_error( $response ) || 200 !== $response->code ) {
+				switch ( $type ) {
+					case 'aspects':
+						$this->_error( 'wp2d_api_getting_aspects_failed', __( 'Error loading aspects.', 'wp-to-diaspora' ) );
+						break;
+					case 'services':
+						$this->_error( 'wp2d_api_getting_services_failed', __( 'Error loading services.', 'wp-to-diaspora' ) );
+						break;
+					default:
+						$this->_error( 'wp2d_api_getting_aspects_services_failed', _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
+						break;
+				}
 				return false;
 			}
-			// No need to parse the list, as it get's done for each http request anyway.
-		}
 
+			// Load the aspects or services.
+			if ( $raw_list = json_decode( $this->_parse_regex( $type, $response->body ) ) ) {
+				// In case this fetch is forced, empty the list.
+				$list = array();
+
+				switch ( $type ) {
+					case 'aspects':
+						// Add the 'public' aspect, as it's global and not user specific.
+						$list['public'] = __( 'Public', 'wp-to-diaspora' );
+
+						// Add all user specific aspects.
+						foreach ( $raw_list as $aspect ) {
+							$list[ $aspect->id ] = $aspect->name;
+						}
+						break;
+					case 'services':
+						foreach ( $raw_list as $service ) {
+							$list[ $service ] = ucfirst( $service );
+						}
+						break;
+				}
+			}
+		}
 		return true;
 	}
 
 	/**
-	 * Send an http(s) request via cURL.
+	 * Send an http(s) request via WP_HTTP API.
 	 *
-	 * @param string       $url     The URL to request.
-	 * @param array|string $data    Data to be posted with the request.
-	 * @param array        $headers Headers to assign to the request.
+	 * @see WP_Http::request()
+	 *
+	 * @param string $url  The URL to request.
+	 * @param array  $args Arguments to be posted with the request.
 	 * @return object An object containing details about this request.
 	 */
-	private function _http_request( $url, $data = array(), $headers = array() ) {
+	private function _request( $url, $args = array() ) {
 		// Prefix the full pod URL if necessary.
 		if ( 0 === strpos( $url, '/' ) ) {
 			$url = $this->get_pod_url( $url );
 		}
 
-		// Call address via cURL.
-		$ch = curl_init( $url );
+		// Disable redirections so we can verify HTTP response codes.
+		$defaults = array(
+			'redirection' => 0,
+			'sslverify'   => true,
+			'timeout'     => 60,
+			'method'      => 'GET',
+		);
 
-		// Set up cURL options.
-		curl_setopt( $ch, CURLOPT_HEADER, true );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
+		// If the certificate bundle has been downloaded manually, use that instead.
+		// NOTE: This should actually never be necessary, it's a fallback!
 		if ( file_exists( WP2D_DIR . '/cacert.pem' ) ) {
-			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, true );
-			curl_setopt( $ch, CURLOPT_CAINFO, WP2D_DIR . '/cacert.pem' );
+			$defaults['sslcertificates'] = WP2D_DIR . '/cacert.pem';
 		}
 
-		if ( ! empty( $this->_cookie ) ) {
-			curl_setopt( $ch, CURLOPT_COOKIE, $this->_cookie );
+		// Set the correct cookie.
+		if ( ! empty( $this->_cookies ) ) {
+			$defaults['cookies'] = $this->_cookies;
 		}
 
-		// Add the passed headers.
-		if ( ! empty( $headers ) ) {
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
-		}
+		$args = wp_parse_args( $args, $defaults );
 
-		// Add the passed post data.
-		if ( ! empty( $data ) ) {
-			curl_setopt( $ch, CURLOPT_POST, true );
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
-		}
+		// Get the response from the WP_HTTP request.
+		$response = wp_remote_request( $url, $args );
 
-		// Get the response from the cURL call.
-		$response = curl_exec( $ch );
+		if ( is_wp_error( $response ) ) {
+			$this->last_error = $response;
+			return $response;
+		}
 
 		// Get the headers and the html response.
-		$header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
-		$headers  = substr( $response, 0, $header_size );
-		$response = substr( $response, $header_size );
+		$headers = wp_remote_retrieve_headers( $response );
+		$body    = wp_remote_retrieve_body( $response );
 
 		// Remember this request.
 		$this->_last_request = new stdClass();
-		$this->_last_request->headers  = $headers;
 		$this->_last_request->response = $response;
-		$this->_last_request->error    = curl_error( $ch );
-		$this->_last_request->errno    = curl_errno( $ch );
-		$this->_last_request->info     = curl_getinfo( $ch );
-		curl_close( $ch );
+		$this->_last_request->headers  = $headers;
+		$this->_last_request->body     = $body;
+		$this->_last_request->message  = wp_remote_retrieve_response_message( $response );
+		$this->_last_request->code     = wp_remote_retrieve_response_code( $response );
 
 		// Save the new token.
-		if ( $token = $this->_parse_regex( 'token', $response ) ) {
+		if ( $token = $this->_parse_regex( 'token', $body ) ) {
 			$this->_token = $token;
 		}
 
-		// Save the latest cookie.
-		if ( $cookie = $this->_parse_regex( 'cookie', $headers ) ) {
-			$this->_cookie = $cookie;
+		// Save the latest cookies.
+		if ( isset( $response['cookies'] ) ) {
+			$this->_cookies = $response['cookies'];
 		}
-
-		// Once we're logged in, can we load new aspects and services while we're at it?
-		if ( $this->is_logged_in() ) {
-			// Load the aspects.
-			if ( empty( $this->_aspects ) && $aspects_raw = json_decode( $this->_parse_regex( 'aspects', $response ) ) ) {
-				// Add the 'public' aspect, as it's global and not user specific.
-				$aspects = array( 'public' => __( 'Public' ) );
-
-				// Create an array of all the aspects and save them to the settings.
-				foreach ( $aspects_raw as $aspect ) {
-					$aspects[ $aspect->id ] = $aspect->name;
-				}
-				$this->_aspects = $aspects;
-			}
-
-			// Load the services.
-			if ( empty( $this->_services ) && $services_raw = json_decode( $this->_parse_regex( 'services', $response ) ) ) {
-				$services = array();
-				foreach ( $services_raw as $service ) {
-					$services[ $service ] = ucfirst( $service );
-				}
-				$this->_services = $services;
-			}
-		}
-
-		// Add debug info.
-		WP2D_Helpers::add_debugging( sprintf( "code %s on %s\n", $this->_last_request->info['http_code'], $this->_last_request->info['url'] ) );
 
 		// Return the last request details.
 		return $this->_last_request;
+	}
+
+	/**
+	 * Helper method to set the last occurred error.
+	 *
+	 * @see WP_Error::__construct()
+	 * @since 1.6.0
+	 *
+	 * @param  string|int $code    Error code.
+	 * @param  string     $message Error message.
+	 * @param  mixed      $data    Error data.
+	 */
+	private function _error( $code, $message, $data = '' ) {
+		// Always add the code and message of the last request.
+		$data = array_merge( array_filter( (array) $data ), array(
+			'code'    => ( isset( $this->_last_request->code ) ) ? $this->_last_request->code : null,
+			'message' => ( isset( $this->_last_request->message ) ) ? $this->_last_request->message : null,
+		) );
+		$this->last_error = new WP_Error( $code, $message, $data );
 	}
 
 	/**
