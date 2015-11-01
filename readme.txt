@@ -96,6 +96,7 @@ Quite straightforward, right?
 * API now uses the WP_HTTP API for requests, cURL no longer required
 * Contextual help updated with troubleshooting tips
 * Add initial unit tests for WP2D_API
+* Fixed a bug: the posts were published on diaspora every time they were edited via Quick Edit
 
 = 1.5.4.1 =
 * Fix and correct filters
