@@ -42,7 +42,6 @@ git:
   depth: 1
 
 install:
-  - pip install --user codecov
   # set up WP install
   - export WP_DEVELOP_DIR=/tmp/wordpress/
   - mkdir -p $WP_DEVELOP_DIR
@@ -59,7 +58,7 @@ install:
 script:
   - cd $TRAVIS_BUILD_DIR
   - |
-    if [[ "$TRAVIS_PHP_VERSION" == "5.6" && "$WP_VERSION" == "latest" && "$WP_MULTISITE" == "0" ]] ; then
+    if [[ "$TRAVIS_PHP_VERSION" == "5.6" && "$WP_VERSION" == "master" && "$WP_MULTISITE" == "0" ]] ; then
         phpunit --coverage-clover=coverage.xml
     else
         phpunit
