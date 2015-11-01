@@ -1,7 +1,22 @@
+checks:
+  php:
+    code_rating: true
+    duplication: true
+
 filter:
   excluded_paths:
+    - 'js/chosen.jquery.min.js'
+    - 'js/tag-it.min.js'
+    - 'tests/*'
     - 'vendor/*'
+
 tools:
   php_code_sniffer:
     config:
       standard: "WordPress"
+
+  js_hint: true
+
+  php_mess_detector:
+    config:
+      controversial_rules: { superglobals: false }
