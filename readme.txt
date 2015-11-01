@@ -4,7 +4,7 @@ Donate link: http://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post
 Requires at least: 3.9.2
 Tested up to: 4.3.1
-Stable tag: 1.5.4.1
+Stable tag: 1.6
 Author URI: http://github.com/gutobenn
 Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
@@ -197,4 +197,5 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
-* Important update that fixes and corrects filters!
+* Bug fixed: posts were published every time edited through the 'quick edit'
+* cURL is not required anymore! Now we use the internal WP_HTTP API
