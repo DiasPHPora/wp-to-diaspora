@@ -1,5 +1,8 @@
 WP to diaspora*
 =====================
+[![Build Status](https://travis-ci.org/gutobenn/wp-to-diaspora.svg?branch=master)](https://travis-ci.org/gutobenn/wp-to-diaspora)
+[![Coverage via Codecov](https://codecov.io/github/gutobenn/wp-to-diaspora/coverage.svg?branch=master)](https://codecov.io/github/gutobenn/wp-to-diaspora?branch=master)
+[![Scrutinizer Code Quality Score](https://scrutinizer-ci.com/g/gutobenn/wp-to-diaspora/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/gutobenn/wp-to-diaspora)	
 
 Automatically share WordPress posts on diaspora*
 
