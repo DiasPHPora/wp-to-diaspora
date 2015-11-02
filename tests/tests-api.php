@@ -214,6 +214,43 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test get_aspects_services call with an invalid argument.
+	 *
+	 * @depends test_login
+	 */
+	public function test_get_aspects_services_invalid_argument() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_failed' );
+
+		$this->assertFalse( wp2d_helper_call_private_method( self::$api, '_get_aspects_services', 'invalid-argument', array(), true ) );
+		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
+		$this->assertEquals( 'Unknown error occurred.', $this->_get_last_error_message() );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_failed' );
+	}
+
+
+	/**
+	 * Test getting aspects when an error occurs.
+	 *
+	 * @depends test_login
+	 */
+	public function test_get_aspects_fail() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_failed' );
+
+		// Testing with WP_Error response.
+		$this->assertFalse( self::$api->get_aspects() );
+		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
+		$this->assertEquals( 'Error loading aspects.', $this->_get_last_error_message() );
+
+		// Testing invalid code response.
+		$this->assertFalse( self::$api->get_aspects() );
+		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
+		$this->assertEquals( 'Error loading aspects.', $this->_get_last_error_message() );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_failed' );
+	}
+
+	/**
 	 * Test getting aspects.
 	 *
 	 * @depends test_login
@@ -224,6 +261,27 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertEquals( array( 'public' => 'Public', 1 => 'Family', 2 => 'Friends' ), self::$api->get_aspects() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects' );
+	}
+
+	/**
+	 * Test getting services when an error occurs.
+	 *
+	 * @depends test_login
+	 */
+	public function test_get_services_fail() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_failed' );
+
+		// Testing with WP_Error response.
+		$this->assertFalse( self::$api->get_services() );
+		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
+		$this->assertEquals( 'Error loading services.', $this->_get_last_error_message() );
+
+		// Testing invalid code response.
+		$this->assertFalse( self::$api->get_services() );
+		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
+		$this->assertEquals( 'Error loading services.', $this->_get_last_error_message() );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_failed' );
 	}
 
 	/**

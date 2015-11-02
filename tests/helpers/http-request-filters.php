@@ -207,6 +207,21 @@ function wp2d_api_pre_http_request_filter_delete() {
 }
 
 /**
+ * Custom HTTP request responses for the failed API get_aspects, get_services and direct _get_aspects_services calls.
+ *
+ * @return array Responses with either a WP_Error object or and invalid response code.
+ */
+function wp2d_api_pre_http_request_filter_get_aspects_services_failed() {
+	static $i = 0;
+	$responses = array(
+		new WP_Error( 'wp_error', 'error' ),
+		array( 'body' => '', 'response' => array( 'code' => 999, 'message' => 'error' ) ),
+	);
+	// Since this filter is used by different tests, just keep on looping through the responses.
+	return $responses[ $i++ % count( $responses ) ];
+}
+
+/**
  * Custom HTTP request responses for the API get_aspects call.
  *
  * @return array Response with the available aspects.
