@@ -221,7 +221,8 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	public function test_get_aspects_services_invalid_argument() {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_failed' );
 
-		$this->assertFalse( wp2d_helper_call_private_method( self::$api, '_get_aspects_services', 'invalid-argument', array(), true ) );
+		$list = array();
+		$this->assertFalse( wp2d_helper_call_private_method( self::$api, '_get_aspects_services', 'invalid-argument', $list, true ) );
 		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
 		$this->assertEquals( 'Unknown error occurred.', $this->_get_last_error_message() );
 
