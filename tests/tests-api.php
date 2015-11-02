@@ -61,9 +61,32 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test the constructor.
+	 */
+	public function test_api_constructor() {
+		$api = new WP2D_API( 'pod1' );
+		$this->assertAttributeSame( true, '_is_secure', $api );
+		$this->assertAttributeSame( 'pod1', '_pod', $api );
+
+		$api = new WP2D_API( 'pod2', false );
+		$this->assertAttributeSame( false, '_is_secure', $api );
+		$this->assertAttributeSame( 'pod2', '_pod', $api );
+	}
+
+	/**
+	 * Test init when there is no valid token.
+	 */
+	public function test_init_no_valid_token() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_no_valid_token' );
+
+		$this->assertFalse( self::$api->init() );
+		$this->assertEquals( 'Failed to initialise connection to pod "https://pod".', $this->_get_last_error_message() );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_no_valid_token' );
+	}
+
+	/**
 	 * Test the initialisation.
-	 *
-	 * @covers ::init
 	 */
 	public function test_init() {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init' );
@@ -76,7 +99,6 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test fetching the token.
 	 *
-	 * @covers ::_fetch_token
 	 * @depends test_init
 	 */
 	public function test_fetch_token() {
@@ -85,13 +107,20 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		wp2d_helper_set_private_property( self::$api, '_token', 'uvw' );
 		$this->assertEquals( 'uvw', wp2d_helper_call_private_method( self::$api, '_fetch_token' ) );
 
+		// Force fetch a new token.
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_fetch_token' );
+
+		$this->assertEquals( 'forced', wp2d_helper_call_private_method( self::$api, '_fetch_token', true ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_fetch_token' );
+
+		// Reset to initial token.
 		wp2d_helper_set_private_property( self::$api, '_token', 'xyz' );
 	}
 
 	/**
 	 * Test not being logged in.
 	 *
-	 * @covers ::is_logged_in
 	 * @depends test_init
 	 */
 	public function test_not_logged_in() {
@@ -117,7 +146,6 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test the login check.
 	 *
-	 * @covers ::_check_login
 	 * @depends test_init
 	 */
 	public function test_check_login() {
@@ -131,24 +159,63 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test an invalid login.
+	 *
+	 * @depends test_not_logged_in
+	 */
+	public function test_login_invalid() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_invalid' );
+
+		$this->assertFalse( self::$api->login( 'user', 'pass' ) );
+		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
+		$this->assertEquals( 'Login failed. Check your login details.', $this->_get_last_error_message() );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_invalid' );
+	}
+
+	/**
 	 * Test the login.
 	 *
-	 * @covers ::login
 	 * @depends test_not_logged_in
 	 */
 	public function test_login() {
+		$this->assertFalse( self::$api->login( '', '' ) );
+		$this->assertFalse( self::$api->is_logged_in() );
+
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login' );
 
 		$this->assertTrue( self::$api->login( 'user', 'pass' ) );
 		$this->assertTrue( self::$api->is_logged_in() );
 
+		// Logging in again with same credentials just returns true.
+		$this->assertTrue( self::$api->login( 'user', 'pass' ) );
+
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login' );
+	}
+
+	/**
+	 * Force a new login.
+	 *
+	 * @depends test_login
+	 */
+	public function test_login_forced() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_forced' );
+
+		// Forced valid login.
+		$this->assertTrue( self::$api->login( 'user2', 'pass2', true ) );
+		$this->assertTrue( self::$api->is_logged_in() );
+		$this->assertAttributeSame( 'abc', '_token', self::$api );
+
+		$this->assertTrue( self::$api->login( 'user', 'pass', true ) );
+		$this->assertTrue( self::$api->is_logged_in() );
+		$this->assertAttributeSame( 'xyz', '_token', self::$api );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_forced' );
 	}
 
 	/**
 	 * Test getting aspects.
 	 *
-	 * @covers ::get_aspects
 	 * @depends test_login
 	 */
 	public function test_get_aspects() {
@@ -162,7 +229,6 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test getting services.
 	 *
-	 * @covers ::get_services
 	 * @depends test_login
 	 */
 	public function test_get_services() {
@@ -174,9 +240,31 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The the failed posting.
+	 */
+	public function test_post_failed() {
+		// Test post when not logged in.
+		wp2d_helper_set_private_property( self::$api, '_is_logged_in', false );
+		$this->assertFalse( self::$api->post( 'text' ) );
+
+		wp2d_helper_set_private_property( self::$api, '_is_logged_in', true );
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post_failed' );
+
+		// Returning a WP_Error object.
+		$this->assertFalse( self::$api->post( 'text' ) );
+		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
+		$this->assertEquals( 'Fail message', $this->_get_last_error_message() );
+
+		// Returning an error code.
+		$this->assertFalse( self::$api->post( 'text' ) );
+		$this->assertEquals( 'Some Post Error', $this->_get_last_error_message() );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post_failed' );
+	}
+
+	/**
 	 * Test the posting.
 	 *
-	 * @covers ::post
 	 * @depends test_login
 	 */
 	public function test_post() {
@@ -211,11 +299,14 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test deleting posts and comments.
 	 *
-	 * @covers ::delete
 	 * @depends test_login
 	 */
 	public function test_delete() {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete' );
+
+		// Getting a WP_Error response.
+		$this->assertFalse( self::$api->delete( 'post', 'wp_error' ) );
+		$this->assertEquals( 'Error message', $this->_get_last_error_message() );
 
 		// Deleting something other than posts or comments.
 		$this->assertFalse( self::$api->delete( 'internet', 'allofit' ) );
@@ -251,7 +342,6 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 *
 	 * Make sure we perform all tests that require a login, before logging out.
 	 *
-	 * @covers ::logout
 	 * @depends test_get_aspects
 	 * @depends test_get_services
 	 * @depends test_post
@@ -270,4 +360,20 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertAttributeSame( array(), '_aspects',      self::$api );
 		$this->assertAttributeSame( array(), '_services',     self::$api );
 	}
+
+	/**
+	 * Initialise the connection and then re-initialise for a different pod.
+	 */
+	public function test_change_pod() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_change_pod' );
+
+		$this->assertTrue( self::$api->init() );
+		$this->assertEquals( 'xyz', wp2d_helper_call_private_method( self::$api, '_fetch_token' ) );
+
+		$this->assertTrue( self::$api->init( 'new-pod', true ) );
+		$this->assertEquals( 'uvw', wp2d_helper_call_private_method( self::$api, '_fetch_token' ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_change_pod' );
+	}
+
 }
