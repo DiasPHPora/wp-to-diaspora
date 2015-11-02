@@ -447,7 +447,10 @@ class WP2D_API {
 	 * @return array Array of aspect objects.
 	 */
 	public function get_aspects( $force = false ) {
-		return ( $this->_get_aspects_services( 'aspects', $this->_aspects, $force ) ) ? $this->_aspects : false;
+		if ( $this->_aspects = $this->_get_aspects_services( 'aspects', $this->_aspects, $force ) ) {
+			return $this->_aspects;
+		}
+		return false;
 	}
 
 	/**
@@ -457,7 +460,10 @@ class WP2D_API {
 	 * @return array Array of service objects.
 	 */
 	public function get_services( $force = false ) {
-		return ( $this->_get_aspects_services( 'services', $this->_services, $force ) ) ? $this->_services : false;
+		if ( $this->_services = $this->_get_aspects_services( 'services', $this->_services, $force ) ) {
+			return $this->_services;
+		}
+		return false;
 	}
 
 	/**
@@ -468,7 +474,7 @@ class WP2D_API {
 	 * @param boolean $force Force to fetch new list.
 	 * @return boolean Was the list fetched successfully?
 	 */
-	private function _get_aspects_services( $type, &$list, $force ) {
+	private function _get_aspects_services( $type, $list, $force ) {
 		if ( ! $this->_check_login() ) {
 			return false;
 		}
@@ -515,7 +521,7 @@ class WP2D_API {
 				}
 			}
 		}
-		return true;
+		return $list;
 	}
 
 	/**
