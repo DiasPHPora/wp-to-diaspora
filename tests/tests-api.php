@@ -3,271 +3,577 @@
  * WP2D_API tests.
  *
  * @package WP_To_Diaspora\Tests\WP2D_API
- * @since 1.6.0
+ * @since next-release
  */
 
 /**
  * Main API test class.
  *
- * @since 1.6.0
- *
- * @coversDefaultClass WP2D_API
+ * @since next-release
  */
 class Tests_WP2D_API extends WP_UnitTestCase {
 
 	/**
-	 * Instance of the WP2D_API class.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @var WP2D_API
-	 */
-	protected static $api;
-
-	/**
-	 * Set up the instance of the API class.
-	 *
-	 * @since 1.6.0
-	 */
-	public static function setUpBeforeClass() {
-		// Set up our API instance.
-		self::$api = new WP2D_API( 'pod', true );
-	}
-
-	/**
 	 * Little helper method to get the last API error message.
 	 *
-	 * @since 1.6.0
+	 * @since next-release
 	 *
+	 * @param WP2D_API $api   The API object to get the message from.
+	 * @param bool     $clear If the last error should be cleared after fetching.
 	 * @return string The last error message or null.
 	 */
-	private function _get_last_error_message() {
-		if ( is_wp_error( self::$api->last_error ) ) {
-			return self::$api->last_error->get_error_message();
+	private function _get_last_error_message( $api, $clear = false ) {
+		if ( is_wp_error( $api->last_error ) ) {
+			$error = $api->last_error->get_error_message();
+			$clear && $api->last_error = null;
+			return $error;
 		}
 		return null;
 	}
 
 	/**
-	 * Test getting a pod url.
+	 * Create an API instance and fake it's initialisation.
 	 *
-	 * @covers ::get_pod_url
+	 * This method helps to prevent HTTP requests for tests that need a valid token.
+	 *
+	 * @since next-release
+	 *
+	 * @param string $pod   Pod to fake.
+	 * @param string $token Token to fake.
+	 * @return WP2D_API The fakely initialised API instance.
+	 */
+	private function _get_fake_api_init( $pod = 'pod', $token = 'token' ) {
+		$api = new WP2D_API( $pod );
+
+		// Fake initialisation.
+		wp2d_helper_set_private_property( $api, '_token', $token );
+
+		return $api;
+	}
+
+	/**
+	 * Create an API instance and fake it's initialisation.
+	 *
+	 * This method helps to prevent HTTP requests for tests that need a valid login.
+	 *
+	 * @since next-release
+	 *
+	 * @param string $pod      Pod to fake.
+	 * @param string $token    Token to fake.
+	 * @param string $username Username to fake.
+	 * @param string $password Password to fake.
+	 * @return WP2D_API The fakely initialised and logged in API instance.
+	 */
+	private function _get_fake_api_init_login( $pod = 'pod', $token = 'token', $username = 'username', $password = 'password' ) {
+		$api = $this->_get_fake_api_init( $pod, $token );
+
+		// Fake valid login.
+		wp2d_helper_set_private_property( $api, '_is_logged_in', true );
+		wp2d_helper_set_private_property( $api, '_username', $username );
+		wp2d_helper_set_private_property( $api, '_password', $password );
+
+		return $api;
+	}
+
+	/**
+	 * Test the constructor, to make sure that the correct class variables are set.
+	 *
+	 * @since next-release
+	 */
+	public function test_constructor() {
+		$api = new WP2D_API( 'pod1' );
+		$this->assertAttributeSame( true, '_is_secure', $api );
+		$this->assertAttributeSame( 'pod1', '_pod', $api );
+
+		$api = new WP2D_API( 'pod2', false );
+		$this->assertAttributeSame( false, '_is_secure', $api );
+		$this->assertAttributeSame( 'pod2', '_pod', $api );
+	}
+
+	/**
+	 * Test getting a pod url in different formats.
+	 *
+	 * @since next-release
 	 */
 	public function test_get_pod_url() {
-		$this->assertEquals( 'https://pod', self::$api->get_pod_url() );
-		$this->assertEquals( 'https://pod/a', self::$api->get_pod_url( 'a' ) );
-		$this->assertEquals( 'https://pod/a/', self::$api->get_pod_url( 'a/' ) );
-		$this->assertNotEquals( 'https://pod/a/', self::$api->get_pod_url( 'a//' ) );
+		// Default is HTTPS.
+		$api = new WP2D_API( 'pod' );
+		$this->assertEquals( 'https://pod', $api->get_pod_url() );
+		$this->assertEquals( 'https://pod', $api->get_pod_url( '' ) );
+		$this->assertEquals( 'https://pod', $api->get_pod_url( '/' ) );
+		$this->assertEquals( 'https://pod/a', $api->get_pod_url( 'a' ) );
+		$this->assertEquals( 'https://pod/a', $api->get_pod_url( '/a' ) );
+		$this->assertEquals( 'https://pod/a', $api->get_pod_url( 'a/' ) );
+		$this->assertEquals( 'https://pod/a', $api->get_pod_url( 'a//' ) );
+
+		// Using HTTP.
+		$api = new WP2D_API( 'pod', false );
+		$this->assertEquals( 'http://pod', $api->get_pod_url() );
 	}
 
 	/**
-	 * Test the initialisation.
+	 * Test init when there is no valid token.
 	 *
-	 * @covers ::init
+	 * @since next-release
 	 */
-	public function test_init() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init' );
+	public function test_init_fail() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_fail' );
 
-		$this->assertTrue( self::$api->init() );
+		$api = new WP2D_API( 'pod' );
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init' );
+		// Directly check if the connection has been initialised.
+		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_init' ) );
+		$this->assertEquals(
+			'Connection not initialised.',
+			$this->_get_last_error_message( $api )
+		);
+
+		// False response, can't resolve host.
+		$this->assertFalse( $api->init() );
+		$this->assertContains(
+			'Failed to initialise connection to pod "https://pod".',
+			$this->_get_last_error_message( $api )
+		);
+
+		// Response has an invalid token.
+		$this->assertFalse( $api->init() );
+		$this->assertEquals(
+			'Failed to initialise connection to pod "https://pod".',
+			$this->_get_last_error_message( $api )
+		);
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_fail' );
 	}
 
 	/**
-	 * Test fetching the token.
+	 * Test the successful initialisation and pod changes.
 	 *
-	 * @covers ::_fetch_token
-	 * @depends test_init
+	 * @since next-release
+	 */
+	public function test_init_success() {
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_success' );
+
+		$api = new WP2D_API( 'pod1' );
+
+		// First initialisation.
+		$this->assertTrue( $api->init() );
+		$this->assertAttributeSame( 'token-a', '_token', $api );
+		// Only check for the cookie once, since it's always the same one.
+		$this->assertAttributeSame( array( 'the_cookie' ), '_cookies', $api );
+
+		// Reinitialise with same pod, token isn't reloaded.
+		$this->assertTrue( $api->init( 'pod1' ) );
+		$this->assertAttributeSame( 'token-a', '_token', $api );
+
+		// Reinitialise with different pod.
+		$this->assertTrue( $api->init( 'pod2' ) );
+		$this->assertAttributeSame( 'token-b', '_token', $api );
+
+		// Reinitialise with different protocol.
+		$this->assertTrue( $api->init( 'pod2', false ) );
+		$this->assertAttributeSame( 'token-c', '_token', $api );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_success' );
+	}
+
+	/**
+	 * Test fetching and forcefully re-fetching the token.
+	 *
+	 * @since next-release
 	 */
 	public function test_fetch_token() {
-		$this->assertEquals( 'xyz', wp2d_helper_call_private_method( self::$api, '_fetch_token' ) );
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_fetch_token' );
 
-		wp2d_helper_set_private_property( self::$api, '_token', 'uvw' );
-		$this->assertEquals( 'uvw', wp2d_helper_call_private_method( self::$api, '_fetch_token' ) );
+		$api = $this->_get_fake_api_init( 'pod', 'token-initial' );
 
-		wp2d_helper_set_private_property( self::$api, '_token', 'xyz' );
+		// Check the initial token.
+		$this->assertEquals( 'token-initial', wp2d_helper_call_private_method( $api, '_fetch_token' ) );
+
+		// Directly set a new token.
+		wp2d_helper_set_private_property( $api, '_token', 'token-new' );
+		$this->assertEquals( 'token-new', wp2d_helper_call_private_method( $api, '_fetch_token' ) );
+
+		// Force fetch a new token.
+		$this->assertEquals( 'token-forced', wp2d_helper_call_private_method( $api, '_fetch_token', true ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_fetch_token' );
 	}
 
 	/**
-	 * Test not being logged in.
+	 * Test the login checker.
 	 *
-	 * @covers ::is_logged_in
-	 * @depends test_init
-	 */
-	public function test_not_logged_in() {
-		$this->assertFalse( self::$api->is_logged_in() );
-
-		$this->assertFalse( self::$api->get_aspects() );
-		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message() );
-		self::$api->last_error = null;
-
-		$this->assertFalse( self::$api->get_services() );
-		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message() );
-		self::$api->last_error = null;
-
-		$this->assertFalse( self::$api->post( 'text' ) );
-		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message() );
-		self::$api->last_error = null;
-
-		$this->assertFalse( self::$api->delete( 'post', '1' ) );
-		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message() );
-		self::$api->last_error = null;
-	}
-
-	/**
-	 * Test the login check.
-	 *
-	 * @covers ::_check_login
-	 * @depends test_init
+	 * @since next-release
 	 */
 	public function test_check_login() {
-		wp2d_helper_set_private_property( self::$api, '_is_logged_in', true );
-		$this->assertTrue( wp2d_helper_call_private_method( self::$api, '_check_login' ) );
+		$api = new WP2D_API( 'pod' );
+		// Try to check login before initialised.
+		$this->assertFalse( $api->is_logged_in() );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_login' ) );
+		$this->assertEquals( 'Connection not initialised.', $this->_get_last_error_message( $api, true ) );
 
-		wp2d_helper_set_private_property( self::$api, '_is_logged_in', false );
-		$this->assertFalse( wp2d_helper_call_private_method( self::$api, '_check_login' ) );
-		$this->assertInstanceOf( 'WP_Error', self::$api->last_error );
-		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message() );
+		$api = $this->_get_fake_api_init();
+
+		$this->assertFalse( $api->is_logged_in() );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_login' ) );
+		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api, true ) );
+
+		wp2d_helper_set_private_property( $api, '_is_logged_in', true );
+
+		$this->assertTrue( $api->is_logged_in() );
+		$this->assertTrue( wp2d_helper_call_private_method( $api, '_check_login' ) );
 	}
 
 	/**
-	 * Test the login.
+	 * Test an invalid login.
 	 *
-	 * @covers ::login
-	 * @depends test_not_logged_in
+	 * @since next-release
 	 */
-	public function test_login() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login' );
+	public function test_login_fail() {
+		$api = new WP2D_API( 'pod' );
+		// Try login before initialised.
+		$this->assertFalse( $api->login( 'username', 'password' ) );
+		$this->assertEquals( 'Connection not initialised.', $this->_get_last_error_message( $api, true ) );
 
-		$this->assertTrue( self::$api->login( 'user', 'pass' ) );
-		$this->assertTrue( self::$api->is_logged_in() );
+		$api = $this->_get_fake_api_init();
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login' );
+		// Both username AND password are required!
+		$this->assertFalse( $api->login( '', '' ) );
+		$this->assertFalse( $api->is_logged_in() );
+
+		$this->assertFalse( $api->login( 'username-only', '' ) );
+		$this->assertFalse( $api->is_logged_in() );
+
+		$this->assertFalse( $api->login( '', 'password-only' ) );
+		$this->assertFalse( $api->is_logged_in() );
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_fail' );
+
+		$this->assertFalse( $api->login( 'username-wrong', 'password-wrong' ) );
+		$this->assertEquals( 'Login failed. Check your login details.', $this->_get_last_error_message( $api ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_fail' );
 	}
 
 	/**
-	 * Test getting aspects.
+	 * Test a successful login, re-login and forced re-login.
 	 *
-	 * @covers ::get_aspects
-	 * @depends test_login
+	 * @since next-release
 	 */
-	public function test_get_aspects() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects' );
+	public function test_login_success() {
+		$api = $this->_get_fake_api_init();
 
-		$this->assertEquals( array( 'public' => 'Public', 1 => 'Family', 2 => 'Friends' ), self::$api->get_aspects() );
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_success' );
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects' );
+		// First login.
+		$this->assertTrue( $api->login( 'username', 'password' ) );
+		$this->assertTrue( $api->is_logged_in() );
+
+		// Trying to log in again with same credentials just returns true, without making a new sign in attempt.
+		$this->assertTrue( $api->login( 'username', 'password' ) );
+		$this->assertTrue( $api->is_logged_in() );
+
+		// Force a new sign in.
+		$this->assertTrue( $api->login( 'username', 'password', true ) );
+		$this->assertTrue( $api->is_logged_in() );
+
+		// Login with new credentials.
+		$this->assertTrue( $api->login( 'username-new', 'password-new' ) );
+		$this->assertTrue( $api->is_logged_in() );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_success' );
 	}
 
 	/**
-	 * Test getting services.
+	 * Test _get_aspects_services method with an invalid argument.
 	 *
-	 * @covers ::get_services
-	 * @depends test_login
+	 * @since next-release
 	 */
-	public function test_get_services() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_services' );
+	public function test_get_aspects_services_invalid_argument() {
+		$api = $this->_get_fake_api_init_login();
 
-		$this->assertEquals( array( 'facebook' => 'Facebook', 'twitter' => 'Twitter' ), self::$api->get_services() );
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_services' );
+		// Testing with WP_Error response (check filter).
+		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', array(), true ) );
+		$this->assertEquals( 'Unknown error occurred.', $this->_get_last_error_message( $api ) );
+
+		// Testing invalid code response (check filter).
+		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', array(), true ) );
+		$this->assertEquals( 'Unknown error occurred.', $this->_get_last_error_message( $api ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 	}
 
 	/**
-	 * Test the posting.
+	 * Test getting aspects when an error occurs.
 	 *
-	 * @covers ::post
-	 * @depends test_login
+	 * @since next-release
 	 */
-	public function test_post() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post' );
+	public function test_get_aspects_fail() {
+		// Test getting aspects when not logged in.
+		$api = $this->_get_fake_api_init();
+		$this->assertFalse( $api->get_aspects() );
+		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api ) );
 
-		$post1 = self::$api->post( 'text' );
+		// Test getting aspects when logged in.
+		$api = $this->_get_fake_api_init_login();
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
+
+		// Testing with WP_Error response.
+		$this->assertFalse( $api->get_aspects() );
+		$this->assertEquals( 'Error loading aspects.', $this->_get_last_error_message( $api ) );
+
+		// Testing invalid code response.
+		$this->assertFalse( $api->get_aspects() );
+		$this->assertEquals( 'Error loading aspects.', $this->_get_last_error_message( $api ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
+	}
+
+	/**
+	 * Test getting aspects successfully.
+	 *
+	 * @since next-release
+	 */
+	public function test_get_aspects_success() {
+		$api = $this->_get_fake_api_init_login();
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_success' );
+
+		// The aspects that should be returned.
+		$aspects = array( 'public' => 'Public', 1 => 'Family' );
+		$this->assertEquals( $aspects, $api->get_aspects() );
+		$this->assertAttributeSame( $aspects, '_aspects', $api );
+
+		// Fetching the aspects again should pass the same list without a new request.
+		$this->assertEquals( $aspects, $api->get_aspects() );
+		$this->assertAttributeSame( $aspects, '_aspects', $api );
+
+		// Force a new fetch request.
+		$aspects = array( 'public' => 'Public', 2 => 'Friends' );
+		$this->assertEquals( $aspects, $api->get_aspects( true ) );
+		$this->assertAttributeSame( $aspects, '_aspects', $api );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_success' );
+	}
+
+	/**
+	 * Test getting services when an error occurs.
+	 *
+	 * @since next-release
+	 */
+	public function test_get_services_fail() {
+		// Test getting services when not logged in.
+		$api = $this->_get_fake_api_init();
+		$this->assertFalse( $api->get_services() );
+		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api ) );
+
+		// Test getting services when logged in.
+		$api = $this->_get_fake_api_init_login();
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
+
+		// Testing with WP_Error response.
+		$this->assertFalse( $api->get_services() );
+		$this->assertEquals( 'Error loading services.', $this->_get_last_error_message( $api ) );
+
+		// Testing invalid code response.
+		$this->assertFalse( $api->get_services() );
+		$this->assertEquals( 'Error loading services.', $this->_get_last_error_message( $api ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
+	}
+
+	/**
+	 * Test getting services successfully.
+	 *
+	 * @since next-release
+	 */
+	public function test_get_services_success() {
+		$api = $this->_get_fake_api_init_login();
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_services_success' );
+
+		// The services that should be returned.
+		$services = array( 'facebook' => 'Facebook' );
+		$this->assertEquals( $services, $api->get_services() );
+		$this->assertAttributeSame( $services, '_services', $api );
+
+		// Fetching the services again should pass the same list without a new request.
+		$this->assertEquals( $services, $api->get_services() );
+		$this->assertAttributeSame( $services, '_services', $api );
+
+		// Force a new fetch request.
+		$services = array( 'twitter' => 'Twitter' );
+		$this->assertEquals( $services, $api->get_services( true ) );
+		$this->assertAttributeSame( $services, '_services', $api );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_services_success' );
+	}
+
+	/**
+	 * Test posting when an error occurs.
+	 *
+	 * @since next-release
+	 */
+	public function test_post_fail() {
+		// Test post when not logged in.
+		$api = $this->_get_fake_api_init();
+		$this->assertFalse( $api->post( 'text' ) );
+		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api ) );
+
+		// Test post when logged in.
+		$api = $this->_get_fake_api_init_login();
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post_fail' );
+
+		// Returning a WP_Error object.
+		$this->assertFalse( $api->post( 'text' ) );
+		$this->assertEquals( 'WP_Error message', $this->_get_last_error_message( $api ) );
+
+		// Returning an error code.
+		$this->assertFalse( $api->post( 'text' ) );
+		$this->assertEquals( 'Error code message', $this->_get_last_error_message( $api ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post_fail' );
+	}
+
+	/**
+	 * Test posting successfully.
+	 *
+	 * @since next-release
+	 */
+	public function test_post_success() {
+		$api = $this->_get_fake_api_init_login();
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post_success' );
+
+		$post1 = $api->post( 'text' );
 		$this->assertEquals( 1, $post1->id );
 		$this->assertEquals( true, $post1->public );
-		$this->assertEquals( 'abc', $post1->guid );
+		$this->assertEquals( 'guid1', $post1->guid );
 		$this->assertEquals( 'text1', $post1->text );
-		$this->assertEquals( 'https://pod/posts/abc', $post1->permalink );
+		$this->assertEquals( 'https://pod/posts/guid1', $post1->permalink );
 
-		$post2 = self::$api->post( 'text', '1' );
+		$post2 = $api->post( 'text', '1' );
 		$this->assertEquals( 2, $post2->id );
 		$this->assertEquals( false, $post2->public );
-		$this->assertEquals( 'def', $post2->guid );
+		$this->assertEquals( 'guid2', $post2->guid );
 		$this->assertEquals( 'text2', $post2->text );
-		$this->assertEquals( 'https://pod/posts/def', $post2->permalink );
+		$this->assertEquals( 'https://pod/posts/guid2', $post2->permalink );
 
-		$post3 = self::$api->post( 'text', array( '1' ) );
+		$post3 = $api->post( 'text', array( '1' ) );
 		$this->assertEquals( 3, $post3->id );
 		$this->assertEquals( false, $post3->public );
-		$this->assertEquals( 'ghi', $post3->guid );
+		$this->assertEquals( 'guid3', $post3->guid );
 		$this->assertEquals( 'text3', $post3->text );
-		$this->assertEquals( 'https://pod/posts/ghi', $post3->permalink );
+		$this->assertEquals( 'https://pod/posts/guid3', $post3->permalink );
 
 		// Need a test for the extra data parameter!
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post' );
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post_success' );
 	}
 
 	/**
-	 * Test deleting posts and comments.
+	 * Test deleting posts and comments when an error occurs.
 	 *
-	 * @covers ::delete
-	 * @depends test_login
+	 * @since next-release
 	 */
-	public function test_delete() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete' );
+	public function test_delete_fail() {
+		// Test delete when not logged in.
+		$api = $this->_get_fake_api_init();
+		$this->assertFalse( $api->delete( 'post', 'anything' ) );
+		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api ) );
+
+		// Test delete when logged in.
+		$api = $this->_get_fake_api_init_login();
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete_fail' );
+
+		// Getting a WP_Error response.
+		$this->assertFalse( $api->delete( 'post', 'wp_error' ) );
+		$this->assertEquals( 'WP_Error message', $this->_get_last_error_message( $api ) );
 
 		// Deleting something other than posts or comments.
-		$this->assertFalse( self::$api->delete( 'internet', 'allofit' ) );
-		$this->assertEquals( 'You can only delete posts and comments.', $this->_get_last_error_message() );
+		$this->assertFalse( $api->delete( 'internet', 'allofit' ) );
+		$this->assertEquals( 'You can only delete posts and comments.', $this->_get_last_error_message( $api ) );
 
 		// Deleting posts.
-		$this->assertFalse( self::$api->delete( 'post', 'invalid_id' ) );
-		$this->assertEquals( 'The post you tried to delete does not exist.', $this->_get_last_error_message() );
+		$this->assertFalse( $api->delete( 'post', 'invalid_id' ) );
+		$this->assertEquals( 'The post you tried to delete does not exist.', $this->_get_last_error_message( $api ) );
 
-		$this->assertFalse( self::$api->delete( 'post', 'not_my_id' ) );
-		$this->assertEquals( 'The post you tried to delete does not belong to you.', $this->_get_last_error_message() );
-
-		$this->assertTrue( self::$api->delete( 'post', 'my_valid_id' ) );
+		$this->assertFalse( $api->delete( 'post', 'not_my_id' ) );
+		$this->assertEquals( 'The post you tried to delete does not belong to you.', $this->_get_last_error_message( $api ) );
 
 		// Deleting comments.
-		$this->assertFalse( self::$api->delete( 'comment', 'invalid_id' ) );
-		$this->assertEquals( 'The comment you tried to delete does not exist.', $this->_get_last_error_message() );
+		$this->assertFalse( $api->delete( 'comment', 'invalid_id' ) );
+		$this->assertEquals( 'The comment you tried to delete does not exist.', $this->_get_last_error_message( $api ) );
 
-		$this->assertFalse( self::$api->delete( 'comment', 'not_my_id' ) );
-		$this->assertEquals( 'The comment you tried to delete does not belong to you.', $this->_get_last_error_message() );
-
-		$this->assertTrue( self::$api->delete( 'comment', 'my_valid_id' ) );
+		$this->assertFalse( $api->delete( 'comment', 'not_my_id' ) );
+		$this->assertEquals( 'The comment you tried to delete does not belong to you.', $this->_get_last_error_message( $api ) );
 
 		// Unknown error, due to an invalid response code.
-		$this->assertFalse( self::$api->delete( 'post', 'anything' ) );
-		$this->assertEquals( 'Unknown error occurred.', $this->_get_last_error_message() );
+		$this->assertFalse( $api->delete( 'post', 'anything' ) );
+		$this->assertEquals( 'Unknown error occurred.', $this->_get_last_error_message( $api ) );
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete' );
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete_fail' );
+	}
+
+	/**
+	 * Test deleting posts and comments successfully.
+	 *
+	 * @since next-release
+	 */
+	public function test_delete_success() {
+		$api = $this->_get_fake_api_init_login();
+
+		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete_success' );
+
+		// Delete post.
+		$this->assertTrue( $api->delete( 'post', 'my_valid_id' ) );
+
+		// Delete comment.
+		$this->assertTrue( $api->delete( 'comment', 'my_valid_id' ) );
+
+		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete_success' );
 	}
 
 	/**
 	 * Test logging out.
 	 *
-	 * Make sure we perform all tests that require a login, before logging out.
-	 *
-	 * @covers ::logout
-	 * @depends test_get_aspects
-	 * @depends test_get_services
-	 * @depends test_post
-	 * @depends test_delete
+	 * @since next-release
 	 */
 	public function test_logout() {
-		self::$api->logout();
+		$api = $this->_get_fake_api_init_login();
 
-		$this->assertNull( self::$api->last_error );
-		$this->assertAttributeSame( null,    '_token',        self::$api );
-		$this->assertAttributeSame( array(), '_cookies',      self::$api );
-		$this->assertAttributeSame( null,    '_last_request', self::$api );
-		$this->assertAttributeSame( null,    '_username',     self::$api );
-		$this->assertAttributeSame( null,    '_password',     self::$api );
-		$this->assertAttributeSame( false,   '_is_logged_in', self::$api );
-		$this->assertAttributeSame( array(), '_aspects',      self::$api );
-		$this->assertAttributeSame( array(), '_services',     self::$api );
+		$api->logout();
+
+		$this->assertAttributeSame( false,   '_is_logged_in', $api );
+		$this->assertAttributeSame( null,    '_username',     $api );
+		$this->assertAttributeSame( null,    '_password',     $api );
+		$this->assertAttributeSame( array(), '_aspects',      $api );
+		$this->assertAttributeSame( array(), '_services',     $api );
+	}
+
+	/**
+	 * Test the deinitialisation.
+	 *
+	 * @since next-release
+	 */
+	public function test_deinit() {
+		$api = $this->_get_fake_api_init_login();
+
+		$api->deinit();
+
+		$this->assertNull( $api->last_error );
+		$this->assertAttributeSame( null,    '_token',        $api );
+		$this->assertAttributeSame( array(), '_cookies',      $api );
+		$this->assertAttributeSame( null,    '_last_request', $api );
+		$this->assertAttributeSame( false,   '_is_logged_in', $api );
+		$this->assertAttributeSame( null,    '_username',     $api );
+		$this->assertAttributeSame( null,    '_password',     $api );
+		$this->assertAttributeSame( array(), '_aspects',      $api );
+		$this->assertAttributeSame( array(), '_services',     $api );
 	}
 }
