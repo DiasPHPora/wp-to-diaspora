@@ -324,7 +324,7 @@ class WP2D_API {
 	/**
 	 * Perform a deinitialisation, resetting all class variables.
 	 *
-	 * @since 1.7.0
+	 * @since next-release
 	 */
 	public function deinit() {
 		$this->logout();

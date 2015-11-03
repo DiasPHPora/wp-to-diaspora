@@ -3,13 +3,13 @@
  * All helper methods for the WP2D tests.
  *
  * @package WP_To_Diaspora\Tests\Helpers
- * @since 1.7.0
+ * @since next-release
  */
 
 /**
  * Custom HTTP request responses for test_init_fail.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_init_fail() {
 	static $responses = array(
@@ -25,7 +25,7 @@ function wp2d_api_pre_http_request_filter_init_fail() {
 /**
  * Custom HTTP request responses for test_init_success.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_init_success() {
 	static $tokens = array( 'token-a', 'token-b', 'token-c' );
@@ -39,7 +39,7 @@ function wp2d_api_pre_http_request_filter_init_success() {
 /**
  * Custom HTTP request response for test_fetch_token.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_fetch_token() {
 	return array(
@@ -51,7 +51,7 @@ function wp2d_api_pre_http_request_filter_fetch_token() {
 /**
  * Custom HTTP request response for test_login_fail.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_login_fail() {
 	return array( 'response' => array( 'code' => 999, 'message' => 'Error code message' ) );
@@ -60,7 +60,7 @@ function wp2d_api_pre_http_request_filter_login_fail() {
 /**
  * Custom HTTP request response for test_login_success.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_login_success() {
 	static $i = 0;
@@ -80,7 +80,7 @@ function wp2d_api_pre_http_request_filter_login_success() {
  *
  * Return either a WP_Error object or and invalid response code.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_get_aspects_services_fail() {
 	// Loop through responses using a static incrementing variable.
@@ -98,7 +98,7 @@ function wp2d_api_pre_http_request_filter_get_aspects_services_fail() {
 /**
  * Custom HTTP request responses for test_get_aspects_success.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_get_aspects_success() {
 	static $aspects_bodies = array(
@@ -115,7 +115,7 @@ function wp2d_api_pre_http_request_filter_get_aspects_success() {
 /**
  * Custom HTTP request responses for test_get_services_success.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_get_services_success() {
 	static $services_bodies = array( '["facebook"]', '["twitter"]' );
@@ -129,7 +129,7 @@ function wp2d_api_pre_http_request_filter_get_services_success() {
 /**
  * Custom HTTP request responses for test_post_fail.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_post_fail() {
 	// Loop through responses using a static incrementing variable.
@@ -149,7 +149,7 @@ function wp2d_api_pre_http_request_filter_post_fail() {
 /**
  * Custom HTTP request responses for test_post_success.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_post_success() {
 	static $post_bodies = array(
@@ -167,7 +167,7 @@ function wp2d_api_pre_http_request_filter_post_success() {
 /**
  * Custom HTTP request responses for test_delete_fail.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_delete_fail() {
 	// Loop through responses using a static incrementing variable.
@@ -193,7 +193,7 @@ function wp2d_api_pre_http_request_filter_delete_fail() {
 /**
  * Custom HTTP request response for test_delete_success.
  *
- * @since 1.7.0
+ * @since next-release
  */
 function wp2d_api_pre_http_request_filter_delete_success() {
 	return array( 'response' => array( 'code' => 204, 'message' => 'No Content' ) );
