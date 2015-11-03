@@ -205,6 +205,12 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_check_login() {
+		$api = new WP2D_API( 'pod' );
+		// Try to check login before initialised.
+		$this->assertFalse( $api->is_logged_in() );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_login' ) );
+		$this->assertEquals( 'Connection not initialised.', $this->_get_last_error_message( $api, true ) );
+
 		$api = $this->_get_fake_api_init();
 
 		$this->assertFalse( $api->is_logged_in() );
@@ -223,6 +229,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_login_fail() {
+		$api = new WP2D_API( 'pod' );
+		// Try login before initialised.
+		$this->assertFalse( $api->login( 'username', 'password' ) );
+		$this->assertEquals( 'Connection not initialised.', $this->_get_last_error_message( $api, true ) );
+
 		$api = $this->_get_fake_api_init();
 
 		// Both username AND password are required!
@@ -299,15 +310,13 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_get_aspects_fail() {
-		$api = $this->_get_fake_api_init_login();
-
 		// Test getting aspects when not logged in.
-		wp2d_helper_set_private_property( $api, '_is_logged_in', false );
-
+		$api = $this->_get_fake_api_init();
 		$this->assertFalse( $api->get_aspects() );
 		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api ) );
 
-		wp2d_helper_set_private_property( $api, '_is_logged_in', true );
+		// Test getting aspects when logged in.
+		$api = $this->_get_fake_api_init_login();
 
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 
@@ -355,15 +364,13 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_get_services_fail() {
-		$api = $this->_get_fake_api_init_login();
-
 		// Test getting services when not logged in.
-		wp2d_helper_set_private_property( $api, '_is_logged_in', false );
-
+		$api = $this->_get_fake_api_init();
 		$this->assertFalse( $api->get_services() );
 		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api ) );
 
-		wp2d_helper_set_private_property( $api, '_is_logged_in', true );
+		// Test getting services when logged in.
+		$api = $this->_get_fake_api_init_login();
 
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 
@@ -411,15 +418,13 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_post_fail() {
-		$api = $this->_get_fake_api_init_login();
-
 		// Test post when not logged in.
-		wp2d_helper_set_private_property( $api, '_is_logged_in', false );
-
+		$api = $this->_get_fake_api_init();
 		$this->assertFalse( $api->post( 'text' ) );
 		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api ) );
 
-		wp2d_helper_set_private_property( $api, '_is_logged_in', true );
+		// Test post when logged in.
+		$api = $this->_get_fake_api_init_login();
 
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post_fail' );
 
@@ -476,6 +481,12 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_delete_fail() {
+		// Test delete when not logged in.
+		$api = $this->_get_fake_api_init();
+		$this->assertFalse( $api->delete( 'post', 'anything' ) );
+		$this->assertEquals( 'Not logged in.', $this->_get_last_error_message( $api ) );
+
+		// Test delete when logged in.
 		$api = $this->_get_fake_api_init_login();
 
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete_fail' );
