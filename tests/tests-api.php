@@ -130,8 +130,8 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		// False response, can't resolve host.
 		$this->assertFalse( $api->init() );
-		$this->assertEquals(
-			'Failed to initialise connection to pod "https://pod". Could not resolve host: pod',
+		$this->assertContains(
+			'Failed to initialise connection to pod "https://pod".',
 			$this->_get_last_error_message( $api )
 		);
 
