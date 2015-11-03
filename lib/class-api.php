@@ -129,8 +129,10 @@ class WP2D_API {
 	 * @return string Full pod url.
 	 */
 	public function get_pod_url( $path = '' ) {
+		$path = trim( $path, ' /' );
+
 		// Add a slash to the beginning?
-		if ( '' !== $path && '/' !== $path[0] ) {
+		if ( '' !== $path ) {
 			$path = '/' . $path;
 		}
 
@@ -160,6 +162,10 @@ class WP2D_API {
 	public function init( $pod = null, $is_secure = true ) {
 		// If we are changing pod, we need to fetch a new token.
 		$force_new_token = false;
+
+		// When initialising a connection, clear the last error.
+		// This is important when multiple init tries happen.
+		$this->last_error = null;
 
 		// Change the pod we are connecting to?
 		if ( isset( $pod ) && ( $this->_pod !== $pod || $this->_is_secure !== $is_secure ) ) {
@@ -200,11 +206,27 @@ class WP2D_API {
 	}
 
 	/**
+	 * Check if the API has been initialised. Otherwise set the last error.
+	 *
+	 * @return boolean Has the connection been initialised?
+	 */
+	private function _check_init() {
+		if ( is_null( $this->_token ) ) {
+			$this->_error( 'wp2d_api_connection_not_initialised', __( 'Connection not initialised.', 'wp-to-diaspora' ) );
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Check if we're logged in. Otherwise set the last error.
 	 *
 	 * @return boolean Are we logged in already?
 	 */
 	private function _check_login() {
+		if ( ! $this->_check_init() ) {
+			return false;
+		}
 		if ( ! $this->is_logged_in() ) {
 			$this->_error( 'wp2d_api_not_logged_in', __( 'Not logged in.', 'wp-to-diaspora' ) );
 			return false;
@@ -230,26 +252,30 @@ class WP2D_API {
 	 * @return boolean Did the login succeed?
 	 */
 	public function login( $username, $password, $force = false ) {
-		// Are we trying to log in as a different user?
-		if ( ( isset( $this->_username ) && $username !== $this->_username )
-			|| ( isset( $this->_password ) && $password !== $this->_password ) ) {
-			$this->logout();
-		}
-
-		// If we are already logged in and not forcing a relogin, return.
-		if ( $this->is_logged_in() && ! (bool) $force ) {
-			return true;
-		}
-
-		// Set the username and password.
-		( isset( $username ) && '' !== $username ) && $this->_username = $username;
-		( isset( $password ) && '' !== $password ) && $this->_password = $password;
-
-		// Do we have the necessary credentials?
-		if ( ! isset( $this->_username, $this->_password ) ) {
+		// Has the connection been initialised?
+		if ( ! $this->_check_init() ) {
 			$this->logout();
 			return false;
 		}
+
+		// Username and password both need to be set.
+		$username = ( isset( $username ) && '' !== $username ) ? $username : null;
+		$password = ( isset( $password ) && '' !== $password ) ? $password : null;
+		if ( ! isset( $username, $password ) ) {
+			$this->logout();
+			return false;
+		}
+
+		// If we are already logged in and not forcing a relogin, return.
+		if ( ! $force && $this->is_logged_in() &&
+			$username === $this->_username &&
+			$password === $this->_password ) {
+			return true;
+		}
+
+		// Set the newly passed username and password.
+		$this->_username = $username;
+		$this->_password = $password;
 
 		// Set up the login parameters.
 		$params = array(
@@ -273,6 +299,7 @@ class WP2D_API {
 		if ( is_wp_error( $response ) || 200 !== $response->code ) {
 			// Login failed.
 			$this->_error( 'wp2d_api_login_failed', __( 'Login failed. Check your login details.', 'wp-to-diaspora' ), array( 'help_tab' => 'troubleshooting' ) );
+			$this->logout();
 			return false;
 		}
 
@@ -282,20 +309,29 @@ class WP2D_API {
 	}
 
 	/**
-	 * Perform a logout, resetting all class variables.
+	 * Perform a logout, resetting all login info.
 	 *
 	 * @since 1.6.0
 	 */
 	public function logout() {
+		$this->_is_logged_in = false;
+		$this->_username = null;
+		$this->_password = null;
+		$this->_aspects = array();
+		$this->_services = array();
+	}
+
+	/**
+	 * Perform a deinitialisation, resetting all class variables.
+	 *
+	 * @since 1.7.0
+	 */
+	public function deinit() {
+		$this->logout();
 		$this->last_error = null;
 		$this->_token = null;
 		$this->_cookies = array();
 		$this->_last_request = null;
-		$this->_username = null;
-		$this->_password = null;
-		$this->_is_logged_in = false;
-		$this->_aspects = array();
-		$this->_services = array();
 	}
 
 	/**
