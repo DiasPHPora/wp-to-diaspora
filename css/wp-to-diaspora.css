@@ -5,6 +5,11 @@
 	vertical-align: middle;
 }
 
+.settings_page_wp_to_diaspora .spinner:not(.is-active),
+#wp_to_diaspora_meta_box .spinner:not(.is-active) {
+	display: none;
+}
+
 /* Modifications for chosen. */
 
 #enabled_post_types_chosen,
