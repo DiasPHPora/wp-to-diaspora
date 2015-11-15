@@ -180,13 +180,13 @@ class WP2D_Options {
 					$conn = WP2D_Helpers::api_quick_connect();
 					if ( empty( $conn->last_error ) ) {
 						// Get the loaded aspects.
-						if ( $aspects = $conn->get_aspects() ) {
+						if ( is_array( $aspects = $conn->get_aspects() ) ) {
 							// Save the new list of aspects.
 							$this->set_option( 'aspects_list', $aspects );
 						}
 
 						// Get the loaded services.
-						if ( $services = $conn->get_services() ) {
+						if ( is_array( $services = $conn->get_services() ) ) {
 							// Save the new list of services.
 							$this->set_option( 'services_list', $services );
 						}

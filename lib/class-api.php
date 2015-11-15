@@ -483,10 +483,8 @@ class WP2D_API {
 	 * @return array Array of aspect objects.
 	 */
 	public function get_aspects( $force = false ) {
-		if ( $this->_aspects = $this->_get_aspects_services( 'aspects', $this->_aspects, $force ) ) {
-			return $this->_aspects;
-		}
-		return false;
+		$this->_aspects = $this->_get_aspects_services( 'aspects', $this->_aspects, $force );
+		return ( is_array( $this->_aspects ) ) ? $this->_aspects : false;
 	}
 
 	/**
@@ -496,10 +494,8 @@ class WP2D_API {
 	 * @return array Array of service objects.
 	 */
 	public function get_services( $force = false ) {
-		if ( $this->_services = $this->_get_aspects_services( 'services', $this->_services, $force ) ) {
-			return $this->_services;
-		}
-		return false;
+		$this->_services = $this->_get_aspects_services( 'services', $this->_services, $force );
+		return ( is_array( $this->_services ) ) ? $this->_services : false;
 	}
 
 	/**
