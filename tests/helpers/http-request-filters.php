@@ -104,6 +104,7 @@ function wp2d_api_pre_http_request_filter_get_aspects_success() {
 	static $aspects_bodies = array(
 		'[{"id":1,"name":"Family","selected":true}]',
 		'[{"id":2,"name":"Friends","selected":true}]',
+		'[]',
 	);
 
 	return array(
@@ -118,7 +119,7 @@ function wp2d_api_pre_http_request_filter_get_aspects_success() {
  * @since next-release
  */
 function wp2d_api_pre_http_request_filter_get_services_success() {
-	static $services_bodies = array( '["facebook"]', '["twitter"]' );
+	static $services_bodies = array( '["facebook"]', '["twitter"]', '[]' );
 
 	return array(
 		'body'     => '"configured_services":' . array_shift( $services_bodies ),

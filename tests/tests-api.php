@@ -355,6 +355,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertEquals( $aspects, $api->get_aspects( true ) );
 		$this->assertAttributeSame( $aspects, '_aspects', $api );
 
+		// Make sure that there is always at least a Public aspect.
+		$aspects = array( 'public' => 'Public' );
+		$this->assertEquals( $aspects, $api->get_aspects( true ) );
+		$this->assertAttributeSame( $aspects, '_aspects', $api );
+
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_success' );
 	}
 
@@ -408,6 +413,10 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$services = array( 'twitter' => 'Twitter' );
 		$this->assertEquals( $services, $api->get_services( true ) );
 		$this->assertAttributeSame( $services, '_services', $api );
+
+		// If no services are connected, make sure we get an empty array.
+		$this->assertEquals( array(), $api->get_services( true ) );
+		$this->assertAttributeSame( array(), '_services', $api );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_services_success' );
 	}

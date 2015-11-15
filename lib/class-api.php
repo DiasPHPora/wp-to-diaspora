@@ -118,8 +118,8 @@ class WP2D_API {
 	 */
 	private $_regexes = array(
 		'token'    => '/content="(.*?)" name="csrf-token"|name="csrf-token" content="(.*?)"/',
-		'aspects'  => '/"aspects"\:(\[.+?\])/',
-		'services' => '/"configured_services"\:(\[.+?\])/',
+		'aspects'  => '/"aspects"\:(\[.*?\])/',
+		'services' => '/"configured_services"\:(\[.*?\])/',
 	);
 
 	/**
@@ -531,7 +531,7 @@ class WP2D_API {
 			}
 
 			// Load the aspects or services.
-			if ( $raw_list = json_decode( $this->_parse_regex( $type, $response->body ) ) ) {
+			if ( is_array( $raw_list = json_decode( $this->_parse_regex( $type, $response->body ) ) ) ) {
 				// In case this fetch is forced, empty the list.
 				$list = array();
 
