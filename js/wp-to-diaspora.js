@@ -1,5 +1,8 @@
 jQuery(document).ready(function ($) {
 
+	// Clearly we have JS, so remove the hidden input field marking no-js.
+	$('#wp2d_no_js').remove();
+
 	var onSettingsPage = ('settings_page_wp_to_diaspora' === adminpage);
 
 	$('.wrap, .contextual-help-tabs-wrap').on('click', '.open-help-tab', function(e) {
