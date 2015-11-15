@@ -174,7 +174,7 @@ class WP2D_Options {
 				// It could always be empty, resulting in this code being run every time the page is loaded.
 				// The aspects will at least have a "Public" entry after the initial fetch.
 				$aspects_list = $this->get_option( 'aspects_list' );
-				if ( empty( $aspects_list ) || $force = get_transient( 'wp2d_no_js_force_refetch' ) ) {
+				if ( $force = get_transient( 'wp2d_no_js_force_refetch' ) || empty( $aspects_list ) ) {
 
 					// Set up the connection to diaspora*.
 					$conn = WP2D_Helpers::api_quick_connect();
