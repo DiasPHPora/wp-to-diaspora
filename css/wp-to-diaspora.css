@@ -1,7 +1,5 @@
 .settings_page_wp_to_diaspora .spinner,
 #wp_to_diaspora_meta_box .spinner {
-	display: inline-block;
-	visibility: visible;
 	margin: 0;
 	float: none;
 	vertical-align: middle;

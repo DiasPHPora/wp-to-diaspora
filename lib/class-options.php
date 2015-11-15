@@ -129,7 +129,7 @@ class WP2D_Options {
 		}
 
 		// Add the 'Setup' tab to the end of the list.
-		$tabs['setup'] = __( 'Setup', 'wp-to-diaspora' ) . '<span id="pod-connection-status" class="dashicons-before" style="display:none;"></span><span class="spinner"></span>';
+		$tabs['setup'] = __( 'Setup', 'wp-to-diaspora' ) . '<span id="pod-connection-status" class="dashicons-before hidden"></span><span class="spinner"></span>';
 
 		// Container for all options tabs.
 		$out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
@@ -311,7 +311,7 @@ class WP2D_Options {
 	 */
 	public function pod_render() {
 		?>
-		https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo esc_attr( $this->get_option( 'pod' ) ); ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required> <a id="refresh-pod-list" class="button"><?php esc_html_e( 'Refresh pod list', 'wp-to-diaspora' ); ?></a><span class="spinner" style="display: none;"></span>
+		https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo esc_attr( $this->get_option( 'pod' ) ); ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required> <a id="refresh-pod-list" class="button hide-if-no-js"><?php esc_html_e( 'Refresh pod list', 'wp-to-diaspora' ); ?></a><span class="spinner"></span>
 		<datalist id="pod-list">
 		<?php foreach ( (array) $this->get_option( 'pod_list' ) as $pod ) : ?>
 			<option data-secure="<?php echo esc_attr( $pod['secure'] ); ?>" value="<?php echo esc_attr( $pod['domain'] ); ?>"></option>
@@ -553,8 +553,8 @@ class WP2D_Options {
 		</div>
 		<p class="description">
 			<?php echo $description; ?>
-			<a id="refresh-<?php echo esc_attr( $type ); ?>-list" class="button"><?php echo esc_html( $refresh_button ); ?></a>
-			<span class="spinner" style="display: none;"></span>
+			<a id="refresh-<?php echo esc_attr( $type ); ?>-list" class="button hide-if-no-js"><?php echo esc_html( $refresh_button ); ?></a>
+			<span class="spinner"></span>
 		</p>
 		<?php
 	}
