@@ -118,8 +118,8 @@ class WP2D_API {
 	 */
 	private $_regexes = array(
 		'token'    => '/content="(.*?)" name="csrf-token"|name="csrf-token" content="(.*?)"/',
-		'aspects'  => '/"aspects"\:(\[.+?\])/',
-		'services' => '/"configured_services"\:(\[.+?\])/',
+		'aspects'  => '/"aspects"\:(\[.*?\])/',
+		'services' => '/"configured_services"\:(\[.*?\])/',
 	);
 
 	/**
@@ -483,10 +483,8 @@ class WP2D_API {
 	 * @return array Array of aspect objects.
 	 */
 	public function get_aspects( $force = false ) {
-		if ( $this->_aspects = $this->_get_aspects_services( 'aspects', $this->_aspects, $force ) ) {
-			return $this->_aspects;
-		}
-		return false;
+		$this->_aspects = $this->_get_aspects_services( 'aspects', $this->_aspects, $force );
+		return ( is_array( $this->_aspects ) ) ? $this->_aspects : false;
 	}
 
 	/**
@@ -496,10 +494,8 @@ class WP2D_API {
 	 * @return array Array of service objects.
 	 */
 	public function get_services( $force = false ) {
-		if ( $this->_services = $this->_get_aspects_services( 'services', $this->_services, $force ) ) {
-			return $this->_services;
-		}
-		return false;
+		$this->_services = $this->_get_aspects_services( 'services', $this->_services, $force );
+		return ( is_array( $this->_services ) ) ? $this->_services : false;
 	}
 
 	/**
@@ -535,7 +531,7 @@ class WP2D_API {
 			}
 
 			// Load the aspects or services.
-			if ( $raw_list = json_decode( $this->_parse_regex( $type, $response->body ) ) ) {
+			if ( is_array( $raw_list = json_decode( $this->_parse_regex( $type, $response->body ) ) ) ) {
 				// In case this fetch is forced, empty the list.
 				$list = array();
 
