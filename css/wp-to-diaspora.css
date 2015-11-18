@@ -1,10 +1,13 @@
 .settings_page_wp_to_diaspora .spinner,
 #wp_to_diaspora_meta_box .spinner {
-	display: inline-block;
-	visibility: visible;
 	margin: 0;
 	float: none;
 	vertical-align: middle;
+}
+
+.settings_page_wp_to_diaspora .spinner:not(.is-active),
+#wp_to_diaspora_meta_box .spinner:not(.is-active) {
+	display: none;
 }
 
 /* Modifications for chosen. */

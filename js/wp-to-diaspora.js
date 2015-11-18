@@ -1,5 +1,8 @@
 jQuery(document).ready(function ($) {
 
+	// Clearly we have JS, so remove the hidden input field marking no-js.
+	$('#wp2d_no_js').remove();
+
 	var onSettingsPage = ('settings_page_wp_to_diaspora' === adminpage);
 
 	$('.wrap, .contextual-help-tabs-wrap').on('click', '.open-help-tab', function(e) {
@@ -46,7 +49,7 @@ jQuery(document).ready(function ($) {
 	// Refresh the list of aspects and update the checkboxes.
 	$('#refresh-aspects-list').click(function() {
 		var $refreshButton = $(this).hide();
-		var $spinner = $refreshButton.next('.spinner').show();
+		var $spinner = $refreshButton.next('.spinner').addClass('is-active');
 		var $aspectsContainer = $('#aspects-container');
 
 		// Before loading the new checkboxes, disable all the current ones.
@@ -76,7 +79,7 @@ jQuery(document).ready(function ($) {
 			}
 			smartAspectSelection();
 
-			$spinner.hide();
+			$spinner.removeClass('is-active');
 			$refreshButton.show();
 		});
 	});
@@ -84,7 +87,7 @@ jQuery(document).ready(function ($) {
 	// Refresh the list of services and update the checkboxes.
 	$('#refresh-services-list').click(function() {
 		var $refreshButton = $(this).hide();
-		var $spinner = $refreshButton.next('.spinner').show();
+		var $spinner = $refreshButton.next('.spinner').addClass('is-active');
 		var $servicesContainer = $('#services-container');
 
 		// Before loading the new checkboxes, disable all the current ones.
@@ -117,7 +120,7 @@ jQuery(document).ready(function ($) {
 				$servicesContainer.append(WP2DL10n.no_services_connected);
 			}
 
-			$spinner.hide();
+			$spinner.removeClass('is-active');
 			$refreshButton.show();
 		});
 	});
@@ -127,7 +130,7 @@ jQuery(document).ready(function ($) {
 		// Refresh the list of pods and repopulate the autocomplete list.
 		$('#refresh-pod-list').click(function() {
 			var $refreshButton = $(this).hide();
-			var $spinner = $refreshButton.next('.spinner').show();
+			var $spinner = $refreshButton.next('.spinner').addClass('is-active');
 
 			$.post(ajaxurl, { 'action': 'wp_to_diaspora_update_pod_list' }, function(pods) {
 				// Empty the current pod list and repopulate it.
@@ -136,13 +139,14 @@ jQuery(document).ready(function ($) {
 					$podList.append( '<option data-secure="' + pod.secure + '" value="' + pod.domain + '"></option>' );
 				});
 
-				$spinner.hide();
+				$spinner.removeClass('is-active');
 				$refreshButton.show();
 			});
 		});
 
 		// Check the pod connection status.
 		var $pcs = $('#pod-connection-status');
+		var $spinner = $pcs.next('.spinner').addClass('is-active').show();
 		$pcs.parent().attr('title', WP2DL10n.conn_testing);
 
 		var $msg = $('#wp2d-message');
@@ -182,7 +186,7 @@ jQuery(document).ready(function ($) {
 			}
 		})
 		.always(function() {
-			$pcs.next('.spinner').hide();
+			$spinner.removeClass('is-active').hide();
 		});
 
 		// Confirmation when resetting to default settings.

@@ -129,7 +129,7 @@ class WP2D_Options {
 		}
 
 		// Add the 'Setup' tab to the end of the list.
-		$tabs['setup'] = __( 'Setup', 'wp-to-diaspora' ) . '<span id="pod-connection-status" class="dashicons-before" style="display:none;"></span><span class="spinner"></span>';
+		$tabs['setup'] = __( 'Setup', 'wp-to-diaspora' ) . '<span id="pod-connection-status" class="dashicons-before hidden"></span><span class="spinner"></span>';
 
 		// Container for all options tabs.
 		$out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
@@ -174,7 +174,7 @@ class WP2D_Options {
 				// It could always be empty, resulting in this code being run every time the page is loaded.
 				// The aspects will at least have a "Public" entry after the initial fetch.
 				$aspects_list = $this->get_option( 'aspects_list' );
-				if ( empty( $aspects_list ) ) {
+				if ( ( $force = get_transient( 'wp2d_no_js_force_refetch' ) ) || empty( $aspects_list ) ) {
 
 					// Set up the connection to diaspora*.
 					$conn = WP2D_Helpers::api_quick_connect();
@@ -192,6 +192,18 @@ class WP2D_Options {
 						}
 
 						$this->save();
+					}
+
+					if ( $force ) {
+						delete_transient( 'wp2d_no_js_force_refetch' );
+						$success = empty( $conn->last_error );
+						$message = ( $success ) ? __( 'Connection successful.', 'wp-to-diaspora' ) : $conn->last_error->get_error_message();
+						add_settings_error(
+							'wp_to_diaspora_settings',
+							'wp_to_diaspora_connected',
+							$message,
+							( $success ) ? 'updated' : 'error'
+						);
 					}
 				}
 
@@ -216,14 +228,14 @@ class WP2D_Options {
 				}
 			}
 
-				// Output success or error message.
-				settings_errors( 'wp_to_diaspora_settings' );
+			// Output success or error message.
+			settings_errors( 'wp_to_diaspora_settings' );
 			?>
 
 			<?php $page_tabs = array_keys( $this->_options_page_tabs( true ) ); ?>
 
 			<form action="options.php" method="post">
-
+				<input id="wp2d_no_js" type="hidden" name="wp_to_diaspora_settings[no_js]" value="1">
 				<?php
 				// Load the settings fields.
 				settings_fields( 'wp_to_diaspora_settings' );
@@ -311,7 +323,7 @@ class WP2D_Options {
 	 */
 	public function pod_render() {
 		?>
-		https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo esc_attr( $this->get_option( 'pod' ) ); ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required> <a id="refresh-pod-list" class="button"><?php esc_html_e( 'Refresh pod list', 'wp-to-diaspora' ); ?></a><span class="spinner" style="display: none;"></span>
+		https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo esc_attr( $this->get_option( 'pod' ) ); ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required> <a id="refresh-pod-list" class="button hide-if-no-js"><?php esc_html_e( 'Refresh pod list', 'wp-to-diaspora' ); ?></a><span class="spinner"></span>
 		<datalist id="pod-list">
 		<?php foreach ( (array) $this->get_option( 'pod_list' ) as $pod ) : ?>
 			<option data-secure="<?php echo esc_attr( $pod['secure'] ); ?>" value="<?php echo esc_attr( $pod['domain'] ); ?>"></option>
@@ -553,8 +565,9 @@ class WP2D_Options {
 		</div>
 		<p class="description">
 			<?php echo $description; ?>
-			<a id="refresh-<?php echo esc_attr( $type ); ?>-list" class="button"><?php echo esc_html( $refresh_button ); ?></a>
-			<span class="spinner" style="display: none;"></span>
+			<a id="refresh-<?php echo esc_attr( $type ); ?>-list" class="button hide-if-no-js"><?php echo esc_html( $refresh_button ); ?></a>
+			<span class="spinner"></span>
+			<span class="hide-if-js"><?php printf( esc_html_x( 'To update this list, %sre-save your login info%s.', 'placeholders are link tags to the settings page.', 'wp-to-diaspora' ), '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '&amp;tab=setup" target="_blank">', '</a>' ); ?></span>
 		</p>
 		<?php
 	}
@@ -668,6 +681,12 @@ class WP2D_Options {
 				$input['password'] = $this->get_option( 'password' );
 			} else {
 				$input['password'] = WP2D_Helpers::encrypt( $input['password'] );
+			}
+
+			// This is for when JS in not enabled, to make sure that the aspects and services
+			// are refetched when displaying the options page after saving.
+			if ( isset( $input['no_js'] ) ) {
+				set_transient( 'wp2d_no_js_force_refetch', true );
 			}
 		}
 

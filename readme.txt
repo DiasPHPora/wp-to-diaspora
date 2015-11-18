@@ -92,6 +92,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= next-release =
+* Make plugin no-js friendly, so that it works properly even if Javascript is disabled
+
 = 1.6.0 =
 * API now uses the WP_HTTP API for requests, cURL no longer required
 * Contextual help updated with troubleshooting tips
