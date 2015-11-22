@@ -302,10 +302,14 @@ class WP_To_Diaspora {
 	private function _update_pod_list() {
 		// API url to fetch pods list from podupti.me.
 		$pod_list_url = 'http://podupti.me/api.php?format=json&key=4r45tg';
-
 		$pods = array();
-		if ( $json = file_get_contents( $pod_list_url ) ) {
+
+		// Get the response from the WP_HTTP request.
+		$response = wp_safe_remote_get( $pod_list_url );
+
+		if ( $json = wp_remote_retrieve_body( $response ) ) {
 			$pod_list = json_decode( $json );
+
 			if ( isset( $pod_list->pods ) ) {
 				foreach ( $pod_list->pods as $pod ) {
 					if ( 'no' === $pod->hidden ) {
