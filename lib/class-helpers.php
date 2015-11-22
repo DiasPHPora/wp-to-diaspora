@@ -28,7 +28,7 @@ class WP2D_Helpers {
 	 */
 	public static function add_debugging( $text ) {
 		// Make sure we're in debug mode.
-		if ( defined( 'WP2D_DEBUGGING' ) ) {
+		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
 			$d = '';
 			foreach ( debug_backtrace() as $dbt ) {
 				extract( $dbt );
@@ -39,7 +39,10 @@ class WP2D_Helpers {
 			}
 
 			self::$_debugging .= sprintf( "%s\n%s\n", date( 'Y.m.d H:i:s' ), $d . $text );
+
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -48,10 +51,10 @@ class WP2D_Helpers {
 	 * @return string The debug output.
 	 */
 	public static function get_debugging() {
-		if ( defined( 'WP2D_DEBUGGING' ) ) {
+		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
 			return self::$_debugging;
 		}
-		return '';
+		return false;
 	}
 
 	/**
@@ -64,7 +67,12 @@ class WP2D_Helpers {
 	 */
 	public static function str_to_arr( &$input ) {
 		if ( ! is_array( $input ) ) {
-			$input = explode( ',', $input );
+			// Explode string > Trim each entry > Remove blanks > Re-index array.
+			$input = array_values( array_filter( array_map( 'trim', explode( ',', $input ) ) ) );
+		} else {
+			// If we're already an array, make sure we return it clean.
+			self::arr_to_str( $input );
+			self::str_to_arr( $input );
 		}
 		return $input;
 	}
@@ -79,7 +87,12 @@ class WP2D_Helpers {
 	 */
 	public static function arr_to_str( &$input ) {
 		if ( is_array( $input ) ) {
-			$input = implode( ',', $input );
+			// Trim each entry > Remove blanks > Implode them together.
+			$input = implode( ',', array_filter( array_map( 'trim', $input ) ) );
+		} else {
+			// If we're already a string, make sure we return it clean.
+			self::str_to_arr( $input );
+			self::arr_to_str( $input );
 		}
 		return $input;
 	}
@@ -92,6 +105,9 @@ class WP2D_Helpers {
 	 * @return string The encrypted string.
 	 */
 	public static function encrypt( $input, $key = AUTH_KEY ) {
+		if ( is_null( $input ) || '' === $input ) {
+			return false;
+		}
 		global $wpdb;
 		return $wpdb->get_var( $wpdb->prepare( 'SELECT HEX(AES_ENCRYPT(%s,%s))', $input, $key ) );
 	}
@@ -104,6 +120,9 @@ class WP2D_Helpers {
 	 * @return string The decrypted string.
 	 */
 	public static function decrypt( $input, $key = AUTH_KEY ) {
+		if ( is_null( $input ) || '' === $input ) {
+			return false;
+		}
 		global $wpdb;
 		return $wpdb->get_var( $wpdb->prepare( 'SELECT AES_DECRYPT(UNHEX(%s),%s)', $input, $key ) );
 	}
