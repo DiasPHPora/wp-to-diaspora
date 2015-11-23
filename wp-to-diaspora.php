@@ -339,10 +339,17 @@ class WP_To_Diaspora {
 	/**
 	 * Fetch the list of aspects or services and save them to the settings.
 	 *
+	 * NOTE: When updating the lists, always force a fresh fetch.
+	 *
 	 * @param string $type Type of list to update.
-	 * @return array The list of aspects or services.
+	 * @return array|boolean The list of aspects or services, false if an illegal parameter is passed.
 	 */
 	private function _update_aspects_services_list( $type ) {
+		// Check for correct argument value.
+		if ( ! in_array( $type, array( 'aspects', 'services' ) ) ) {
+			return false;
+		}
+
 		$options = WP2D_Options::instance();
 		$list    = $options->get_option( $type . '_list' );
 
@@ -353,19 +360,27 @@ class WP_To_Diaspora {
 
 		// Set up the connection to diaspora*.
 		$api = $this->_load_api();
-		if ( ! is_wp_error( $api->last_error ) ) {
-			if ( 'aspects' === $type ) {
-				$list = $api->get_aspects();
-			} elseif ( 'services' === $type ) {
-				$list = $api->get_services();
-			}
-			// So we have a new list.
-			$options = WP2D_Options::instance();
-			$options->set_option( $type . '_list', $list );
-			$options->save();
+
+		// If there was a problem loading the API, return false.
+		if ( is_wp_error( $api->last_error ) ) {
+			return false;
 		}
 
-		return $list;
+		if ( 'aspects' === $type ) {
+			$list_new = $api->get_aspects( true );
+		} elseif ( 'services' === $type ) {
+			$list_new = $api->get_services( true );
+		}
+		// If the new list couldn't be fetched successfully, return false.
+		if ( is_wp_error( $api->last_error ) ) {
+			return false;
+		}
+
+		// We have a new list to save and return!
+		$options->set_option( $type . '_list', $list_new );
+		$options->save();
+
+		return $list_new;
 	}
 
 	/**
