@@ -104,7 +104,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	 * @since next-release
 	 */
 	public function test_l10n() {
-		//$this->assertTrue( is_textdomain_loaded( 'wp-to-diaspora' ) );
+		$this->assertTrue( is_textdomain_loaded( 'wp-to-diaspora' ) );
 	}
 
 	/**
