@@ -176,10 +176,10 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		// When an update fails (WP_Error or error code response), the previously set option remains unchanged.
 		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
-		$this->assertEquals( 'Error loading aspects.', wp2d_api_helper_get_last_error_message( $api, true ) );
+		$this->assertEquals( 'Error loading aspects.', $api->get_last_error( true ) );
 		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
-		$this->assertEquals( 'Error loading aspects.', wp2d_api_helper_get_last_error_message( $api, true ) );
+		$this->assertEquals( 'Error loading aspects.', $api->get_last_error( true ) );
 
 		// When getting an empty return, only the public aspect should exist.
 		$res = array( 'public' => 'Public' );
@@ -200,10 +200,10 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		// When an update fails (WP_Error or error code response), the previously set option remains unchanged.
 		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
-		$this->assertEquals( 'Error loading services.', wp2d_api_helper_get_last_error_message( $api, true ) );
+		$this->assertEquals( 'Error loading services.', $api->get_last_error( true ) );
 		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
-		$this->assertEquals( 'Error loading services.', wp2d_api_helper_get_last_error_message( $api, true ) );
+		$this->assertEquals( 'Error loading services.', $api->get_last_error( true ) );
 
 		// When getting an empty return, we get an empty array.
 		$res = array();
@@ -239,7 +239,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		$this->assertTrue( wp2d_helper_call_private_method( $wp2d, '_check_pod_connection_status' ) );
 
 		// Simulate an error in the API object.
-		$api->last_error = new WP_Error( 'wp_error_code', 'WP_Error message' );
+		wp2d_helper_set_private_property( $api, '_last_error', new WP_Error( 'wp_error_code', 'WP_Error message' ) );
 		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_check_pod_connection_status' ) );
 	}
 }

@@ -177,16 +177,16 @@ class WP2D_Options {
 				if ( ( $force = get_transient( 'wp2d_no_js_force_refetch' ) ) || empty( $aspects_list ) ) {
 
 					// Set up the connection to diaspora*.
-					$conn = WP2D_Helpers::api_quick_connect();
-					if ( empty( $conn->last_error ) ) {
+					$api = WP2D_Helpers::api_quick_connect();
+					if ( ! $api->has_last_error() ) {
 						// Get the loaded aspects.
-						if ( is_array( $aspects = $conn->get_aspects() ) ) {
+						if ( is_array( $aspects = $api->get_aspects() ) ) {
 							// Save the new list of aspects.
 							$this->set_option( 'aspects_list', $aspects );
 						}
 
 						// Get the loaded services.
-						if ( is_array( $services = $conn->get_services() ) ) {
+						if ( is_array( $services = $api->get_services() ) ) {
 							// Save the new list of services.
 							$this->set_option( 'services_list', $services );
 						}
@@ -196,13 +196,12 @@ class WP2D_Options {
 
 					if ( $force ) {
 						delete_transient( 'wp2d_no_js_force_refetch' );
-						$success = empty( $conn->last_error );
-						$message = ( $success ) ? __( 'Connection successful.', 'wp-to-diaspora' ) : $conn->last_error->get_error_message();
+						$message = ( ! $api->has_last_error() ) ? __( 'Connection successful.', 'wp-to-diaspora' ) : $api->get_last_error();
 						add_settings_error(
 							'wp_to_diaspora_settings',
 							'wp_to_diaspora_connected',
 							$message,
-							( $success ) ? 'updated' : 'error'
+							( ! $api->has_last_error() ) ? 'updated' : 'error'
 						);
 					}
 				}

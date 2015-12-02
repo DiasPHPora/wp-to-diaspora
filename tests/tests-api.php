@@ -63,21 +63,21 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_init' ) );
 		$this->assertEquals(
 			'Connection not initialised.',
-			wp2d_api_helper_get_last_error_message( $api )
+			$api->get_last_error()
 		);
 
 		// False response, can't resolve host.
 		$this->assertFalse( $api->init() );
 		$this->assertContains(
 			'Failed to initialise connection to pod "https://pod".',
-			wp2d_api_helper_get_last_error_message( $api )
+			$api->get_last_error()
 		);
 
 		// Response has an invalid token.
 		$this->assertFalse( $api->init() );
 		$this->assertEquals(
 			'Failed to initialise connection to pod "https://pod".',
-			wp2d_api_helper_get_last_error_message( $api )
+			$api->get_last_error()
 		);
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_fail' );
@@ -147,13 +147,13 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		// Try to check login before initialised.
 		$this->assertFalse( $api->is_logged_in() );
 		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_login' ) );
-		$this->assertEquals( 'Connection not initialised.', wp2d_api_helper_get_last_error_message( $api, true ) );
+		$this->assertEquals( 'Connection not initialised.', $api->get_last_error() );
 
 		$api = wp2d_api_helper_get_fake_api_init();
 
 		$this->assertFalse( $api->is_logged_in() );
 		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_login' ) );
-		$this->assertEquals( 'Not logged in.', wp2d_api_helper_get_last_error_message( $api, true ) );
+		$this->assertEquals( 'Not logged in.', $api->get_last_error() );
 
 		wp2d_helper_set_private_property( $api, '_is_logged_in', true );
 
@@ -170,7 +170,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$api = new WP2D_API( 'pod' );
 		// Try login before initialised.
 		$this->assertFalse( $api->login( 'username', 'password' ) );
-		$this->assertEquals( 'Connection not initialised.', wp2d_api_helper_get_last_error_message( $api, true ) );
+		$this->assertEquals( 'Connection not initialised.', $api->get_last_error() );
 
 		$api = wp2d_api_helper_get_fake_api_init();
 
@@ -187,7 +187,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_fail' );
 
 		$this->assertFalse( $api->login( 'username-wrong', 'password-wrong' ) );
-		$this->assertEquals( 'Login failed. Check your login details.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Login failed. Check your login details.', $api->get_last_error() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_fail' );
 	}
@@ -233,11 +233,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		// Testing with WP_Error response (check filter).
 		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', array(), true ) );
-		$this->assertEquals( 'Unknown error occurred.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Unknown error occurred.', $api->get_last_error() );
 
 		// Testing invalid code response (check filter).
 		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', array(), true ) );
-		$this->assertEquals( 'Unknown error occurred.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Unknown error occurred.', $api->get_last_error() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 	}
@@ -251,7 +251,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		// Test getting aspects when not logged in.
 		$api = wp2d_api_helper_get_fake_api_init();
 		$this->assertFalse( $api->get_aspects() );
-		$this->assertEquals( 'Not logged in.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Not logged in.', $api->get_last_error() );
 
 		// Test getting aspects when logged in.
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -260,11 +260,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		// Testing with WP_Error response.
 		$this->assertFalse( $api->get_aspects() );
-		$this->assertEquals( 'Error loading aspects.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Error loading aspects.', $api->get_last_error() );
 
 		// Testing invalid code response.
 		$this->assertFalse( $api->get_aspects() );
-		$this->assertEquals( 'Error loading aspects.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Error loading aspects.', $api->get_last_error() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 	}
@@ -310,7 +310,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		// Test getting services when not logged in.
 		$api = wp2d_api_helper_get_fake_api_init();
 		$this->assertFalse( $api->get_services() );
-		$this->assertEquals( 'Not logged in.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Not logged in.', $api->get_last_error() );
 
 		// Test getting services when logged in.
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -319,11 +319,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		// Testing with WP_Error response.
 		$this->assertFalse( $api->get_services() );
-		$this->assertEquals( 'Error loading services.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Error loading services.', $api->get_last_error() );
 
 		// Testing invalid code response.
 		$this->assertFalse( $api->get_services() );
-		$this->assertEquals( 'Error loading services.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Error loading services.', $api->get_last_error() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 	}
@@ -368,7 +368,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		// Test post when not logged in.
 		$api = wp2d_api_helper_get_fake_api_init();
 		$this->assertFalse( $api->post( 'text' ) );
-		$this->assertEquals( 'Not logged in.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Not logged in.', $api->get_last_error() );
 
 		// Test post when logged in.
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -377,11 +377,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		// Returning a WP_Error object.
 		$this->assertFalse( $api->post( 'text' ) );
-		$this->assertEquals( 'WP_Error message', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'WP_Error message', $api->get_last_error() );
 
 		// Returning an error code.
 		$this->assertFalse( $api->post( 'text' ) );
-		$this->assertEquals( 'Error code message', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Error code message', $api->get_last_error() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_post_fail' );
 	}
@@ -431,7 +431,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		// Test delete when not logged in.
 		$api = wp2d_api_helper_get_fake_api_init();
 		$this->assertFalse( $api->delete( 'post', 'anything' ) );
-		$this->assertEquals( 'Not logged in.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Not logged in.', $api->get_last_error() );
 
 		// Test delete when logged in.
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -440,29 +440,29 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		// Getting a WP_Error response.
 		$this->assertFalse( $api->delete( 'post', 'wp_error' ) );
-		$this->assertEquals( 'WP_Error message', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'WP_Error message', $api->get_last_error() );
 
 		// Deleting something other than posts or comments.
 		$this->assertFalse( $api->delete( 'internet', 'allofit' ) );
-		$this->assertEquals( 'You can only delete posts and comments.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'You can only delete posts and comments.', $api->get_last_error() );
 
 		// Deleting posts.
 		$this->assertFalse( $api->delete( 'post', 'invalid_id' ) );
-		$this->assertEquals( 'The post you tried to delete does not exist.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'The post you tried to delete does not exist.', $api->get_last_error() );
 
 		$this->assertFalse( $api->delete( 'post', 'not_my_id' ) );
-		$this->assertEquals( 'The post you tried to delete does not belong to you.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'The post you tried to delete does not belong to you.', $api->get_last_error() );
 
 		// Deleting comments.
 		$this->assertFalse( $api->delete( 'comment', 'invalid_id' ) );
-		$this->assertEquals( 'The comment you tried to delete does not exist.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'The comment you tried to delete does not exist.', $api->get_last_error() );
 
 		$this->assertFalse( $api->delete( 'comment', 'not_my_id' ) );
-		$this->assertEquals( 'The comment you tried to delete does not belong to you.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'The comment you tried to delete does not belong to you.', $api->get_last_error() );
 
 		// Unknown error, due to an invalid response code.
 		$this->assertFalse( $api->delete( 'post', 'anything' ) );
-		$this->assertEquals( 'Unknown error occurred.', wp2d_api_helper_get_last_error_message( $api ) );
+		$this->assertEquals( 'Unknown error occurred.', $api->get_last_error() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_delete_fail' );
 	}
@@ -513,7 +513,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		$api->deinit();
 
-		$this->assertNull( $api->last_error );
+		$this->assertFalse( $api->has_last_error() );
 		$this->assertAttributeSame( null,    '_token',        $api );
 		$this->assertAttributeSame( array(), '_cookies',      $api );
 		$this->assertAttributeSame( null,    '_last_request', $api );

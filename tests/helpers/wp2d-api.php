@@ -7,24 +7,6 @@
  */
 
 /**
- * Little helper method to get the last API error message.
- *
- * @since next-release
- *
- * @param WP2D_API $api   The API object to get the message from.
- * @param bool     $clear If the last error should be cleared after fetching.
- * @return string The last error message or null.
- */
-function wp2d_api_helper_get_last_error_message( $api, $clear = false ) {
-	if ( is_wp_error( $api->last_error ) ) {
-		$error = $api->last_error->get_error_message();
-		$clear && $api->last_error = null;
-		return $error;
-	}
-	return null;
-}
-
-/**
  * Create an API instance and fake it's initialisation.
  *
  * This method helps to prevent HTTP requests for tests that need a valid token.

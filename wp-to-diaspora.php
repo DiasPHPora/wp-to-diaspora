@@ -362,7 +362,7 @@ class WP_To_Diaspora {
 		$api = $this->_load_api();
 
 		// If there was a problem loading the API, return false.
-		if ( is_wp_error( $api->last_error ) ) {
+		if ( $api->has_last_error() ) {
 			return false;
 		}
 
@@ -372,7 +372,7 @@ class WP_To_Diaspora {
 			$list_new = $api->get_services( true );
 		}
 		// If the new list couldn't be fetched successfully, return false.
-		if ( is_wp_error( $api->last_error ) ) {
+		if ( $api->has_last_error() ) {
 			return false;
 		}
 
@@ -408,7 +408,7 @@ class WP_To_Diaspora {
 		$status = null;
 
 		if ( $options->is_pod_set_up() ) {
-			$status = ! is_wp_error( $this->_load_api()->last_error );
+			$status = ! $this->_load_api()->has_last_error();
 		}
 
 		return $status;
@@ -433,8 +433,8 @@ class WP_To_Diaspora {
 
 		if ( true === $status ) {
 			wp_send_json_success( $data );
-		} elseif ( false === $status && is_wp_error( $this->_load_api()->last_error ) ) {
-			$data['message'] = $this->_load_api()->last_error->get_error_message() . ' ' . WP2D_Contextual_Help::get_help_tab_quick_link( $this->_load_api()->last_error );
+		} elseif ( false === $status && $this->_load_api()->has_last_error() ) {
+			$data['message'] = $this->_load_api()->get_last_error() . ' ' . WP2D_Contextual_Help::get_help_tab_quick_link( $this->_load_api()->get_last_error_object() );
 			wp_send_json_error( $data );
 		}
 		// If $status === null, do nothing.
