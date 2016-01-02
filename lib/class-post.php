@@ -227,11 +227,11 @@ class WP2D_Post {
 		$status_message  = $status_converter->convert( $status_message );
 
 		// Set up the connection to diaspora*.
-		$conn = WP2D_Helpers::api_quick_connect();
+		$api = WP2D_Helpers::api_quick_connect();
 		if ( ! empty( $status_message ) ) {
-			if ( is_wp_error( $conn->last_error ) ) {
+			if ( $api->has_last_error() ) {
 				// Save the post error as post meta data, so we can display it to the user.
-				update_post_meta( $post_id, '_wp_to_diaspora_post_error', $conn->last_error );
+				update_post_meta( $post_id, '_wp_to_diaspora_post_error', $api->get_last_error() );
 				return false;
 			}
 
@@ -241,7 +241,7 @@ class WP2D_Post {
 			);
 
 			// Try to post to diaspora*.
-			if ( $response = $conn->post( $status_message, $this->aspects, $extra_data ) ) {
+			if ( $response = $api->post( $status_message, $this->aspects, $extra_data ) ) {
 				// Save certain diaspora* post data as meta data for future reference.
 				$this->_save_to_history( (object) $response );
 
