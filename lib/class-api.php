@@ -27,18 +27,18 @@ defined( 'ABSPATH' ) || exit;
 class WP2D_API {
 
 	/**
-	 * The last http request error that occurred.
-	 *
-	 * @var WP_Error
-	 */
-	public $last_error;
-
-	/**
 	 * The provider name to display when posting to diaspora*.
 	 *
 	 * @var string
 	 */
 	public $provider = 'WP to diaspora*';
+
+	/**
+	 * The last http request error that occurred.
+	 *
+	 * @var WP_Error
+	 */
+	private $_last_error;
 
 	/**
 	 * Security token to be used for making requests.
@@ -165,7 +165,7 @@ class WP2D_API {
 
 		// When initialising a connection, clear the last error.
 		// This is important when multiple init tries happen.
-		$this->last_error = null;
+		$this->_last_error = null;
 
 		// Change the pod we are connecting to?
 		if ( isset( $pod ) && ( $this->_pod !== $pod || $this->_is_secure !== $is_secure ) ) {
@@ -176,7 +176,7 @@ class WP2D_API {
 
 		// Get and save the token.
 		if ( null === $this->_fetch_token( $force_new_token ) ) {
-			$error = ( is_wp_error( $this->last_error ) ) ? ' ' . $this->last_error->get_error_message() : '';
+			$error = ( $this->has_last_error() ) ? ' ' . $this->get_last_error() : '';
 			$this->_error( 'wp2d_api_init_failed',
 				sprintf(
 					_x( 'Failed to initialise connection to pod "%s".', 'Placeholder is the full pod URL.', 'wp-to-diaspora' ),
@@ -188,6 +188,39 @@ class WP2D_API {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Check if there is an API error around.
+	 *
+	 * @return boolean If there is an API error around.
+	 */
+	public function has_last_error() {
+		return is_wp_error( $this->_last_error );
+	}
+
+	/**
+	 * Get the last API error object.
+	 *
+	 * @param boolean $clear If the error should be cleared after returning it.
+	 * @return WP_Error|null The last API error object or null.
+	 */
+	public function get_last_error_object( $clear = true ) {
+		$last_error = $this->_last_error;
+		$clear && $this->_last_error = null;
+		return $last_error;
+	}
+
+	/**
+	 * Get the last API error message.
+	 *
+	 * @param boolean $clear If the error should be cleared after returning it.
+	 * @return string The last API error message.
+	 */
+	public function get_last_error( $clear = false ) {
+		$last_error = ( $this->has_last_error() ) ? $this->_last_error->get_error_message() : '';
+		$clear && $this->_last_error = null;
+		return $last_error;
 	}
 
 	/**
@@ -328,7 +361,7 @@ class WP2D_API {
 	 */
 	public function deinit() {
 		$this->logout();
-		$this->last_error = null;
+		$this->_last_error = null;
 		$this->_token = null;
 		$this->_cookies = array();
 		$this->_last_request = null;
@@ -596,7 +629,7 @@ class WP2D_API {
 		$response = wp_remote_request( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
-			$this->last_error = $response;
+			$this->_last_error = $response;
 			return $response;
 		}
 
@@ -642,7 +675,7 @@ class WP2D_API {
 			'code'    => ( isset( $this->_last_request->code ) ) ? $this->_last_request->code : null,
 			'message' => ( isset( $this->_last_request->message ) ) ? $this->_last_request->message : null,
 		) );
-		$this->last_error = new WP_Error( $code, $message, $data );
+		$this->_last_error = new WP_Error( $code, $message, $data );
 	}
 
 	/**

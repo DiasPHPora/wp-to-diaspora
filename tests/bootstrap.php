@@ -8,6 +8,7 @@
 
 // Include helpers.
 require_once __DIR__ . '/helpers/general.php';
+require_once __DIR__ . '/helpers/wp2d-api.php';
 require_once __DIR__ . '/helpers/http-request-filters.php';
 
 /**

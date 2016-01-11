@@ -7,6 +7,73 @@
  */
 
 /**
+ * Custom HTTP request responses for _update_pod_list AJAX call.
+ *
+ * @since next-release
+ */
+function wp_to_diaspora_pre_http_request_filter_update_pod_list() {
+	static $responses = array(
+		array(
+			'body'     => '',
+			'response' => array( 'code' => 200, 'message' => 'OK' ),
+		),
+		array(
+			'body'     => '
+				{"podcount":3,"pods":[
+					{"id":"1","domain":"pod1","secure":"true","hidden":"no"},
+					{"id":"2","domain":"pod2","secure":"false","hidden":"no"},
+					{"id":"3","domain":"pod3","secure":"true","hidden":"yes"}
+				]}',
+			'response' => array( 'code' => 200, 'message' => 'OK' ),
+		),
+		array(
+			'body'     => '
+				{"podcount":1,"pods":[
+					{"id":"10","domain":"pod10","secure":"true","hidden":"no"}
+				]}',
+			'response' => array( 'code' => 200, 'message' => 'OK' ),
+		),
+	);
+	return array_shift( $responses );
+}
+
+/**
+ * Custom HTTP request responses for test_update_aspects_services_list testing both aspects and services.
+ *
+ * @since next-release
+ */
+function wp_to_diaspora_pre_http_request_filter_update_aspects() {
+	static $i = 0;
+	$success_bodies = array(
+		// Aspect bodies to return.
+		'"aspects":[{"id":1,"name":"Family","selected":true}]',
+		'"aspects":[{"id":2,"name":"Friends","selected":true}]',
+		'WP_Error',
+		'error',
+		'"aspects":[]',
+		// Service bodies to return.
+		'"configured_services":["facebook"]',
+		'"configured_services":["twitter"]',
+		'WP_Error',
+		'error',
+		'"configured_services":[]',
+	);
+
+	$body = $success_bodies[ $i++ ];
+	if ( 'WP_Error' === $body ) {
+		return new WP_Error( 'wp_error_code', 'WP_Error message' );
+	} elseif ( 'error' === $body ) {
+		return array( 'response' => array( 'code' => 999, 'message' => 'Error code message' ) );
+	} else {
+		return array(
+			'body'     => $body,
+			'response' => array( 'code' => 200, 'message' => 'OK' ),
+		);
+	}
+}
+
+
+/**
  * Custom HTTP request responses for test_init_fail.
  *
  * @since next-release

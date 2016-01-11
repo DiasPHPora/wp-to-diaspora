@@ -146,8 +146,8 @@ class WP2D_Helpers {
 			$api->login( $username, $password );
 		}
 
-		if ( is_wp_error( $api->last_error ) ) {
-			self::add_debugging( $api->last_error->get_error_message() );
+		if ( $api->has_last_error() ) {
+			self::add_debugging( $api->get_last_error() );
 		}
 
 		return $api;

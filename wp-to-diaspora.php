@@ -302,10 +302,14 @@ class WP_To_Diaspora {
 	private function _update_pod_list() {
 		// API url to fetch pods list from podupti.me.
 		$pod_list_url = 'http://podupti.me/api.php?format=json&key=4r45tg';
-
 		$pods = array();
-		if ( $json = file_get_contents( $pod_list_url ) ) {
+
+		// Get the response from the WP_HTTP request.
+		$response = wp_safe_remote_get( $pod_list_url );
+
+		if ( $json = wp_remote_retrieve_body( $response ) ) {
 			$pod_list = json_decode( $json );
+
 			if ( isset( $pod_list->pods ) ) {
 				foreach ( $pod_list->pods as $pod ) {
 					if ( 'no' === $pod->hidden ) {
@@ -335,10 +339,17 @@ class WP_To_Diaspora {
 	/**
 	 * Fetch the list of aspects or services and save them to the settings.
 	 *
+	 * NOTE: When updating the lists, always force a fresh fetch.
+	 *
 	 * @param string $type Type of list to update.
-	 * @return array The list of aspects or services.
+	 * @return array|boolean The list of aspects or services, false if an illegal parameter is passed.
 	 */
 	private function _update_aspects_services_list( $type ) {
+		// Check for correct argument value.
+		if ( ! in_array( $type, array( 'aspects', 'services' ) ) ) {
+			return false;
+		}
+
 		$options = WP2D_Options::instance();
 		$list    = $options->get_option( $type . '_list' );
 
@@ -349,19 +360,27 @@ class WP_To_Diaspora {
 
 		// Set up the connection to diaspora*.
 		$api = $this->_load_api();
-		if ( ! is_wp_error( $api->last_error ) ) {
-			if ( 'aspects' === $type ) {
-				$list = $api->get_aspects();
-			} elseif ( 'services' === $type ) {
-				$list = $api->get_services();
-			}
-			// So we have a new list.
-			$options = WP2D_Options::instance();
-			$options->set_option( $type . '_list', $list );
-			$options->save();
+
+		// If there was a problem loading the API, return false.
+		if ( $api->has_last_error() ) {
+			return false;
 		}
 
-		return $list;
+		if ( 'aspects' === $type ) {
+			$list_new = $api->get_aspects( true );
+		} elseif ( 'services' === $type ) {
+			$list_new = $api->get_services( true );
+		}
+		// If the new list couldn't be fetched successfully, return false.
+		if ( $api->has_last_error() ) {
+			return false;
+		}
+
+		// We have a new list to save and return!
+		$options->set_option( $type . '_list', $list_new );
+		$options->save();
+
+		return $list_new;
 	}
 
 	/**
@@ -389,7 +408,7 @@ class WP_To_Diaspora {
 		$status = null;
 
 		if ( $options->is_pod_set_up() ) {
-			$status = ! is_wp_error( $this->_load_api()->last_error );
+			$status = ! $this->_load_api()->has_last_error();
 		}
 
 		return $status;
@@ -414,8 +433,8 @@ class WP_To_Diaspora {
 
 		if ( true === $status ) {
 			wp_send_json_success( $data );
-		} elseif ( false === $status && is_wp_error( $this->_load_api()->last_error ) ) {
-			$data['message'] = $this->_load_api()->last_error->get_error_message() . ' ' . WP2D_Contextual_Help::get_help_tab_quick_link( $this->_load_api()->last_error );
+		} elseif ( false === $status && $this->_load_api()->has_last_error() ) {
+			$data['message'] = $this->_load_api()->get_last_error() . ' ' . WP2D_Contextual_Help::get_help_tab_quick_link( $this->_load_api()->get_last_error_object() );
 			wp_send_json_error( $data );
 		}
 		// If $status === null, do nothing.
