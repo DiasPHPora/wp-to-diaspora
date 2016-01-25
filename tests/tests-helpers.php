@@ -3,13 +3,13 @@
  * WP2D_Helpers tests.
  *
  * @package WP_To_Diaspora\Tests\WP2D_Helpers
- * @since next-release
+ * @since 1.7.0
  */
 
 /**
  * Main API test class.
  *
- * @since next-release
+ * @since 1.7.0
  */
 class Tests_WP2D_Helpers extends WP_UnitTestCase {
 
@@ -19,7 +19,7 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	 * NOTE: Because of the constant, his test needs to run in
 	 * a seperate process without preserving the global state.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 *
 	 * @preserveGlobalState disabled
 	 * @runInSeparateProcess
@@ -42,7 +42,7 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	 * NOTE: Because of the constant, his test needs to run in
 	 * a seperate process without preserving the global state.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 *
 	 * @preserveGlobalState disabled
 	 * @runInSeparateProcess
@@ -64,7 +64,7 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	/**
 	 * Test converting a CSV string to an array.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_str_to_arr() {
 		// If we're already an array, stay an array.
@@ -101,7 +101,7 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	/**
 	 * Test converting an array to a CSV string.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_arr_to_str() {
 		// If we're already a string, stay a string.
@@ -138,7 +138,7 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	/**
 	 * Test the encryption helpers.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_encryption() {
 		define( 'AUTH_KEY', 'you know, the random and very salty WordPress auth key...' );
@@ -173,7 +173,7 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	/**
 	 * The the API quick connect function.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_api_quick_connect() {
 		$this->markTestSkipped( 'Skipping for the moment.' );

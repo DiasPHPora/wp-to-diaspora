@@ -3,7 +3,7 @@
  * All helper methods for the WP2D tests.
  *
  * @package WP_To_Diaspora\Tests\Helpers
- * @since next-release
+ * @since 1.7.0
  */
 
 /**
@@ -11,7 +11,7 @@
  *
  * This method helps to prevent HTTP requests for tests that need a valid token.
  *
- * @since next-release
+ * @since 1.7.0
  *
  * @param string $pod   Pod to fake.
  * @param string $token Token to fake.
@@ -31,7 +31,7 @@ function wp2d_api_helper_get_fake_api_init( $pod = 'pod', $token = 'token' ) {
  *
  * This method helps to prevent HTTP requests for tests that need a valid login.
  *
- * @since next-release
+ * @since 1.7.0
  *
  * @param string $pod      Pod to fake.
  * @param string $token    Token to fake.

@@ -9,7 +9,7 @@ Automatically share WordPress posts on diaspora*
 
 https://wordpress.org/plugins/wp-to-diaspora/
 
-Wiki includes additional documentation: https://github.com/gutobenn/wp-to-diaspora/wiki
+For additional documentation [visit the wiki](https://github.com/gutobenn/wp-to-diaspora/wiki)
 
 ### Translations
 - Portuguese (Brazil)
@@ -21,9 +21,8 @@ Wiki includes additional documentation: https://github.com/gutobenn/wp-to-diaspo
 - Italian -- contributed by [Giulio Roberti](http://www.viroproject.com)
 - Spanish -- contributed by [Armando Lüscher](http://noplanman.ch)
 
-If you want to contribute a translation, check out https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a
+Feel free to help and [contribute to a translation](https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a)
 
 ### Donate
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=gutobenn&url=https://github.com/gutobenn/wp-to-diaspora&title=WP to diaspora*&language=&tags=github&category=software)
+[![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=gutobenn&url=https://github.com/gutobenn/wp-to-diaspora&title=WP to diaspora*&language=&tags=github&category=software)
 Bitcoin: 1DVgfD9mzh6GPKZ5XGQeiJdVAQqVaJszAm
-
