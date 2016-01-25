@@ -3,20 +3,20 @@
  * WP2D_API tests.
  *
  * @package WP_To_Diaspora\Tests\WP2D_API
- * @since next-release
+ * @since 1.7.0
  */
 
 /**
  * Main API test class.
  *
- * @since next-release
+ * @since 1.7.0
  */
 class Tests_WP2D_API extends WP_UnitTestCase {
 
 	/**
 	 * Test the constructor, to make sure that the correct class variables are set.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_constructor() {
 		$api = new WP2D_API( 'pod1' );
@@ -31,7 +31,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test getting a pod url in different formats.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_get_pod_url() {
 		// Default is HTTPS.
@@ -52,7 +52,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test init when there is no valid token.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_init_fail() {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_fail' );
@@ -86,7 +86,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test the successful initialisation and pod changes.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_init_success() {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_success' );
@@ -117,7 +117,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test fetching and forcefully re-fetching the token.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_fetch_token() {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_fetch_token' );
@@ -140,7 +140,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test the login checker.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_check_login() {
 		$api = new WP2D_API( 'pod' );
@@ -164,7 +164,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test an invalid login.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_login_fail() {
 		$api = new WP2D_API( 'pod' );
@@ -195,7 +195,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test a successful login, re-login and forced re-login.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_login_success() {
 		$api = wp2d_api_helper_get_fake_api_init();
@@ -224,7 +224,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test _get_aspects_services method with an invalid argument.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_get_aspects_services_invalid_argument() {
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -245,7 +245,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test getting aspects when an error occurs.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_get_aspects_fail() {
 		// Test getting aspects when not logged in.
@@ -272,7 +272,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test getting aspects successfully.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_get_aspects_success() {
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -304,7 +304,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test getting services when an error occurs.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_get_services_fail() {
 		// Test getting services when not logged in.
@@ -331,7 +331,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test getting services successfully.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_get_services_success() {
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -362,7 +362,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test posting when an error occurs.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_post_fail() {
 		// Test post when not logged in.
@@ -389,7 +389,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test posting successfully.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_post_success() {
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -425,7 +425,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test deleting posts and comments when an error occurs.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_delete_fail() {
 		// Test delete when not logged in.
@@ -470,7 +470,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test deleting posts and comments successfully.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_delete_success() {
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -489,7 +489,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test logging out.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_logout() {
 		$api = wp2d_api_helper_get_fake_api_init_login();
@@ -506,7 +506,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	/**
 	 * Test the deinitialisation.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_deinit() {
 		$api = wp2d_api_helper_get_fake_api_init_login();

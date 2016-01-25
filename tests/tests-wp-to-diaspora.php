@@ -3,20 +3,20 @@
  * WP_To_Diaspora tests.
  *
  * @package WP_To_Diaspora\Tests\WP_To_Diaspora
- * @since next-release
+ * @since 1.7.0
  */
 
 /**
  * Main WP to diaspora test class.
  *
- * @since next-release
+ * @since 1.7.0
  */
 class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 
 	/**
 	 * Test for the static instance attribute.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_wp_to_diaspora_instance() {
 		$this->assertClassHasStaticAttribute( '_instance', 'WP_To_Diaspora' );
@@ -25,7 +25,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	/**
 	 * Test for all defined constants.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_constants_defined() {
 		$path = str_replace( '/tests', '', dirname( __FILE__ ) );
@@ -37,7 +37,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	/**
 	 * Test for existance of included files.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_includes_exist() {
 		$this->assertFileExists( WP2D_VENDOR_DIR . '/autoload.php' );
@@ -51,7 +51,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	/**
 	 * Test that all admin scripts and stylesheets exist.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_styles_scripts_exist() {
 		$this->assertFileExists( WP2D_DIR . '/css/jquery.tagit.css' );
@@ -65,7 +65,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	/**
 	 * Test for actions and filters which should be set up.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_setup() {
 		$wp2d = WP_To_Diaspora::instance();
@@ -101,7 +101,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	/**
 	 * Test that the languages textdomain is loaded.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_l10n() {
 		$this->assertTrue( is_textdomain_loaded( 'wp-to-diaspora' ) );
@@ -110,7 +110,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	/**
 	 * Test to make sure that the podupti.me rendering works properly.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_update_pod_list() {
 		// Get the necessary instances.
@@ -147,7 +147,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	/**
 	 * Test fetching the correct aspects and services.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_update_aspects_services_list() {
 		// Get the necessary instances.
@@ -216,7 +216,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	/**
 	 * Test the connection to the pod.
 	 *
-	 * @since next-release
+	 * @since 1.7.0
 	 */
 	public function test_check_pod_connection_status() {
 		// Get the necessary instances.

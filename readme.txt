@@ -1,14 +1,14 @@
 === WP to diaspora ===
 Contributors: gutobenn, noplanman
-Donate link: http://github.com/gutobenn/wp-to-diaspora/
-Tags: diaspora, integration, share, post
+Donate link: https://github.com/gutobenn/wp-to-diaspora/
+Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
-Tested up to: 4.3.1
-Stable tag: 1.6
-Author URI: http://github.com/gutobenn
-Plugin URI: http://github.com/gutobenn/wp-to-diaspora/
+Tested up to: 4.4.1
+Stable tag: 1.7
+Author URI: https://github.com/gutobenn
+Plugin URI: https://github.com/gutobenn/wp-to-diaspora/
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Automatically share your WordPress posts on your diaspora* profile.
 
@@ -48,12 +48,12 @@ diaspora* is a decentralized social network. More about it on https://diasporafo
 Your language isn't listed? Then feel free to [contribute your language skills](https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a) and help make this plugin more accessible!
 
 = Development =
-This plugin is completely open source and is a work of love by all who have contributed.
+This plugin is completely open source and is a work of love by all who have [contributed](https://github.com/gutobenn/wp-to-diaspora/graphs/contributors).
 If you would like to be part of it and join in, make your way over to the [project page on GitHub](https://github.com/gutobenn/wp-to-diaspora) now.
 Also, if you have an idea you would like to see in this plugin or if you've found a bug, please [let us know](https://github.com/gutobenn/wp-to-diaspora/issues/new).
 
 = Credits =
-* Dandelion banner image: [Pixabay](http://pixabay.com/en/dandelion-sky-flower-nature-seeds-463928/)
+* Dandelion banner image: [Pixabay](https://pixabay.com/en/dandelion-sky-flower-nature-seeds-463928/)
 
 == Installation ==
 
@@ -92,8 +92,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= next-release =
+= 1.7.0 =
 * Make plugin no-js friendly, so that it works properly even if Javascript is disabled
+* Add extra tests and introduce a few helper methods
 
 = 1.6.0 =
 * API now uses the WP_HTTP API for requests, cURL no longer required
