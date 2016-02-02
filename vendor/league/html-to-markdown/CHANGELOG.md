@@ -4,6 +4,29 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ## [Unreleased][unreleased]
 
+## [4.2.0]
+
+### Added
+ - Added the ability to invoke HtmlConverter objects as functions (#85)
+
+### Fixed
+ - Fixed improper handling of nested list items (#19 and #84)
+ - Fixed preceeding or trailing spaces within emphasis tags (#83)
+
+## [4.1.1]
+
+### Fixed
+ - Fixed conversion of empty paragraphs (#78)
+ - Fixed `preg_replace` so it wouldn't break UTF-8 characters (#79)
+
+## [4.1.0]
+
+### Added
+ - Added `bin/html-to-markdown` script
+
+### Changed
+ - Changed default italic character to `_` (#58)
+
 ## [4.0.1]
 
 ### Fixed
@@ -113,7 +136,10 @@ not ideally set, so this releases fixes that. Moving forwards this should reduce
 ### Added
  - Initial release
 
-[unreleased]: https://github.com/thephpleague/html-to-markdown/compare/4.0.1...master
+[unreleased]: https://github.com/thephpleague/html-to-markdown/compare/4.2.0...master
+[4.2.0]: https://github.com/thephpleague/html-to-markdown/compare/4.1.1...4.2.0
+[4.1.1]: https://github.com/thephpleague/html-to-markdown/compare/4.1.0...4.1.1
+[4.1.0]: https://github.com/thephpleague/html-to-markdown/compare/4.0.1...4.1.0
 [4.0.1]: https://github.com/thephpleague/html-to-markdown/compare/4.0.0...4.0.1
 [4.0.0]: https://github.com/thephpleague/html-to-markdown/compare/3.1.1...4.0.0
 [3.1.1]: https://github.com/thephpleague/html-to-markdown/compare/3.1.0...3.1.1

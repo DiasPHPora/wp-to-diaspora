@@ -1,6 +1,8 @@
 HTML To Markdown for PHP
 ========================
 
+[![Join the chat at https://gitter.im/thephpleague/html-to-markdown](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/thephpleague/html-to-markdown?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Latest Version](https://img.shields.io/packagist/v/league/html-to-markdown.svg?style=flat-square)](https://packagist.org/packages/league/html-to-markdown)
 [![Software License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Build Status](https://img.shields.io/travis/thephpleague/html-to-markdown/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/html-to-markdown)
@@ -32,15 +34,13 @@ Typically you would convert HTML to Markdown if:
 
 ### How to use it
 
-Require the library in your composer.json:
+Require the library by issuing this command:
 
-    {
-        "require": {
-            "league/html-to-markdown": "~4.0"
-        }
-    }
+```bash
+composer require league/html-to-markdown
+```
 
-Then `composer install` and add `require 'vendor/autoload.php';` to the top of your script.
+Add `require 'vendor/autoload.php';` to the top of your script.
 
 Next, create a new HtmlConverter instance, passing in your valid HTML code to its `convert()` function:
 
@@ -71,7 +71,7 @@ To strip HTML tags that don't have a Markdown equivalent while preserving the co
 Or more explicitly, like this:
 
     $converter = new HtmlConverter();
-    $converter->setOption('strip_tags', true);
+    $converter->getConfig()->setOption('strip_tags', true);
 
     $html = '<span>Turnips!</span>';
     $markdown = $converter->convert($html); // $markdown now contains "Turnips!"
@@ -90,8 +90,8 @@ To strip tags and their content, pass a space-separated list of tags in `remove_
 Bold and italic tags are converted using the asterisk syntax by default. Change this to the underlined syntax using the `bold_style` and `italic_style` options.
 
     $converter = new HtmlConverter();
-    $converter->setOption('italic_style', '_');
-    $converter->setOption('bold_style', '__');
+    $converter->getConfig()->setOption('italic_style', '_');
+    $converter->getConfig()->setOption('bold_style', '__');
 
     $html = '<em>Italic</em> and a <strong>bold</strong>';
     $markdown = $converter->convert($html); // $markdown now contains "_Italic_ and a __bold__"

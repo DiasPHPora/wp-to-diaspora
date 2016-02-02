@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7eb488884f194a2f532b13909ba5b137",
-    "content-hash": "7c8a6a1053a3dcd7483aa29a105e1e20",
+    "hash": "7870dc1982f341803486416fde7e308b",
+    "content-hash": "f28db3ff00828171c1d730ea34d24267",
     "packages": [
         {
             "name": "league/html-to-markdown",
-            "version": "4.0.1",
+            "version": "4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/html-to-markdown.git",
-                "reference": "c496c27e01b9dce310e03afbcdf783347738f67b"
+                "reference": "9a5becc8c6b520920fb846afefcfd7faf4c31712"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/c496c27e01b9dce310e03afbcdf783347738f67b",
-                "reference": "c496c27e01b9dce310e03afbcdf783347738f67b",
+                "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/9a5becc8c6b520920fb846afefcfd7faf4c31712",
+                "reference": "9a5becc8c6b520920fb846afefcfd7faf4c31712",
                 "shasum": ""
             },
             "require": {
@@ -27,13 +27,17 @@
                 "php": ">=5.3.3"
             },
             "require-dev": {
+                "mikehaertl/php-shellcommand": "~1.1.0",
                 "phpunit/phpunit": "4.*",
                 "scrutinizer/ocular": "~1.1"
             },
+            "bin": [
+                "bin/html-to-markdown"
+            ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.1-dev"
+                    "dev-master": "4.3-dev"
                 }
             },
             "autoload": {
@@ -65,7 +69,7 @@
                 "html",
                 "markdown"
             ],
-            "time": "2015-09-01 22:39:54"
+            "time": "2016-02-01 16:49:02"
         }
     ],
     "packages-dev": [],

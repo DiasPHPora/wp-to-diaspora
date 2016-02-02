@@ -33,7 +33,7 @@ class HtmlConverter
             'suppress_errors' => true, // Set to false to show warnings when loading malformed HTML
             'strip_tags'      => false, // Set to true to strip tags that don't have markdown equivalents. N.B. Strips tags, not their content. Useful to clean MS Word HTML output.
             'bold_style'      => '**', // Set to '__' if you prefer the underlined style
-            'italic_style'    => '*', // Set to '_' if you prefer the underlined style
+            'italic_style'    => '_', // Set to '*' if you prefer the asterisk style
             'remove_nodes'    => '', // space-separated list of dom nodes that should be removed. example: 'meta style script'
         );
 
@@ -56,6 +56,20 @@ class HtmlConverter
     public function getConfig()
     {
         return $this->environment->getConfig();
+    }
+
+    /**
+     * Convert
+     *
+     * @see HtmlConverter::convert
+     *
+     * @param string $html
+     *
+     * @return string The Markdown version of the html
+     */
+    public function __invoke($html)
+    {
+        return $this->convert($html);
     }
 
     /**

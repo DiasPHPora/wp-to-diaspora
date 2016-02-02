@@ -1,17 +1,17 @@
 [
     {
         "name": "league/html-to-markdown",
-        "version": "4.0.1",
-        "version_normalized": "4.0.1.0",
+        "version": "4.2.0",
+        "version_normalized": "4.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/html-to-markdown.git",
-            "reference": "c496c27e01b9dce310e03afbcdf783347738f67b"
+            "reference": "9a5becc8c6b520920fb846afefcfd7faf4c31712"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/c496c27e01b9dce310e03afbcdf783347738f67b",
-            "reference": "c496c27e01b9dce310e03afbcdf783347738f67b",
+            "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/9a5becc8c6b520920fb846afefcfd7faf4c31712",
+            "reference": "9a5becc8c6b520920fb846afefcfd7faf4c31712",
             "shasum": ""
         },
         "require": {
@@ -20,14 +20,18 @@
             "php": ">=5.3.3"
         },
         "require-dev": {
+            "mikehaertl/php-shellcommand": "~1.1.0",
             "phpunit/phpunit": "4.*",
             "scrutinizer/ocular": "~1.1"
         },
-        "time": "2015-09-01 22:39:54",
+        "time": "2016-02-01 16:49:02",
+        "bin": [
+            "bin/html-to-markdown"
+        ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "4.1-dev"
+                "dev-master": "4.3-dev"
             }
         },
         "installation-source": "dist",
