@@ -19,7 +19,7 @@ For additional documentation [visit the wiki](https://github.com/gutobenn/wp-to-
 - French -- contributed by [Fabián Rodriguez](http://fabianrodriguez.com)
 - German -- contributed by [Katrin Leinweber](http://www.konscience.de)
 - Italian -- contributed by [Giulio Roberti](http://www.viroproject.com)
-- Spanish -- contributed by [Armando Lüscher](http://noplanman.ch)
+- Spanish -- contributed by [Lupa Alonzo](http://lupa18.org)
 
 Feel free to help and [contribute to a translation](https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a)
 
