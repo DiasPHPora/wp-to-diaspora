@@ -43,7 +43,7 @@ diaspora* is a decentralized social network. More about it on https://diasporafo
 * French -- contributed by [Fabián Rodriguez](http://fabianrodriguez.com)
 * German -- contributed by [Katrin Leinweber](http://www.konscience.de)
 * Italian -- contributed by [Giulio Roberti](http://www.viroproject.com)
-* Spanish -- contributed by [Armando Lüscher](http://noplanman.ch)
+* Spanish -- contributed by [Lupa Alonzo](http://lupa18.org)
 
 Your language isn't listed? Then feel free to [contribute your language skills](https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a) and help make this plugin more accessible!
 
