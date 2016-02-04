@@ -95,6 +95,7 @@ Quite straightforward, right?
 = 1.7.0 =
 * Make plugin no-js friendly, so that it works properly even if Javascript is disabled
 * Add extra tests and introduce a few helper methods
+* Spanish translation available
 
 = 1.6.0 =
 * API now uses the WP_HTTP API for requests, cURL no longer required
