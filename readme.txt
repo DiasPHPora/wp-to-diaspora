@@ -3,7 +3,7 @@ Contributors: gutobenn, noplanman
 Donate link: https://github.com/gutobenn/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
-Tested up to: 4.4.1
+Tested up to: 4.6
 Stable tag: 1.7
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/gutobenn/wp-to-diaspora/
