@@ -99,15 +99,6 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the languages textdomain is loaded.
-	 *
-	 * @since 1.7.0
-	 */
-	public function test_l10n() {
-		$this->assertTrue( is_textdomain_loaded( 'wp-to-diaspora' ) );
-	}
-
-	/**
 	 * Test to make sure that the podupti.me rendering works properly.
 	 *
 	 * @since 1.7.0
