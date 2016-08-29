@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "league/html-to-markdown",
-            "version": "4.2.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/html-to-markdown.git",
-                "reference": "9a5becc8c6b520920fb846afefcfd7faf4c31712"
+                "reference": "4e4d46079f59995a37145c19cc688e6fb8c981ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/9a5becc8c6b520920fb846afefcfd7faf4c31712",
-                "reference": "9a5becc8c6b520920fb846afefcfd7faf4c31712",
+                "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/4e4d46079f59995a37145c19cc688e6fb8c981ab",
+                "reference": "4e4d46079f59995a37145c19cc688e6fb8c981ab",
                 "shasum": ""
             },
             "require": {
@@ -69,7 +69,7 @@
                 "html",
                 "markdown"
             ],
-            "time": "2016-02-01 16:49:02"
+            "time": "2016-05-18 12:57:10"
         }
     ],
     "packages-dev": [],
