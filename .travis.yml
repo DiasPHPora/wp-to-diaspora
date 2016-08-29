@@ -2,47 +2,50 @@ sudo: false
 
 language: php
 
-php:
-  - 7.0
-  - 5.6
-  - 5.5
-  - 5.4
-  - 5.3
-  - hhvm
-
 matrix:
+  fast_finish: true
   allow_failures:
     - php: hhvm
-  fast_finish: true
+  include:
+    - php: 7.0
+      env: WP_VERSION=master COVERAGE=1 # trunk
+    - php: 5.3
+      env: WP_VERSION=3.9.2 # earliest supported
+    - php: 7.0
+      env: WP_VERSION=4.6
+    - php: 7.0
+      env: WP_VERSION=4.5.3
+    - php: 7.0
+      env: WP_VERSION=4.4.4
+    - php: 7.0
+      env: WP_VERSION=4.3.5
+    - php: 5.6
+      env: WP_VERSION=4.6
+    - php: 5.5
+      env: WP_VERSION=4.6
+    - php: 5.4
+      env: WP_VERSION=4.6
+    - php: 5.3
+      env: WP_VERSION=4.6
+    - php: hhvm
+      env: WP_VERSION=4.6
 
-env:
-  # trunk:
-  - WP_VERSION=master WP_MULTISITE=0
-  # latest stable:
-  - WP_VERSION=4.5.3 WP_MULTISITE=0
-  # previous stable:
-  - WP_VERSION=4.4.4 WP_MULTISITE=0
-  # earliest supported:
-  - WP_VERSION=3.9.2 WP_MULTISITE=0
-
-notifications:
-  email: false,
-  webhooks:
-    urls:
-      - https://webhooks.gitter.im/e/cdf78658f24e0dac7ee0
-    on_success: change  # options: [always|never|change] default: always
-    on_failure: always  # options: [always|never|change] default: always
-    on_start: never     # options: [always|never|change] default: always
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
 
 git:
   depth: 1
 
 install:
+  - composer install --no-interaction
+
+before_script:
   # set up WP install
   - export WP_DEVELOP_DIR=/tmp/wordpress/
-  - mkdir -p $WP_DEVELOP_DIR
-  - cd $WP_DEVELOP_DIR
-  - git clone --depth=1 git://develop.git.wordpress.org/ .
+  - git clone --depth=1 git://develop.git.wordpress.org/ "$WP_DEVELOP_DIR"
+  - cd "$WP_DEVELOP_DIR"
   # set up tests config
   - cp wp-tests-config-sample.php wp-tests-config.php
   - sed -i "s/youremptytestdbnamehere/wordpress_test/" wp-tests-config.php
@@ -52,13 +55,17 @@ install:
   - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
 
 script:
-  - cd $TRAVIS_BUILD_DIR
-  - |
-    if [[ "$TRAVIS_PHP_VERSION" == "5.6" && "$WP_VERSION" == "master" && "$WP_MULTISITE" == "0" ]] ; then
-        phpunit --coverage-clover=coverage.xml
-    else
-        phpunit
-    fi
+  - cd "$TRAVIS_BUILD_DIR"
+  - if [[ "$COVERAGE" == "1" ]]; then phpunit --coverage-clover=coverage.xml; else phpunit; fi
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+  - if [[ "$COVERAGE" == "1" ]]; then bash <(curl -s https://codecov.io/bash); fi
+
+notifications:
+  email: false
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/cdf78658f24e0dac7ee0
+    on_success: change  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: always
