@@ -124,7 +124,7 @@ class WP2D_Post {
 		add_action( 'admin_init', array( $instance, 'ignore_post_error' ) );
 
 		// Handle diaspora* posting when saving the post.
-		add_action( 'save_post', array( $instance, 'post' ), 20, 2 );
+		add_action( 'save_post', array( $instance, 'post' ), 11, 2 );
 		add_action( 'save_post', array( $instance, 'save_meta_box_data' ), 10 );
 
 		// Add meta boxes.
