@@ -11,4 +11,9 @@
 			<directory prefix="tests-" suffix=".php">./tests/</directory>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist>
+			<directory suffix=".php">.</directory>
+		</whitelist>
+	</filter>
 </phpunit>
