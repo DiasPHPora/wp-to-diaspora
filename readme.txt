@@ -21,7 +21,7 @@ With the focus on being **intuitive**, sharing your posts to diaspora* is made *
 Simply write your post and have it shared to diaspora* at the same time you publish it on your website.
 
 = Minimum requirements =
-WordPress 3.9.2, PHP 5.3.
+WordPress 3.9.2, PHP 5.4.
 
 = Getting started =
 After installing and activating the plugin, be sure to visit the plugin's settings page at 'Settings -> WP to diaspora' on your WordPress Admin page.

@@ -63,7 +63,7 @@ class WP_To_Diaspora {
 	 *
 	 * @var string
 	 */
-	private $_min_php = '5.3';
+	private $_min_php = '5.4';
 
 	/**
 	 * Instance of the API class.
