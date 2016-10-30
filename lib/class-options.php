@@ -613,7 +613,7 @@ class WP2D_Options {
 	public function global_tags_render( $tags ) {
 		WP2D_Helpers::arr_to_str( $tags );
 		?>
-		<input type="text" class="wp2dtags" name="wp_to_diaspora_settings[global_tags]" value="<?php echo esc_attr( $tags ); ?>" placeholder="<?php esc_attr_e( 'Global tags', 'wp-to-diaspora' ); ?>" class="regular-text">
+		<input type="text" class="regular-text wp2d-tags" name="wp_to_diaspora_settings[global_tags]" value="<?php echo esc_attr( $tags ); ?>" placeholder="<?php esc_attr_e( 'Global tags', 'wp-to-diaspora' ); ?>">
 		<p class="description"><?php esc_html_e( 'Custom tags to add to all posts being posted to diaspora*.', 'wp-to-diaspora' ); ?></p>
 		<?php
 	}
@@ -628,7 +628,7 @@ class WP2D_Options {
 		?>
 		<label title="<?php esc_attr_e( 'Custom tags to add to this post when it\'s posted to diaspora*.', 'wp-to-diaspora' ); ?>">
 			<?php esc_html_e( 'Custom tags', 'wp-to-diaspora' ); ?>
-			<input type="text" class="wp2dtags" name="wp_to_diaspora_settings[custom_tags]" value="<?php echo esc_attr( $tags ); ?>" class="widefat">
+			<input type="text" class="widefat wp2d-tags" name="wp_to_diaspora_settings[custom_tags]" value="<?php echo esc_attr( $tags ); ?>">
 		</label>
 		<p class="description"><?php esc_html_e( 'Separate tags with commas' ); ?></p>
 		<?php
