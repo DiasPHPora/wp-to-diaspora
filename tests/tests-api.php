@@ -3,7 +3,7 @@
  * WP2D_API tests.
  *
  * @package WP_To_Diaspora\Tests\WP2D_API
- * @since 1.7.0
+ * @since   1.7.0
  */
 
 /**
@@ -97,7 +97,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertTrue( $api->init() );
 		$this->assertAttributeSame( 'token-a', '_token', $api );
 		// Only check for the cookie once, since it's always the same one.
-		$this->assertAttributeSame( array( 'the_cookie' ), '_cookies', $api );
+		$this->assertAttributeSame( [ 'the_cookie' ], '_cookies', $api );
 
 		// Reinitialise with same pod, token isn't reloaded.
 		$this->assertTrue( $api->init( 'pod1' ) );
@@ -232,11 +232,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 
 		// Testing with WP_Error response (check filter).
-		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', array(), true ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', [], true ) );
 		$this->assertEquals( 'Unknown error occurred.', $api->get_last_error() );
 
 		// Testing invalid code response (check filter).
-		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', array(), true ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', [], true ) );
 		$this->assertEquals( 'Unknown error occurred.', $api->get_last_error() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
@@ -280,7 +280,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_success' );
 
 		// The aspects that should be returned.
-		$aspects = array( 'public' => 'Public', 1 => 'Family' );
+		$aspects = [ 'public' => 'Public', 1 => 'Family' ];
 		$this->assertEquals( $aspects, $api->get_aspects() );
 		$this->assertAttributeSame( $aspects, '_aspects', $api );
 
@@ -289,12 +289,12 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertAttributeSame( $aspects, '_aspects', $api );
 
 		// Force a new fetch request.
-		$aspects = array( 'public' => 'Public', 2 => 'Friends' );
+		$aspects = [ 'public' => 'Public', 2 => 'Friends' ];
 		$this->assertEquals( $aspects, $api->get_aspects( true ) );
 		$this->assertAttributeSame( $aspects, '_aspects', $api );
 
 		// Make sure that there is always at least a Public aspect.
-		$aspects = array( 'public' => 'Public' );
+		$aspects = [ 'public' => 'Public' ];
 		$this->assertEquals( $aspects, $api->get_aspects( true ) );
 		$this->assertAttributeSame( $aspects, '_aspects', $api );
 
@@ -339,7 +339,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_services_success' );
 
 		// The services that should be returned.
-		$services = array( 'facebook' => 'Facebook' );
+		$services = [ 'facebook' => 'Facebook' ];
 		$this->assertEquals( $services, $api->get_services() );
 		$this->assertAttributeSame( $services, '_services', $api );
 
@@ -348,13 +348,13 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertAttributeSame( $services, '_services', $api );
 
 		// Force a new fetch request.
-		$services = array( 'twitter' => 'Twitter' );
+		$services = [ 'twitter' => 'Twitter' ];
 		$this->assertEquals( $services, $api->get_services( true ) );
 		$this->assertAttributeSame( $services, '_services', $api );
 
 		// If no services are connected, make sure we get an empty array.
-		$this->assertEquals( array(), $api->get_services( true ) );
-		$this->assertAttributeSame( array(), '_services', $api );
+		$this->assertEquals( [], $api->get_services( true ) );
+		$this->assertAttributeSame( [], '_services', $api );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_services_success' );
 	}
@@ -410,7 +410,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertEquals( 'text2', $post2->text );
 		$this->assertEquals( 'https://pod/posts/guid2', $post2->permalink );
 
-		$post3 = $api->post( 'text', array( '1' ) );
+		$post3 = $api->post( 'text', [ '1' ] );
 		$this->assertEquals( 3, $post3->id );
 		$this->assertEquals( false, $post3->public );
 		$this->assertEquals( 'guid3', $post3->guid );
@@ -496,11 +496,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		$api->logout();
 
-		$this->assertAttributeSame( false,   '_is_logged_in', $api );
-		$this->assertAttributeSame( null,    '_username',     $api );
-		$this->assertAttributeSame( null,    '_password',     $api );
-		$this->assertAttributeSame( array(), '_aspects',      $api );
-		$this->assertAttributeSame( array(), '_services',     $api );
+		$this->assertAttributeSame( false, '_is_logged_in', $api );
+		$this->assertAttributeSame( null, '_username', $api );
+		$this->assertAttributeSame( null, '_password', $api );
+		$this->assertAttributeSame( [], '_aspects', $api );
+		$this->assertAttributeSame( [], '_services', $api );
 	}
 
 	/**
@@ -514,13 +514,13 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$api->deinit();
 
 		$this->assertFalse( $api->has_last_error() );
-		$this->assertAttributeSame( null,    '_token',        $api );
-		$this->assertAttributeSame( array(), '_cookies',      $api );
-		$this->assertAttributeSame( null,    '_last_request', $api );
-		$this->assertAttributeSame( false,   '_is_logged_in', $api );
-		$this->assertAttributeSame( null,    '_username',     $api );
-		$this->assertAttributeSame( null,    '_password',     $api );
-		$this->assertAttributeSame( array(), '_aspects',      $api );
-		$this->assertAttributeSame( array(), '_services',     $api );
+		$this->assertAttributeSame( null, '_token', $api );
+		$this->assertAttributeSame( [], '_cookies', $api );
+		$this->assertAttributeSame( null, '_last_request', $api );
+		$this->assertAttributeSame( false, '_is_logged_in', $api );
+		$this->assertAttributeSame( null, '_username', $api );
+		$this->assertAttributeSame( null, '_password', $api );
+		$this->assertAttributeSame( [], '_aspects', $api );
+		$this->assertAttributeSame( [], '_services', $api );
 	}
 }

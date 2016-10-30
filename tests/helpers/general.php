@@ -3,7 +3,7 @@
  * General test helper functions.
  *
  * @package WP_To_Diaspora\Tests\Helpers
- * @since 1.6.0
+ * @since   1.6.0
  */
 
 /**
@@ -16,10 +16,11 @@
  *
  * @param object $object Object to call the method on.
  * @param string $method The private method to be called.
+ *
  * @return mixed The return value of the called private method.
  */
 function wp2d_helper_call_private_method( $object, $method ) {
-	$refClass = new \ReflectionClass( $object );
+	$refClass  = new \ReflectionClass( $object );
 	$refMethod = $refClass->getMethod( $method );
 	$refMethod->setAccessible( true );
 
