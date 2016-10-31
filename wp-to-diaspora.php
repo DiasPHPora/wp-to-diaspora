@@ -78,7 +78,7 @@ class WP_To_Diaspora {
 	 * @return WP_To_Diaspora Instance of this class.
 	 */
 	public static function instance() {
-		if ( ! isset( self::$_instance ) ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 			if ( self::$_instance->_version_check() ) {
 				self::$_instance->_constants();
@@ -103,7 +103,7 @@ class WP_To_Diaspora {
 			define( 'WP2D_DEBUGGING', true );
 		}
 
-		define( 'WP2D_DIR', dirname( __FILE__ ) );
+		define( 'WP2D_DIR', __DIR__ );
 		define( 'WP2D_LIB_DIR', WP2D_DIR . '/lib' );
 		define( 'WP2D_VENDOR_DIR', WP2D_DIR . '/vendor' );
 	}
@@ -117,9 +117,9 @@ class WP_To_Diaspora {
 	 */
 	private function _version_check() {
 		// Check for version requirements.
-		if ( version_compare( $GLOBALS['wp_version'], $this->_min_wp, '<' )
-			|| version_compare( PHP_VERSION, $this->_min_php, '<' ) ) {
-			add_action( 'admin_notices', array( $this, 'deactivate' ) );
+		if ( version_compare( PHP_VERSION, $this->_min_php, '<' ) || version_compare( $GLOBALS['wp_version'], $this->_min_wp, '<' ) ) {
+			add_action( 'admin_notices', [ $this, 'deactivate' ] );
+
 			return false;
 		}
 
@@ -166,40 +166,41 @@ class WP_To_Diaspora {
 	private function _setup() {
 
 		// Load languages.
-		add_action( 'plugins_loaded', array( $this, 'l10n' ) );
+		add_action( 'plugins_loaded', [ $this, 'l10n' ] );
 
 		// Add "Settings" link to plugin page.
-		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'settings_link' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), [ $this, 'settings_link' ] );
 
 		// Perform any necessary data upgrades.
-		add_action( 'admin_init', array( $this, 'upgrade' ) );
+		add_action( 'admin_init', [ $this, 'upgrade' ] );
 
 		// Enqueue CSS and JS scripts.
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_load_scripts' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_load_scripts' ] );
 
 		// Set up the options.
-		add_action( 'init', array( 'WP2D_Options', 'instance' ) );
+		add_action( 'init', [ 'WP2D_Options', 'instance' ] );
 
 		// WP2D Post.
-		add_action( 'init', array( 'WP2D_Post', 'setup' ) );
+		add_action( 'init', [ 'WP2D_Post', 'setup' ] );
 
 		// AJAX actions for loading aspects and services.
-		add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', array( $this, 'update_aspects_list_callback' ) );
-		add_action( 'wp_ajax_wp_to_diaspora_update_services_list', array( $this, 'update_services_list_callback' ) );
+		add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', [ $this, 'update_aspects_list_callback' ] );
+		add_action( 'wp_ajax_wp_to_diaspora_update_services_list', [ $this, 'update_services_list_callback' ] );
 
 		// Check the pod connection status on the options page.
-		add_action( 'wp_ajax_wp_to_diaspora_check_pod_connection_status', array( $this, 'check_pod_connection_status_callback' ) );
+		add_action( 'wp_ajax_wp_to_diaspora_check_pod_connection_status', [ $this, 'check_pod_connection_status_callback' ] );
 	}
 
 	/**
 	 * Load the diaspora* API for ease of use.
 	 *
-	 * @return WP2D_API|boolean The API object, or false.
+	 * @return WP2D_API|bool The API object, or false.
 	 */
 	private function _load_api() {
-		if ( ! isset( $this->_api ) ) {
+		if ( null === $this->_api ) {
 			$this->_api = WP2D_Helpers::api_quick_connect();
 		}
+
 		return $this->_api;
 	}
 
@@ -233,11 +234,11 @@ class WP_To_Diaspora {
 			if ( version_compare( $version, '1.4.0', '<' ) ) {
 				// Turn tags_to_post string into an array.
 				$tags_to_post_old = $options->get_option( 'tags_to_post' );
-				$tags_to_post = array_filter( array(
-					( ( false !== strpos( $tags_to_post_old, 'g' ) ) ? 'global' : null ),
-					( ( false !== strpos( $tags_to_post_old, 'c' ) ) ? 'custom' : null ),
-					( ( false !== strpos( $tags_to_post_old, 'p' ) ) ? 'post'   : null ),
-				) );
+				$tags_to_post     = array_filter( [
+					( false !== strpos( $tags_to_post_old, 'g' ) ) ? 'global' : null,
+					( false !== strpos( $tags_to_post_old, 'c' ) ) ? 'custom' : null,
+					( false !== strpos( $tags_to_post_old, 'p' ) ) ? 'post' : null,
+				] );
 				$options->set_option( 'tags_to_post', $tags_to_post );
 			}
 
@@ -259,27 +260,27 @@ class WP_To_Diaspora {
 	 */
 	public function admin_load_scripts() {
 		// Get the enabled post types to load the script for.
-		$enabled_post_types = WP2D_Options::instance()->get_option( 'enabled_post_types', array() );
+		$enabled_post_types = WP2D_Options::instance()->get_option( 'enabled_post_types', [] );
 
 		// Get the screen to find out where we are.
 		$screen = get_current_screen();
 
 		// Only load the styles and scripts on the settings page and the allowed post types.
-		if ( 'settings_page_wp_to_diaspora' === $screen->id || ( in_array( $screen->post_type, $enabled_post_types ) && 'post' === $screen->base ) ) {
+		if ( 'settings_page_wp_to_diaspora' === $screen->id || ( in_array( $screen->post_type, $enabled_post_types, true ) && 'post' === $screen->base ) ) {
 			wp_enqueue_style( 'tag-it', plugins_url( '/css/jquery.tagit.css', __FILE__ ) );
 			wp_enqueue_style( 'chosen', plugins_url( '/css/chosen.min.css', __FILE__ ) );
 			wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
-			wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.min.js', __FILE__ ), array( 'jquery' ), false, true );
-			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', __FILE__ ), array( 'jquery', 'jquery-ui-autocomplete' ), false, true );
-			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), array( 'jquery' ), false, true );
+			wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.min.js', __FILE__ ), [ 'jquery' ], false, true );
+			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', __FILE__ ), [ 'jquery', 'jquery-ui-autocomplete' ], false, true );
+			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), [ 'jquery' ], false, true );
 			// Javascript-specific l10n.
-			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', array(
+			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', [
 				'no_services_connected' => __( 'No services connected yet.', 'wp-to-diaspora' ),
 				'sure_reset_defaults'   => __( 'Are you sure you want to reset to default values?', 'wp-to-diaspora' ),
 				'conn_testing'          => __( 'Testing connection...', 'wp-to-diaspora' ),
 				'conn_successful'       => __( 'Connection successful.', 'wp-to-diaspora' ),
 				'conn_failed'           => __( 'Connection failed.', 'wp-to-diaspora' ),
-			) );
+			] );
 		}
 	}
 
@@ -287,10 +288,12 @@ class WP_To_Diaspora {
 	 * Add the "Settings" link to the plugins page.
 	 *
 	 * @param array $links Links to display for plugin on plugins page.
+	 *
 	 * @return array Links to display for plugin on plugins page.
 	 */
 	public function settings_link( $links ) {
 		$links[] = '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings' ) . '</a>';
+
 		return $links;
 	}
 
@@ -300,11 +303,12 @@ class WP_To_Diaspora {
 	 * NOTE: When updating the lists, always force a fresh fetch.
 	 *
 	 * @param string $type Type of list to update.
-	 * @return array|boolean The list of aspects or services, false if an illegal parameter is passed.
+	 *
+	 * @return array|bool The list of aspects or services, false if an illegal parameter is passed.
 	 */
 	private function _update_aspects_services_list( $type ) {
 		// Check for correct argument value.
-		if ( ! in_array( $type, array( 'aspects', 'services' ) ) ) {
+		if ( ! in_array( $type, [ 'aspects', 'services' ], true ) ) {
 			return false;
 		}
 
@@ -313,7 +317,7 @@ class WP_To_Diaspora {
 
 		// Make sure that we have at least the 'Public' aspect.
 		if ( 'aspects' === $type && empty( $list ) ) {
-			$list = array( 'public' => __( 'Public' ) );
+			$list = [ 'public' => __( 'Public' ) ];
 		}
 
 		// Set up the connection to diaspora*.
@@ -324,11 +328,13 @@ class WP_To_Diaspora {
 			return false;
 		}
 
+		$list_new = $list;
 		if ( 'aspects' === $type ) {
 			$list_new = $api->get_aspects( true );
 		} elseif ( 'services' === $type ) {
 			$list_new = $api->get_services( true );
 		}
+
 		// If the new list couldn't be fetched successfully, return false.
 		if ( $api->has_last_error() ) {
 			return false;
@@ -378,16 +384,16 @@ class WP_To_Diaspora {
 	 * @todo esc_html
 	 */
 	public function check_pod_connection_status_callback() {
-		if ( isset( $_REQUEST['debugging'] ) && ! defined( 'WP2D_DEBUGGING' ) ) {
+		if ( ! defined( 'WP2D_DEBUGGING' ) && isset( $_REQUEST['debugging'] ) ) {
 			define( 'WP2D_DEBUGGING', true );
 		}
 
 		$status = $this->_check_pod_connection_status();
 
-		$data = array(
+		$data = [
 			'debug'   => esc_textarea( WP2D_Helpers::get_debugging() ),
 			'message' => __( 'Connection successful.', 'wp-to-diaspora' ),
-		);
+		];
 
 		if ( true === $status ) {
 			wp_send_json_success( $data );
