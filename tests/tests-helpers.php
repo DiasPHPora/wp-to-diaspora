@@ -16,8 +16,8 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	/**
 	 * Test trying to add and get debug info when debugging is disabled.
 	 *
-	 * NOTE: Because of the constant, his test needs to run in
-	 * a seperate process without preserving the global state.
+	 * NOTE: Because of the constant, this test needs to run in
+	 * a separate process without preserving the global state.
 	 *
 	 * @since 1.7.0
 	 *
@@ -39,8 +39,8 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	/**
 	 * Test adding and getting debug info.
 	 *
-	 * NOTE: Because of the constant, his test needs to run in
-	 * a seperate process without preserving the global state.
+	 * NOTE: Because of the constant, this test needs to run in
+	 * a separate process without preserving the global state.
 	 *
 	 * @since 1.7.0
 	 *
