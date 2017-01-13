@@ -12,18 +12,10 @@ https://wordpress.org/plugins/wp-to-diaspora/
 For additional documentation [visit the wiki](https://github.com/gutobenn/wp-to-diaspora/wiki)
 
 ### Translations
-Managed through GlotPress on WordPress.
+Managed through GlotPress on translate.wordpress.org.
 Feel free to help and [contribute translations](https://translate.wordpress.org/projects/wp-plugins/wp-to-diaspora).
 
-Many thanks to our friendly translators:
-- Portuguese (Brazil)
-- Russian -- contributed by [Vitalie Ciubotaru](https://ciubotaru.tk)
-- Japanese -- ""
-- Romanian -- ""
-- French -- contributed by [Fabián Rodriguez](https://magicfab.ca)
-- German -- contributed by [Katrin Leinweber](http://www.konscience.de)
-- Italian -- contributed by [Giulio Roberti](http://www.viroproject.com)
-- Spanish -- contributed by [Lupa Alonzo](http://lupa18.org)
+Many thanks to our many friendly translators, doing an amazing job :innocent:
 
 ### Donate
 [![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=gutobenn&url=https://github.com/gutobenn/wp-to-diaspora&title=WP to diaspora*&language=&tags=github&category=software)
