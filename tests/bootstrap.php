@@ -3,8 +3,12 @@
  * Bootstrap to set up test environment.
  *
  * @package WP_To_Diaspora\Tests
- * @since 1.6.0
+ * @since   1.6.0
  */
+
+// Required for a composer installation of PHPUnit when using PhpStorm:
+// https://www.drupal.org/node/2597814
+defined( 'PHPUNIT_COMPOSER_INSTALL' ) || define( 'PHPUNIT_COMPOSER_INSTALL', __DIR__ . '/../vendor/autoload.php' );
 
 // Include helpers.
 require_once __DIR__ . '/helpers/general.php';
@@ -37,7 +41,7 @@ if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
 require_once $test_root . '/includes/functions.php';
 
 // Load the plugin manually.
-tests_add_filter( 'muplugins_loaded', function() {
+tests_add_filter( 'muplugins_loaded', function () {
 	require_once __DIR__ . '/../wp-to-diaspora.php';
 } );
 
