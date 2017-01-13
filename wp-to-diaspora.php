@@ -54,7 +54,7 @@ class WP_To_Diaspora {
 	 *
 	 * @var string
 	 */
-	private $_min_wp = '3.9.2';
+	private $_min_wp = '3.9.2-src';
 
 	/**
 	 * The minimum required PHP version.
@@ -80,14 +80,15 @@ class WP_To_Diaspora {
 	public static function instance() {
 		if ( ! isset( self::$_instance ) ) {
 			self::$_instance = new self();
-			self::$_instance->_constants();
 			if ( self::$_instance->_version_check() ) {
+				self::$_instance->_constants();
 				self::$_instance->_includes();
 				self::$_instance->_setup();
 			} else {
 				self::$_instance = null;
 			}
 		}
+
 		return self::$_instance;
 	}
 
@@ -151,7 +152,7 @@ class WP_To_Diaspora {
 	 * @since 1.5.0
 	 */
 	private function _includes() {
-		require WP2D_VENDOR_DIR . '/autoload.php';
+		require_once WP2D_VENDOR_DIR . '/autoload.php';
 		require_once WP2D_LIB_DIR . '/class-api.php';
 		require_once WP2D_LIB_DIR . '/class-contextual-help.php';
 		require_once WP2D_LIB_DIR . '/class-helpers.php';
