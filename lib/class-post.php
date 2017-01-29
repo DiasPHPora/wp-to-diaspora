@@ -171,7 +171,7 @@ class WP2D_Post {
 
 			// If no WP2D meta data has been saved yet, this post shouldn't be published.
 			// This can happen if existing posts (before WP2D) get updated externally, not through the post edit screen.
-			// Check gutobenn/wp-to-diaspora#91 for reference.
+			// Check DiasPHPora/wp-to-diaspora#91 for reference.
 			// Also, when we have a post scheduled for publishing, don't touch it.
 			// This is important when modifying scheduled posts using Quick Edit.
 			if ( ! in_array( $this->post->post_status, array( 'auto-draft', 'future' ) ) && ! $meta_current ) {

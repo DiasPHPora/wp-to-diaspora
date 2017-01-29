@@ -43,10 +43,10 @@ class WP2D_Contextual_Help {
 	private function _constants() {
 		define( 'WP2D_EXT_WPORG',         esc_url( 'https://wordpress.org/plugins/wp-to-diaspora' ) );
 		define( 'WP2D_EXT_I18N',          esc_url( 'https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a' ) );
-		define( 'WP2D_EXT_GH',            esc_url( 'https://github.com/gutobenn/wp-to-diaspora' ) );
-		define( 'WP2D_EXT_DONATE',        esc_url( 'https://github.com/gutobenn/wp-to-diaspora#donate' ) );
-		define( 'WP2D_EXT_GH_ISSUES',     esc_url( 'https://github.com/gutobenn/wp-to-diaspora/issues' ) );
-		define( 'WP2D_EXT_GH_ISSUES_NEW', esc_url( 'https://github.com/gutobenn/wp-to-diaspora/issues/new' ) );
+		define( 'WP2D_EXT_GH',            esc_url( 'https://github.com/DiasPHPora/wp-to-diaspora' ) );
+		define( 'WP2D_EXT_DONATE',        esc_url( 'https://github.com/DiasPHPora/wp-to-diaspora#donate' ) );
+		define( 'WP2D_EXT_GH_ISSUES',     esc_url( 'https://github.com/DiasPHPora/wp-to-diaspora/issues' ) );
+		define( 'WP2D_EXT_GH_ISSUES_NEW', esc_url( 'https://github.com/DiasPHPora/wp-to-diaspora/issues/new' ) );
 	}
 
 	/**
