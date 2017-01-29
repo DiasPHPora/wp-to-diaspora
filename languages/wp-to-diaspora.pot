@@ -466,7 +466,7 @@ msgid "View Post"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid "https://github.com/gutobenn/wp-to-diaspora"
+msgid "https://github.com/DiasPHPora/wp-to-diaspora"
 msgstr ""
 
 #. Description of the plugin/theme

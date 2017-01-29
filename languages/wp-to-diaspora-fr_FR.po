@@ -45,9 +45,9 @@ msgid "WP to Diaspora*"
 msgstr "WP to Diaspora*"
 
 #. Plugin URI of the plugin/theme
-#: 
-msgid "https://github.com/gutobenn/wp-to-diaspora"
-msgstr "https://github.com/gutobenn/wp-to-diaspora"
+#:
+msgid "https://github.com/DiasPHPora/wp-to-diaspora"
+msgstr "https://github.com/DiasPHPora/wp-to-diaspora"
 
 #. Description of the plugin/theme
 #: 
