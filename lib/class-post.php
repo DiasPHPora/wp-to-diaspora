@@ -275,11 +275,10 @@ class WP2D_Post {
 		 *
 		 * @since 1.5.4.1
 		 *
-		 * @param string $default   The whole HTML of the title link to be outputted.
-		 * @param string $title     The title of the original post.
-		 * @param string $permalink The permalink of the original post.
+		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
+		 * @param string    $default   The whole HTML of the title link to be outputted.
 		 */
-		$link = apply_filters( 'wp2d_title_filter', $default, $title, $permalink );
+		$link = apply_filters( 'wp2d_title_filter', $this, $default );
 
 		return '<p>' . $link . '</p>';
 	}
@@ -426,12 +425,11 @@ class WP2D_Post {
 			 *
 			 * @since 1.5.4.1
 			 *
-			 * @param string $default   The whole HTML of the text and link to be outputted.
-			 * @param string $text      The "Originally posted at:" text before the link.
-			 * @param string $permalink The permalink of the original post.
-			 * @param string $title     The "Permalink" title of the link.
+			 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
+			 * @param string    $default   The whole HTML of the text and link to be outputted.
+			 * @param string    $text      The "Originally posted at:" text before the link.
 			 */
-			$link = apply_filters( 'wp2d_posted_at_link_filter', $default, $text, $permalink, $title );
+			$link = apply_filters( 'wp2d_posted_at_link_filter', $this, $default, $text );
 
 			$link = '<p>' . $link . '</p>';
 		}
