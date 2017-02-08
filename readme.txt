@@ -3,8 +3,8 @@ Contributors: gutobenn, noplanman
 Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
-Tested up to: 4.6
-Stable tag: 1.7.2
+Tested up to: 4.7.2
+Stable tag: 1.8.0
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -92,7 +92,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= next =
+= 1.8.0 =
 * Update filters to pass WP2D_Post object
 
 = 1.7.2 =
@@ -212,6 +212,6 @@ Quite straightforward, right?
 
 == Upgrade Notice ==
 
-= next =
+= 1.8.0 =
 Filters have been modified and now get the WP2D_Post object to allow access to all post details.
 If you have any custom filters, they MUST be rewritten to the new format. Check the [Wiki on GitHub](https://github.com/DiasPHPora/wp-to-diaspora/wiki/Filters).
