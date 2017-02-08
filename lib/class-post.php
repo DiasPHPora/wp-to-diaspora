@@ -21,7 +21,7 @@ class WP2D_Post {
 	/**
 	 * The original post object.
 	 *
-	 * @var WP_Posts
+	 * @var WP_Post
 	 * @since 1.5.0
 	 */
 	public $post = null;
@@ -415,9 +415,9 @@ class WP2D_Post {
 		$link = '';
 		if ( $this->fullentrylink ) {
 
-			$text = esc_html( 'Originally posted at:', 'wp-to-diaspora' );
+			$text = esc_html__( 'Originally posted at:', 'wp-to-diaspora' );
 			$permalink = get_permalink( $this->ID );
-			$title = esc_html( 'Permalink', 'wp-to-diaspora' );
+			$title = esc_html__( 'Permalink', 'wp-to-diaspora' );
 			$default = sprintf( '%1$s <a href="%2$s" title="%3$s">%2$s</a>', $text, $permalink, $title );
 
 			/**
