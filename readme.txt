@@ -92,6 +92,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= next =
+* Update filters to pass WP2D_Post object
+
 = 1.7.2 =
 * Manage translations via translate.wordpress.org
 
@@ -208,5 +211,7 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
-* Bug fixed: posts were published every time edited through the 'quick edit'
-* cURL is not required anymore! Now we use the internal WP_HTTP API
+
+= next =
+Filters have been modified and now get the WP2D_Post object to allow access to all post details.
+If you have any custom filters, they MUST be rewritten to the new format. Check the [Wiki on GitHub](https://github.com/DiasPHPora/wp-to-diaspora/wiki/Filters).
