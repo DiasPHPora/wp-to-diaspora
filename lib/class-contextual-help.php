@@ -170,7 +170,7 @@ class WP2D_Contextual_Help {
 				<p>' . esc_html__( 'Most diaspora* pods are secured using SSL (Secure Sockets Layer), which makes your connection encrypted. For this connection to work, your server needs to know that those SSL certificates can be trusted.', 'wp-to-diaspora' ) . '</p>
 				<p>' . esc_html__( 'Therefore, if your WordPress installation or server does not have an up to date CA certificate bundle, WP to diaspora* may not work for you.', 'wp-to-diaspora' ) . '</p>
 				<p>' . esc_html__( 'Lucky for you though, we have you covered if this is the case for you!', 'wp-to-diaspora' ) . '</p>
-				<p><a href="https://github.com/DiasPHPora/wp-to-diaspora/wiki/SSL-and-TLS-Issues">' . esc_html__( 'Read more in the wiki', 'wp-to-diaspora' ) . '</a></p>'
+				<p><a href="https://github.com/DiasPHPora/wp-to-diaspora/wiki/SSL-and-TLS-Issues">' . esc_html__( 'Learn more in the wiki', 'wp-to-diaspora' ) . '</a></p>'
 		) );
 
 		// Explain the meta box and the differences to the global defaults.
@@ -202,7 +202,7 @@ class WP2D_Contextual_Help {
 							<li>' . esc_html__( 'Make sure that your pod domain is entered correctly.', 'wp-to-diaspora' ) . '
 							<li>' .
 								esc_html__( 'It might be an SSL problem.', 'wp-to-diaspora' ) .
-								sprintf( ' <a href="#" class="open-help-tab" data-help-tab="ssl">%s</a>', esc_html__( 'Learn More', 'wp-to-diaspora' ) ) . '
+								sprintf( ' <a href="https://github.com/DiasPHPora/wp-to-diaspora/wiki/SSL-and-TLS-Issues" class="open-help-tab" data-help-tab="ssl">%s</a>', esc_html__( 'Learn more', 'wp-to-diaspora' ) ) . '
 							<li>' . esc_html__( 'The pod might be offline at the moment.', 'wp-to-diaspora' ) . '
 						</ul>
 					<li><strong>' . esc_html__( 'Login failed. Check your login details.', 'wp-to-diaspora' ) . '</strong>: ' .
