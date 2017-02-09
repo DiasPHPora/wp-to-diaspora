@@ -40,7 +40,7 @@ msgid "Post to Diaspora*"
 msgstr "Publier sur Diaspora*"
 
 #. Plugin Name of the plugin/theme
-#: 
+#:
 msgid "WP to Diaspora*"
 msgstr "WP to Diaspora*"
 
@@ -50,7 +50,7 @@ msgid "https://github.com/DiasPHPora/wp-to-diaspora"
 msgstr "https://github.com/DiasPHPora/wp-to-diaspora"
 
 #. Description of the plugin/theme
-#: 
+#:
 msgid "Automatically share WordPress posts on Diaspora*"
 msgstr "Partager automatiquement les articles WordPress sur Diaspora *"
 
@@ -64,11 +64,11 @@ msgstr "Article complet"
 msgid "Display"
 msgstr "Afficher"
 
-#: 
+#:
 msgid "WP to Diaspora*: Sending \\"%1$s\\" failed with error: %2$s"
 msgstr "WP to Diaspora*: Échec de publication de \\"%1$s\\", erreur: %2$s"
 
-#: 
+#:
 msgid "Diaspora* Setup"
 msgstr "Configuration Diaspora*"
 
@@ -76,11 +76,11 @@ msgstr "Configuration Diaspora*"
 msgid "Posting Defaults"
 msgstr "Paramètres de publication par défaut"
 
-#: 
+#:
 msgid "Set up the connection to your Diaspora* account."
 msgstr "Configurer la connection à votre compte Diaspora*"
 
-#: 
+#:
 msgid "Password already set"
 msgstr "Mot de passe déjà spécifié"
 
@@ -89,7 +89,7 @@ msgid "If you would like to change the password type a new one. Otherwise leave 
 msgstr "Pour changer votre mot de passe, écrivez-en un nouveau. Autrement, laissez cet espace en blanc."
 
 #. It seems this is not translated properly in the settings, I always see the English version despite the French being here.
-#: 
+#:
 msgid "Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the \"WP to Diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr "Définissez le comportement par défaut de vos publications ici. Ces paramètres peuvent être modifiés individuellement pour chaque article, en changeant les valeurs dans la section \"WP to Diaspora*\" qui apparaît lors d'édition d'articles."
 
@@ -97,7 +97,7 @@ msgstr "Définissez le comportement par défaut de vos publications ici. Ces par
 msgid "Include a link back to your original post."
 msgstr "Inclure un rétro-lien vers votre article original."
 
-#: 
+#:
 msgid "Choose which tags should be posted to Diaspora*."
 msgstr "Choisissez les étiquettes qui devraient être publiées sur Diaspora*"
 
@@ -133,11 +133,11 @@ msgstr "Toutes les étiquettes (globales, personalisées et d'articles)"
 msgid "Global tags"
 msgstr "Étiquettes globales"
 
-#: 
+#:
 msgid "Custom tags to add to all posts being posted to Diaspora*."
 msgstr "Étiquettes personalisées à ajouter à tous les articles publiés sur Diaspora*"
 
-#: 
+#:
 msgid "Custom tags to add to this post when it\'s posted to Diaspora*."
 msgstr "Étiquettes personalisées à ajouter à cet article lorsqu'il sera publié sur Diaspora*"
 
@@ -162,18 +162,13 @@ msgstr "Types d'articles"
 msgid "Ignore"
 msgstr "Ignorer"
 
-#: 
+#:
 msgid "Successfully posted to Diaspora*."
 msgstr "Publié avec succès sur Diaspora*."
 
-#: 
+#:
 msgid "Already posted to Diaspora*"
 msgstr "Déjà publié sur Diaspora*"
-
-#: lib/class-contextual-help.php:69
-#: lib/class-options.php:318
-msgid "Refresh pod list"
-msgstr "Rafraîchir la liste de pods"
 
 #: lib/class-contextual-help.php:98
 #: lib/class-options.php:377
@@ -377,18 +372,18 @@ msgid "WP to diaspora*"
 msgstr "WP to diaspora*"
 
 #. Description of the plugin/theme
-#: 
+#:
 #, fuzzy
 msgid "Automatically shares WordPress posts on diaspora*"
 msgstr "Partager automatiquement les articles WordPress sur Diaspora *"
 
 #. Author of the plugin/theme
-#: 
+#:
 msgid "Augusto Bennemann"
 msgstr ""
 
 #. Author URI of the plugin/theme
-#: 
+#:
 msgid "https://github.com/gutobenn"
 msgstr "https://github.com/gutobenn"
 
@@ -428,10 +423,6 @@ msgstr "Pod Diaspora*"
 
 #: lib/class-contextual-help.php:68
 msgid "This is the domain name of the pod you are on (e.g. joindiaspora.com)"
-msgstr ""
-
-#: lib/class-contextual-help.php:69
-msgid "Use the \"%s\" button to prepopulate the input field to help choose your pod."
 msgstr ""
 
 #: lib/class-contextual-help.php:71

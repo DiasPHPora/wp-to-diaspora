@@ -86,15 +86,6 @@ msgstr ""
 msgid "This is the domain name of the pod you are on (e.g. joindiaspora.com)"
 msgstr ""
 
-#: lib/class-contextual-help.php:69
-msgid ""
-"Use the \"%s\" button to prepopulate the input field to help choose your pod."
-msgstr ""
-
-#: lib/class-contextual-help.php:69 lib/class-options.php:318
-msgid "Refresh pod list"
-msgstr ""
-
 #: lib/class-contextual-help.php:70 lib/class-options.php:307
 #: lib/class-options.php:332
 msgid "Username"

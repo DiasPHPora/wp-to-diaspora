@@ -7,37 +7,6 @@
  */
 
 /**
- * Custom HTTP request responses for _update_pod_list AJAX call.
- *
- * @since 1.7.0
- */
-function wp_to_diaspora_pre_http_request_filter_update_pod_list() {
-	static $responses = array(
-		array(
-			'body'     => '',
-			'response' => array( 'code' => 200, 'message' => 'OK' ),
-		),
-		array(
-			'body'     => '
-				{"podcount":3,"pods":[
-					{"id":"1","domain":"pod1","secure":"true","hidden":"no"},
-					{"id":"2","domain":"pod2","secure":"false","hidden":"no"},
-					{"id":"3","domain":"pod3","secure":"true","hidden":"yes"}
-				]}',
-			'response' => array( 'code' => 200, 'message' => 'OK' ),
-		),
-		array(
-			'body'     => '
-				{"podcount":1,"pods":[
-					{"id":"10","domain":"pod10","secure":"true","hidden":"no"}
-				]}',
-			'response' => array( 'code' => 200, 'message' => 'OK' ),
-		),
-	);
-	return array_shift( $responses );
-}
-
-/**
  * Custom HTTP request responses for test_update_aspects_services_list testing both aspects and services.
  *
  * @since 1.7.0

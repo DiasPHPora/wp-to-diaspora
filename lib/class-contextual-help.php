@@ -123,8 +123,7 @@ class WP2D_Contextual_Help {
 			'content' => '<p><strong>' . esc_html__( 'Enter your diaspora* login details to connect your account.', 'wp-to-diaspora' ) . '</strong></p>
 				<ul>
 					<li><strong>' . esc_html__( 'diaspora* Pod', 'wp-to-diaspora' ) . '</strong>: ' .
-						esc_html__( 'This is the domain name of the pod you are on (e.g. joindiaspora.com)', 'wp-to-diaspora' ) . '<br>
-							<em>' . sprintf( esc_html__( 'Use the "%s" button to prepopulate the input field to help choose your pod.', 'wp-to-diaspora' ), esc_html__( 'Refresh pod list', 'wp-to-diaspora' ) ) . '</em>
+						esc_html__( 'This is the domain name of the pod you are on (e.g. joindiaspora.com)', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Username', 'wp-to-diaspora' ) . '</strong>: ' .
 						esc_html__( 'Your diaspora* username (without the pod domain).', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Password', 'wp-to-diaspora' ) . '</strong>: ' .

@@ -89,50 +89,12 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		// WP2D Post.
 		$this->assertNotEmpty( has_action( 'init', array( 'WP2D_Post', 'setup' ) ) );
 
-		// AJAX actions for loading pods, aspects and services.
-		$this->assertNotEmpty( has_action( 'wp_ajax_wp_to_diaspora_update_pod_list', array( $wp2d, 'update_pod_list_callback' ) ) );
+		// AJAX actions for loading aspects and services.
 		$this->assertNotEmpty( has_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', array( $wp2d, 'update_aspects_list_callback' ) ) );
 		$this->assertNotEmpty( has_action( 'wp_ajax_wp_to_diaspora_update_services_list', array( $wp2d, 'update_services_list_callback' ) ) );
 
 		// Check the pod connection status on the options page.
 		$this->assertNotEmpty( has_action( 'wp_ajax_wp_to_diaspora_check_pod_connection_status', array( $wp2d, 'check_pod_connection_status_callback' ) ) );
-	}
-
-	/**
-	 * Test to make sure that the podupti.me rendering works properly.
-	 *
-	 * @since 1.7.0
-	 */
-	public function test_update_pod_list() {
-		// Get the necessary instances.
-		$wp2d = WP_To_Diaspora::instance();
-		$options = WP2D_Options::instance();
-
-		add_filter( 'pre_http_request', 'wp_to_diaspora_pre_http_request_filter_update_pod_list' );
-
-		// Make sure the options start off empty.
-		$this->assertEmpty( $options->get_option( 'pod_list' ) );
-
-		// First, get an empty string returned.
-		$this->assertEmpty( wp2d_helper_call_private_method( $wp2d, '_update_pod_list' ) );
-		$this->assertEmpty( $options->get_option( 'pod_list' ) );
-
-		// Then, get a correct list of pods.
-		$res = array(
-			array( 'secure' => 'true', 'domain' => 'pod1' ),
-			array( 'secure' => 'false', 'domain' => 'pod2' ),
-		);
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, '_update_pod_list' ) );
-		$this->assertEquals( $res, $options->get_option( 'pod_list' ) );
-
-		// Then update and overwrite the existing list.
-		$res = array(
-			array( 'secure' => 'true', 'domain' => 'pod10' ),
-		);
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, '_update_pod_list' ) );
-		$this->assertEquals( $res, $options->get_option( 'pod_list' ) );
-
-		remove_filter( 'pre_http_request', 'wp_to_diaspora_pre_http_request_filter_update_pod_list' );
 	}
 
 	/**

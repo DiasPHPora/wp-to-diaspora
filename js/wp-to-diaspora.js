@@ -127,23 +127,6 @@ jQuery(document).ready(function ($) {
 
 
 	if (onSettingsPage) {
-		// Refresh the list of pods and repopulate the autocomplete list.
-		$('#refresh-pod-list').click(function() {
-			var $refreshButton = $(this).hide();
-			var $spinner = $refreshButton.next('.spinner').addClass('is-active');
-
-			$.post(ajaxurl, { 'action': 'wp_to_diaspora_update_pod_list' }, function(pods) {
-				// Empty the current pod list and repopulate it.
-				var $podList = $('#pod-list').empty();
-				pods.forEach(function(pod) {
-					$podList.append( '<option data-secure="' + pod.secure + '" value="' + pod.domain + '"></option>' );
-				});
-
-				$spinner.removeClass('is-active');
-				$refreshButton.show();
-			});
-		});
-
 		// Check the pod connection status.
 		var $pcs = $('#pod-connection-status');
 		var $spinner = $pcs.next('.spinner').addClass('is-active').show();

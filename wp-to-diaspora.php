@@ -183,8 +183,7 @@ class WP_To_Diaspora {
 		// WP2D Post.
 		add_action( 'init', array( 'WP2D_Post', 'setup' ) );
 
-		// AJAX actions for loading pods, aspects and services.
-		add_action( 'wp_ajax_wp_to_diaspora_update_pod_list', array( $this, 'update_pod_list_callback' ) );
+		// AJAX actions for loading aspects and services.
 		add_action( 'wp_ajax_wp_to_diaspora_update_aspects_list', array( $this, 'update_aspects_list_callback' ) );
 		add_action( 'wp_ajax_wp_to_diaspora_update_services_list', array( $this, 'update_services_list_callback' ) );
 
@@ -293,48 +292,6 @@ class WP_To_Diaspora {
 	public function settings_link( $links ) {
 		$links[] = '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings' ) . '</a>';
 		return $links;
-	}
-
-	/**
-	 * Fetch the updated list of pods from podupti.me and save it to the settings.
-	 *
-	 * @return array The list of pods.
-	 */
-	private function _update_pod_list() {
-		// API url to fetch pods list from podupti.me.
-		$pod_list_url = 'http://podupti.me/api.php?format=json&key=4r45tg';
-		$pods = array();
-
-		// Get the response from the WP_HTTP request.
-		$response = wp_safe_remote_get( $pod_list_url );
-
-		if ( $json = wp_remote_retrieve_body( $response ) ) {
-			$pod_list = json_decode( $json );
-
-			if ( isset( $pod_list->pods ) ) {
-				foreach ( $pod_list->pods as $pod ) {
-					if ( 'no' === $pod->hidden ) {
-						$pods[] = array(
-							'secure' => $pod->secure,
-							'domain' => $pod->domain,
-						);
-					}
-				}
-
-				$options = WP2D_Options::instance();
-				$options->set_option( 'pod_list', $pods );
-				$options->save();
-			}
-		}
-
-		return $pods;
-	}
-
-	/**
-	 * Update the list of pods and return them for use with AJAX.
-	 */
-	public function update_pod_list_callback() {
-		wp_send_json( $this->_update_pod_list() );
 	}
 
 	/**

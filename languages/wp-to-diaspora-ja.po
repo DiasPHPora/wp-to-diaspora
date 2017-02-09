@@ -38,7 +38,7 @@ msgid "Post to Diaspora*"
 msgstr "Diaspora*に投稿する"
 
 #. Plugin Name of the plugin/theme
-#: 
+#:
 msgid "WP to Diaspora*"
 msgstr "WP to Diaspora*"
 
@@ -48,7 +48,7 @@ msgid "https://github.com/DiasPHPora/wp-to-diaspora"
 msgstr "https://github.com/DiasPHPora/wp-to-diaspora"
 
 #. Description of the plugin/theme
-#: 
+#:
 msgid "Automatically share WordPress posts on Diaspora*"
 msgstr "自動的にWordPressの記事をDiaspora*に投稿する"
 
@@ -61,11 +61,11 @@ msgstr "全文"
 msgid "Display"
 msgstr "表示する"
 
-#: 
+#:
 msgid "WP to Diaspora*: Sending \\"%1$s\\" failed with error: %2$s"
 msgstr ""
 
-#: 
+#:
 msgid "Diaspora* Setup"
 msgstr ""
 
@@ -73,11 +73,11 @@ msgstr ""
 msgid "Posting Defaults"
 msgstr ""
 
-#: 
+#:
 msgid "Set up the connection to your Diaspora* account."
 msgstr ""
 
-#: 
+#:
 msgid "Password already set"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 msgid "If you would like to change the password type a new one. Otherwise leave this blank."
 msgstr ""
 
-#: 
+#:
 msgid "Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the \"WP to Diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr ""
 
@@ -93,7 +93,7 @@ msgstr ""
 msgid "Include a link back to your original post."
 msgstr ""
 
-#: 
+#:
 msgid "Choose which tags should be posted to Diaspora*."
 msgstr ""
 
@@ -129,11 +129,11 @@ msgstr ""
 msgid "Global tags"
 msgstr ""
 
-#: 
+#:
 msgid "Custom tags to add to all posts being posted to Diaspora*."
 msgstr ""
 
-#: 
+#:
 msgid "Custom tags to add to this post when it\'s posted to Diaspora*."
 msgstr ""
 
@@ -158,18 +158,13 @@ msgstr ""
 msgid "Ignore"
 msgstr "無視する"
 
-#: 
+#:
 msgid "Successfully posted to Diaspora*."
 msgstr ""
 
-#: 
+#:
 msgid "Already posted to Diaspora*"
 msgstr ""
-
-#: lib/class-contextual-help.php:69
-#: lib/class-options.php:318
-msgid "Refresh pod list"
-msgstr "最新サーバーの一覧をダウンロード"
 
 #: lib/class-contextual-help.php:98
 #: lib/class-options.php:377
@@ -357,17 +352,17 @@ msgid "WP to diaspora*"
 msgstr "WP to diaspora*"
 
 #. Description of the plugin/theme
-#: 
+#:
 msgid "Automatically shares WordPress posts on diaspora*"
 msgstr "自動的にWordPressの記事をdiaspora*に投稿する"
 
 #. Author of the plugin/theme
-#: 
+#:
 msgid "Augusto Bennemann"
 msgstr "Augusto Bennemann"
 
 #. Author URI of the plugin/theme
-#: 
+#:
 msgid "https://github.com/gutobenn"
 msgstr "https://github.com/gutobenn"
 
@@ -408,10 +403,6 @@ msgstr "Diaspora*のサーバー名"
 
 #: lib/class-contextual-help.php:68
 msgid "This is the domain name of the pod you are on (e.g. joindiaspora.com)"
-msgstr ""
-
-#: lib/class-contextual-help.php:69
-msgid "Use the \"%s\" button to prepopulate the input field to help choose your pod."
 msgstr ""
 
 #: lib/class-contextual-help.php:71

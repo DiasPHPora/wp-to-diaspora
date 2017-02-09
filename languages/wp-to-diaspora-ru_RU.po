@@ -37,7 +37,7 @@ msgid "Post to Diaspora*"
 msgstr "Опубликовать на Diaspora*"
 
 #. Plugin Name of the plugin/theme
-#: 
+#:
 msgid "WP to Diaspora*"
 msgstr "WP to Diaspora*"
 
@@ -47,7 +47,7 @@ msgid "https://github.com/DiasPHPora/wp-to-diaspora"
 msgstr "https://github.com/DiasPHPora/wp-to-diaspora"
 
 #. Description of the plugin/theme
-#: 
+#:
 msgid "Automatically share WordPress posts on Diaspora*"
 msgstr "Автоматический репост статей с Wordpress на Diaspora*"
 
@@ -60,11 +60,11 @@ msgstr "Полный текст"
 msgid "Display"
 msgstr "Показать"
 
-#: 
+#:
 msgid "WP to Diaspora*: Sending \\"%1$s\\" failed with error: %2$s"
 msgstr "WP to Diaspora: Отправка \\"%1$s\\" завершилась с ошибкой:  %2$s"
 
-#: 
+#:
 msgid "Diaspora* Setup"
 msgstr "Настройка Diaspora*"
 
@@ -72,11 +72,11 @@ msgstr "Настройка Diaspora*"
 msgid "Posting Defaults"
 msgstr "Настройки по умолчанию для репостинга"
 
-#: 
+#:
 msgid "Set up the connection to your Diaspora* account."
 msgstr "Настрой подключение к своему аккаунту в Diaspora*"
 
-#: 
+#:
 msgid "Password already set"
 msgstr "Пароль уже введён"
 
@@ -84,7 +84,7 @@ msgstr "Пароль уже введён"
 msgid "If you would like to change the password type a new one. Otherwise leave this blank."
 msgstr "Для смены пароля, введи свой новый пароль. Иначе оставь поле пустым."
 
-#: 
+#:
 msgid "Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the \"WP to Diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr "Задай здесь поведение по умолчанию для всех сообщений. Эти настройки можно изменить индивидуально для каждого сообщения, изменив значения в виджете \"WP to Diaspora\", который отображается на экране редактирования пообщения."
 
@@ -92,7 +92,7 @@ msgstr "Задай здесь поведение по умолчанию для 
 msgid "Include a link back to your original post."
 msgstr "Добавить ссылку на первоисточник."
 
-#: 
+#:
 msgid "Choose which tags should be posted to Diaspora*."
 msgstr "Выбери, какие теги следует репостить в Diaspora*."
 
@@ -128,11 +128,11 @@ msgstr "Все теги (глобальные, кастомные и теги с
 msgid "Global tags"
 msgstr "Глобальные теги"
 
-#: 
+#:
 msgid "Custom tags to add to all posts being posted to Diaspora*."
 msgstr "Кастомные теги, которые следует добавлять ко всем сообщения при репосте в Diaspora*."
 
-#: 
+#:
 msgid "Custom tags to add to this post when it\'s posted to Diaspora*."
 msgstr "Кастомные теги, которые следует добавлять к этому сообщению при репосте в Diaspora*."
 
@@ -157,18 +157,13 @@ msgstr "Типы записей"
 msgid "Ignore"
 msgstr "Игнорировать"
 
-#: 
+#:
 msgid "Successfully posted to Diaspora*."
 msgstr "Успешно опубликовано в Diaspora*."
 
-#: 
+#:
 msgid "Already posted to Diaspora*"
 msgstr "Уже опубликовано в Diaspora*"
-
-#: lib/class-contextual-help.php:69
-#: lib/class-options.php:318
-msgid "Refresh pod list"
-msgstr "Обновить список серверов"
 
 #: lib/class-contextual-help.php:98
 #: lib/class-options.php:377
@@ -356,17 +351,17 @@ msgid "WP to diaspora*"
 msgstr "WP to diaspora*"
 
 #. Description of the plugin/theme
-#: 
+#:
 msgid "Automatically shares WordPress posts on diaspora*"
 msgstr "Автоматический репост статей с Wordpress на diaspora*"
 
 #. Author of the plugin/theme
-#: 
+#:
 msgid "Augusto Bennemann"
 msgstr "Augusto Bennemann"
 
 #. Author URI of the plugin/theme
-#: 
+#:
 msgid "https://github.com/gutobenn"
 msgstr "https://github.com/gutobenn"
 
@@ -405,10 +400,6 @@ msgstr "Сервер diaspora*"
 #: lib/class-contextual-help.php:68
 msgid "This is the domain name of the pod you are on (e.g. joindiaspora.com)"
 msgstr "Это доменное имя  твоего сервера (напр., joindiaspora.com)"
-
-#: lib/class-contextual-help.php:69
-msgid "Use the \"%s\" button to prepopulate the input field to help choose your pod."
-msgstr "Чтобы выбрать свой сервер из списка в поле ввода, используй кнопку \"%s\" для получения списка."
 
 #: lib/class-contextual-help.php:71
 msgid "Your diaspora* username (without the pod domain)."

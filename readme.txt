@@ -92,6 +92,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= next =
+* Remove AJAX pod list update and add static list instead
+
 = 1.8.0 =
 * Update filters to pass WP2D_Post object
 

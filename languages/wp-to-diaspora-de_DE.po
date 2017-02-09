@@ -36,7 +36,7 @@ msgid "Post to Diaspora*"
 msgstr "Auf Diaspora* posten"
 
 #. Plugin Name of the plugin/theme
-#: 
+#:
 msgid "WP to Diaspora*"
 msgstr "WP nach Diaspora*"
 
@@ -46,7 +46,7 @@ msgid "https://github.com/DiasPHPora/wp-to-diaspora"
 msgstr "https://github.com/DiasPHPora/wp-to-diaspora"
 
 #. Description of the plugin/theme
-#: 
+#:
 msgid "Automatically share WordPress posts on Diaspora*"
 msgstr "WordPress-Beiträge automatisch auf Diaspora* teilen"
 
@@ -59,11 +59,11 @@ msgstr "Vollständiger Post"
 msgid "Display"
 msgstr "Anzeige"
 
-#: 
+#:
 msgid "WP to Diaspora*: Sending \\"%1$s\\" failed with error: %2$s"
 msgstr "WP to Diaspora*: Senden von \\"%1$s\\" schlug fehl. Fehler: %2$s"
 
-#: 
+#:
 msgid "Diaspora* Setup"
 msgstr "Diaspora* Setup"
 
@@ -71,11 +71,11 @@ msgstr "Diaspora* Setup"
 msgid "Posting Defaults"
 msgstr "Posting-Standard"
 
-#: 
+#:
 msgid "Set up the connection to your Diaspora* account."
 msgstr "Verbindung mit deinem Diaspora* Account herstellen"
 
-#: 
+#:
 msgid "Password already set"
 msgstr "Passwort wurde schon festgelegt"
 
@@ -83,7 +83,7 @@ msgstr "Passwort wurde schon festgelegt"
 msgid "If you would like to change the password type a new one. Otherwise leave this blank."
 msgstr "Wenn du dein Passwort ändern möchstest, tippe das neue hier ein. Anderfalls, lass' dieses Feld leer."
 
-#: 
+#:
 msgid "Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the \"WP to Diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr "Definiere das Standardverhalten für Posts. Diese Einstellungen können für jeden Post individuell über die Werte in der \"WP to Diaspora*\"-Metabox geändert werden, die in deinem \"Beitrag bearbeiten\"-Dialog angezeigt wird."
 
@@ -91,7 +91,7 @@ msgstr "Definiere das Standardverhalten für Posts. Diese Einstellungen können 
 msgid "Include a link back to your original post."
 msgstr "Link zum Originalbeitrag mitposten."
 
-#: 
+#:
 msgid "Choose which tags should be posted to Diaspora*."
 msgstr "Wähle die Tags aus, die auf Diaspora* gepostet werden sollen."
 
@@ -127,11 +127,11 @@ msgstr "Alle Tags (global, custom und Beitrag)"
 msgid "Global tags"
 msgstr "Globale Tags"
 
-#: 
+#:
 msgid "Custom tags to add to all posts being posted to Diaspora*."
 msgstr "Custom Tags, die jedem auf Diaspora* geposteten Beitrag hinzugefügt werden."
 
-#: 
+#:
 msgid "Custom tags to add to this post when it\'s posted to Diaspora*."
 msgstr "Custom Tags, die diesem Beitrag hinzugefügt werden, wenn er auf Diaspora* gespostet wird."
 
@@ -156,18 +156,13 @@ msgstr "Beitragstypen"
 msgid "Ignore"
 msgstr "Ignorieren"
 
-#: 
+#:
 msgid "Successfully posted to Diaspora*."
 msgstr "Erfolgreich auf Diaspora* gepostet."
 
-#: 
+#:
 msgid "Already posted to Diaspora*"
 msgstr "Wurde schon auf Diaspora* gepostet"
-
-#: lib/class-contextual-help.php:69
-#: lib/class-options.php:318
-msgid "Refresh pod list"
-msgstr "Pod-Liste aktualisieren"
 
 #: lib/class-contextual-help.php:98
 #: lib/class-options.php:377
@@ -364,18 +359,18 @@ msgid "WP to diaspora*"
 msgstr "WP nach Diaspora*"
 
 #. Description of the plugin/theme
-#: 
+#:
 #, fuzzy
 msgid "Automatically shares WordPress posts on diaspora*"
 msgstr "WordPress-Beiträge automatisch auf Diaspora* teilen"
 
 #. Author of the plugin/theme
-#: 
+#:
 msgid "Augusto Bennemann"
 msgstr "Augusto Bennemann"
 
 #. Author URI of the plugin/theme
-#: 
+#:
 msgid "https://github.com/gutobenn"
 msgstr "https://github.com/gutobenn"
 
@@ -416,10 +411,6 @@ msgstr "Diaspora* Pod"
 #: lib/class-contextual-help.php:68
 msgid "This is the domain name of the pod you are on (e.g. joindiaspora.com)"
 msgstr "Dies ist der Domainname des Pods, auf dem du bist (e.g. joindiaspora.com)"
-
-#: lib/class-contextual-help.php:69
-msgid "Use the \"%s\" button to prepopulate the input field to help choose your pod."
-msgstr "Benutze den \"%s\"-Button um das Eingabefeld vorauszufüllen und bei der Pod-Auswahl zu helfen."
 
 #: lib/class-contextual-help.php:71
 msgid "Your diaspora* username (without the pod domain)."
