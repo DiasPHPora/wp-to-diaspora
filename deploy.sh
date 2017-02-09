@@ -20,7 +20,7 @@ PLUGIN_FILE="${PLUGIN_PATH}/${PLUGIN_SLUG}.php" # this should be the name of you
 
 # SVN config.
 SVN_PATH="/tmp/${PLUGIN_SLUG}-${RANDOM}${RANDOM}" # path to a temp SVN repo. No trailing slash required and don't add trunk.
-SVN_URL="http://plugins.svn.wordpress.org/${PLUGIN_SLUG}" # Remote SVN repo on wordpress.org, with no trailing slash
+SVN_URL="https://plugins.svn.wordpress.org/${PLUGIN_SLUG}" # Remote SVN repo on wordpress.org, with no trailing slash
 SVN_USER="gutobenn" # your svn username
 SVN_IGNORE="
 .editorconfig
@@ -31,7 +31,7 @@ SVN_IGNORE="
 composer.json
 composer.lock
 deploy.sh
-phpunit.xml
+phpunit.xml.dist
 README.md
 tests"
 
@@ -114,7 +114,7 @@ echo
 
 printf "Exporting the HEAD of master from git to the trunk of SVN..."
 git checkout-index -a -f --prefix="${SVN_PATH}/trunk/"
-mv -f "${SVN_PATH}/trunk/assets/*" "${SVN_PATH}/assets"
+mv -f "${SVN_PATH}/trunk/assets"/* "${SVN_PATH}/assets"
 rm -rf "${SVN_PATH}/trunk/assets"
 echo " Done."
 
@@ -148,7 +148,7 @@ cd "${SVN_PATH}/trunk/"
 
 # Install the dependencies with composer
 printf " - Bring dependencies up to date (composer install)..."
-composer install &>/dev/null
+composer install --no-dev &>/dev/null
 # We don't need the vendor bin folder.
 rm -rf vendor/bin &>/dev/null
 echo " Done."
