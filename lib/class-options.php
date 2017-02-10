@@ -63,9 +63,6 @@ class WP2D_Options {
 	/** Singleton, keep private. */
 	final private function __construct() { }
 
-	/** Singleton, keep private. */
-	final private function __wakeup() { }
-
 	/**
 	 * Create / Get the instance of this class.
 	 *

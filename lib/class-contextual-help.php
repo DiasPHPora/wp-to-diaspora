@@ -77,9 +77,6 @@ class WP2D_Contextual_Help {
 	final private function __clone() { }
 
 	/** Singleton, keep private. */
-	final private function __wakeup() { }
-
-	/** Singleton, keep private. */
 	final private function __construct() { }
 
 	/**
