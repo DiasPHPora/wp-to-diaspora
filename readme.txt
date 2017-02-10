@@ -4,7 +4,7 @@ Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
 Tested up to: 4.7.2
-Stable tag: 1.8.0
+Stable tag: 1.9.0
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -92,7 +92,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= next =
+= 1.9.0 =
 * Remove AJAX pod list update and add static list instead
 * Remove certificate bundle downloader and simply refer to the wiki in the help tab
 * Remove some superfluous member value assignments
