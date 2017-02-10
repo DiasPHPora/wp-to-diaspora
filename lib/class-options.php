@@ -19,7 +19,7 @@ class WP2D_Options {
 	 *
 	 * @var WP2D_Options
 	 */
-	private static $_instance = null;
+	private static $_instance;
 
 	/**
 	 * All default plugin options.
@@ -55,7 +55,7 @@ class WP2D_Options {
 	 *
 	 * @var array
 	 */
-	private static $_options = null;
+	private static $_options;
 
 	/** Singleton, keep private. */
 	final private function __clone() { }

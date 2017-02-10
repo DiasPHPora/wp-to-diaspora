@@ -45,7 +45,7 @@ class WP_To_Diaspora {
 	 *
 	 * @var WP_To_Diaspora
 	 */
-	private static $_instance = null;
+	private static $_instance;
 
 	/**
 	 * The minimum required WordPress version.
@@ -70,7 +70,7 @@ class WP_To_Diaspora {
 	 *
 	 * @var WP2D_API
 	 */
-	private $_api = null;
+	private $_api;
 
 	/**
 	 * Create / Get the instance of this class.

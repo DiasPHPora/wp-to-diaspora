@@ -19,7 +19,7 @@ class WP2D_Contextual_Help {
 	 *
 	 * @var WP2D_Contextual_Help
 	 */
-	private static $_instance = null;
+	private static $_instance;
 
 	/**
 	 * Create / Get the instance of this class.

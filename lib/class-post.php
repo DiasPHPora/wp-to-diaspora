@@ -24,7 +24,7 @@ class WP2D_Post {
 	 * @var WP_Post
 	 * @since 1.5.0
 	 */
-	public $post = null;
+	public $post;
 
 	/**
 	 * The original post ID.
@@ -32,7 +32,7 @@ class WP2D_Post {
 	 * @var int
 	 * @since 1.5.0
 	 */
-	public $ID = null;
+	public $ID;
 
 	/**
 	 * If this post should be shared on diaspora*.
@@ -40,7 +40,7 @@ class WP2D_Post {
 	 * @var bool
 	 * @since 1.5.0
 	 */
-	public $post_to_diaspora = null;
+	public $post_to_diaspora;
 
 	/**
 	 * If a link back to the original post should be added.
@@ -48,7 +48,7 @@ class WP2D_Post {
 	 * @var bool
 	 * @since 1.5.0
 	 */
-	public $fullentrylink = null;
+	public $fullentrylink;
 
 	/**
 	 * What content gets posted.
@@ -56,7 +56,7 @@ class WP2D_Post {
 	 * @var string
 	 * @since 1.5.0
 	 */
-	public $display = null;
+	public $display;
 
 	/**
 	 * The types of tags to post. (global,custom,post)
@@ -64,7 +64,7 @@ class WP2D_Post {
 	 * @var array
 	 * @since 1.5.0
 	 */
-	public $tags_to_post = null;
+	public $tags_to_post;
 
 	/**
 	 * The post's custom tags.
@@ -72,7 +72,7 @@ class WP2D_Post {
 	 * @var array
 	 * @since 1.5.0
 	 */
-	public $custom_tags = null;
+	public $custom_tags;
 
 	/**
 	 * Aspects this post gets posted to.
@@ -80,7 +80,7 @@ class WP2D_Post {
 	 * @var array
 	 * @since 1.5.0
 	 */
-	public $aspects = null;
+	public $aspects;
 
 	/**
 	 * Services this post gets posted to.
@@ -88,8 +88,7 @@ class WP2D_Post {
 	 * @var array
 	 * @since 1.5.0
 	 */
-	public $services = null;
-
+	public $services;
 
 	/**
 	 * The post's history of diaspora* posts.
@@ -97,7 +96,7 @@ class WP2D_Post {
 	 * @var array
 	 * @since 1.5.0
 	 */
-	public $post_history = null;
+	public $post_history;
 
 	/**
 	 * If the post actions have all been set up already.
