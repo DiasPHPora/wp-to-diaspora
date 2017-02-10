@@ -34,7 +34,7 @@ msgid "Post to Diaspora*"
 msgstr "Publicar en Diaspora*"
 
 #. Plugin Name of the plugin/theme
-#: 
+#:
 msgid "WP to Diaspora*"
 msgstr "WP to Diaspora*"
 
@@ -44,7 +44,7 @@ msgid "https://github.com/DiasPHPora/wp-to-diaspora"
 msgstr "https://github.com/DiasPHPora/wp-to-diaspora"
 
 #. Description of the plugin/theme
-#: 
+#:
 msgid "Automatically share WordPress posts on Diaspora*"
 msgstr "Compartir automáticamente post de Wordpress en Diaspora*"
 
@@ -57,11 +57,11 @@ msgstr "Publicación completa"
 msgid "Display"
 msgstr "Mostrar"
 
-#: 
+#:
 msgid "WP to Diaspora*: Sending \\"%1$s\\" failed with error: %2$s"
 msgstr "WP a Diaspora*: Enviando \\"%1$s\\" falló con error: %2$s "
 
-#: 
+#:
 msgid "Diaspora* Setup"
 msgstr "Configuración de Diaspora*"
 
@@ -69,11 +69,11 @@ msgstr "Configuración de Diaspora*"
 msgid "Posting Defaults"
 msgstr "Publicando (predet.)"
 
-#: 
+#:
 msgid "Set up the connection to your Diaspora* account."
 msgstr "Configurar la conexióncon tu cuenta Diaspora*"
 
-#: 
+#:
 msgid "Password already set"
 msgstr "Contraseña ya configurada"
 
@@ -81,7 +81,7 @@ msgstr "Contraseña ya configurada"
 msgid "If you would like to change the password type a new one. Otherwise leave this blank."
 msgstr "Si deseas cambiar la contraseña, escribe una nueva. De lo contrario deja esto en blanco.  "
 
-#: 
+#:
 msgid "Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the \"WP to Diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr "Definir el comportamiento predeterminado para todas las publicaciones. Estas configuraciones pueden modificarse por cada publicación de forma individual, cambiando los valores en la caja \"WP a Diaspora*\", que se despliega en la ventana de edición. "
 
@@ -89,7 +89,7 @@ msgstr "Definir el comportamiento predeterminado para todas las publicaciones. E
 msgid "Include a link back to your original post."
 msgstr "Incluir un enlace de vuelta hacia tu post original.  "
 
-#: 
+#:
 msgid "Choose which tags should be posted to Diaspora*."
 msgstr "Elije cuáles etiquetas serán publicadas en Diaspora*"
 
@@ -125,11 +125,11 @@ msgstr "Todas las etiquetas (global, personaliz., y de publicación)"
 msgid "Global tags"
 msgstr "Etiquetas globales"
 
-#: 
+#:
 msgid "Custom tags to add to all posts being posted to Diaspora*."
 msgstr "Etiquetas personalizadas para agregar a todas las publicaciones enviadas a Diaspora*."
 
-#: 
+#:
 msgid "Custom tags to add to this post when it\'s posted to Diaspora*."
 msgstr "Etiquetas personalizadas para agregar a esta publicación cuando se envía a Diaspora*"
 
@@ -154,18 +154,13 @@ msgstr "Tipos de publicación"
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: 
+#:
 msgid "Successfully posted to Diaspora*."
 msgstr "Correctamente publicado en Diaspora*"
 
-#: 
+#:
 msgid "Already posted to Diaspora*"
 msgstr "Ya publicado en Diaspora*"
-
-#: lib/class-contextual-help.php:69
-#: lib/class-options.php:318
-msgid "Refresh pod list"
-msgstr "Refrescar la lista de pods"
 
 #: lib/class-contextual-help.php:98
 #: lib/class-options.php:377
@@ -353,17 +348,17 @@ msgid "WP to diaspora*"
 msgstr "WP to diaspora*"
 
 #. Description of the plugin/theme
-#: 
+#:
 msgid "Automatically shares WordPress posts on diaspora*"
 msgstr "Comparte automáticamente publicaciones de WordPress a Diaspora*"
 
 #. Author of the plugin/theme
-#: 
+#:
 msgid "Augusto Bennemann"
 msgstr "Augusto Bennemann"
 
 #. Author URI of the plugin/theme
-#: 
+#:
 msgid "https://github.com/gutobenn"
 msgstr "https://github.com/gutobenn"
 
@@ -402,10 +397,6 @@ msgstr "Pod Diaspora*"
 #: lib/class-contextual-help.php:68
 msgid "This is the domain name of the pod you are on (e.g. joindiaspora.com)"
 msgstr "Este es el nombre de dominio del pod en el que estás (ej: joindiaspora.com)"
-
-#: lib/class-contextual-help.php:69
-msgid "Use the \"%s\" button to prepopulate the input field to help choose your pod."
-msgstr "Utiliza el botón \"%s\" para pre-completar el campo de ingreso para ayudarte a elegir el pod "
 
 #: lib/class-contextual-help.php:71
 msgid "Your diaspora* username (without the pod domain)."

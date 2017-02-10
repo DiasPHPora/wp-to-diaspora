@@ -92,6 +92,10 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= next =
+* Remove AJAX pod list update and add static list instead
+* Remove certificate bundle downloader and simply refer to the wiki in the help tab
+
 = 1.8.0 =
 * Update filters to pass WP2D_Post object
 
