@@ -19,7 +19,7 @@ class WP2D_Contextual_Help {
 	 *
 	 * @var WP2D_Contextual_Help
 	 */
-	private static $_instance = null;
+	private static $_instance;
 
 	/**
 	 * Create / Get the instance of this class.
@@ -75,9 +75,6 @@ class WP2D_Contextual_Help {
 
 	/** Singleton, keep private. */
 	final private function __clone() { }
-
-	/** Singleton, keep private. */
-	final private function __wakeup() { }
 
 	/** Singleton, keep private. */
 	final private function __construct() { }
@@ -233,7 +230,7 @@ class WP2D_Contextual_Help {
 			'id'       => 'wp-to-diaspora',
 			'title'    => esc_html__( 'WP to diaspora*', 'wp-to-diaspora' ),
 			'content'  => '<p>' . sprintf(
-				esc_html__( 'For detailed information, refer to the contextual help on the %sWP to diaspora*%s settings page.', 'Placeholders represent the link.', 'wp-to-diaspora' ),
+				esc_html_x( 'For detailed information, refer to the contextual help on the %sWP to diaspora*%s settings page.', 'Placeholders represent the link.', 'wp-to-diaspora' ),
 				'<a href="options-general.php?page=wp_to_diaspora" target="_blank">', '</a>'
 			) . '</p>',
 		) );
