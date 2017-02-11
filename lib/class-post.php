@@ -274,10 +274,10 @@ class WP2D_Post {
 		 *
 		 * @since 1.5.4.1
 		 *
-		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
 		 * @param string    $default   The whole HTML of the title link to be outputted.
+		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
 		 */
-		$link = apply_filters( 'wp2d_title_filter', $this, $default );
+		$link = apply_filters( 'wp2d_title_filter', $default, $this );
 
 		return '<p>' . $link . '</p>';
 	}
@@ -424,11 +424,11 @@ class WP2D_Post {
 			 *
 			 * @since 1.5.4.1
 			 *
-			 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
 			 * @param string    $default   The whole HTML of the text and link to be outputted.
+			 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
 			 * @param string    $text      The "Originally posted at:" text before the link.
 			 */
-			$link = apply_filters( 'wp2d_posted_at_link_filter', $this, $default, $text );
+			$link = apply_filters( 'wp2d_posted_at_link_filter', $default, $this, $text );
 
 			$link = '<p>' . $link . '</p>';
 		}
