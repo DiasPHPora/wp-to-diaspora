@@ -4,7 +4,7 @@ Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
 Tested up to: 4.7.2
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -91,6 +91,9 @@ Basically, the server your WordPress installation is set up on makes a connectio
 Quite straightforward, right?
 
 == Changelog ==
+
+= 1.9.1 =
+* Fix wrong parameter order for filters
 
 = 1.9.0 =
 * Remove AJAX pod list update and add static list instead
