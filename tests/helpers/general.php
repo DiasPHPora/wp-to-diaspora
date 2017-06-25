@@ -25,6 +25,7 @@ function wp2d_helper_call_private_method( $object, $method ) {
 	$refMethod->setAccessible( true );
 
 	$params = array_slice( func_get_args(), 2 ); // Get all the parameters after $method.
+
 	return $refMethod->invokeArgs( $object, $params );
 }
 

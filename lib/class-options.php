@@ -305,7 +305,7 @@ class WP2D_Options {
 	 */
 	public function pod_render() {
 		// Update entries: curl 'https://podupti.me/api.php?key=4r45tg&format=json' | jq '.pods[].domain'
-		$pod_list = array(
+		$pod_list = [
 			'berdaguermontes.eu',
 			'berlinspora.de',
 			'bip.tw',
@@ -453,13 +453,13 @@ class WP2D_Options {
 			'wk3.org',
 			'www.datataffel.dk',
 			'www.diasporaix.de',
-		);
+		];
 		?>
 		https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo esc_attr( $this->get_option( 'pod' ) ); ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required>
 		<datalist id="pod-list">
-		<?php foreach ( $pod_list as $pod ) : ?>
-			<option value="<?php echo esc_attr( $pod ); ?>"></option>
-		<?php endforeach; ?>
+			<?php foreach ( $pod_list as $pod ) : ?>
+				<option value="<?php echo esc_attr( $pod ); ?>"></option>
+			<?php endforeach; ?>
 		</datalist>
 		<?php
 	}
