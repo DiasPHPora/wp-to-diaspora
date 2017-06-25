@@ -13,7 +13,7 @@ jQuery( document ).ready( function ( $ ) {
 		if ( '' !== tab && $tabLink.length ) {
 			// Drop down the help window if it isn't open already.
 			var $helpLink = $( '#contextual-help-link' );
-			if ( 'false' == $helpLink.attr( 'aria-expanded' ) ) {
+			if ( 'false' === $helpLink.attr( 'aria-expanded' ) ) {
 				$helpLink.click();
 			}
 			// Select the tab.
@@ -34,7 +34,7 @@ jQuery( document ).ready( function ( $ ) {
 	 * Make the aspect checkboxes clever, giving the 'public' aspect the power to disable all others.
 	 */
 	function smartAspectSelection() {
-		var $allAspectCheckboxes = $( '#aspects-container input[type="checkbox"]' );
+		var $allAspectCheckboxes = $( '#aspects-container' ).find( 'input[type="checkbox"]' );
 		var setDisabledAttrs = function () {
 			var disabled = ( $allAspectCheckboxes.filter( '[value="public"]' ).removeAttr( 'disabled' ).is( ':checked' ) ) ? 'disabled' : null;
 			$allAspectCheckboxes.not( '[value="public"]' ).attr( 'disabled', disabled );
@@ -183,7 +183,7 @@ jQuery( document ).ready( function ( $ ) {
 
 	// Enable all checkboxes on save, as disabled ones don't get saved.
 	$( '#submit, #submit-defaults, #save-post, #publish' ).click( function () {
-		$( '#aspects-container input[type="checkbox"]' ).removeAttr( 'disabled' );
+		$( '#aspects-container' ).find( 'input[type="checkbox"]' ).removeAttr( 'disabled' );
 	} );
 
 } );
