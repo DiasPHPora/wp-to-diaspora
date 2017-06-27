@@ -18,5 +18,5 @@ Feel free to help and [contribute translations](https://translate.wordpress.org/
 Many thanks to our many friendly translators, doing an amazing job :innocent:
 
 ### Donate
-[![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=gutobenn&url=https://github.com/DiasPHPora/wp-to-diaspora&title=WP to diaspora*&language=&tags=github&category=software)
+[![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=gutobenn&url=https://github.com/DiasPHPora/wp-to-diaspora&title=WP%20to%20diaspora*&language=&tags=github&category=software)
 Bitcoin: 1DVgfD9mzh6GPKZ5XGQeiJdVAQqVaJszAm
