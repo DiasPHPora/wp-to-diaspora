@@ -4,7 +4,7 @@ Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
 Tested up to: 4.8.0
-Stable tag: 1.9.1
+Stable tag: 2.0.0
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -85,7 +85,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= unreleased =
+= 2.0.0 =
 * Update components and optimise various parts of the code
 * New minimum PHP version is 5.4
 * Remove dynamic Pod list loading
@@ -219,7 +219,7 @@ Quite straightforward, right?
 
 == Upgrade Notice ==
 
-= next =
+= 2.0.0 =
 This update requires at least PHP 5.4.
 If you are still using PHP 5.3, stay on version 1.9.1.
 
