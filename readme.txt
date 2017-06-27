@@ -3,7 +3,7 @@ Contributors: gutobenn, noplanman
 Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
-Tested up to: 4.7.2
+Tested up to: 4.8.0
 Stable tag: 1.9.1
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
@@ -84,6 +84,12 @@ Basically, the server your WordPress installation is set up on makes a connectio
 Quite straightforward, right?
 
 == Changelog ==
+
+= unreleased =
+* Update components and optimise various parts of the code
+* New minimum PHP version is 5.4
+* Remove dynamic Pod list loading
+* Remove custom SSL certificate management
 
 = 1.9.1 =
 * Fix wrong parameter order for filters
@@ -212,6 +218,10 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
+
+= next =
+This update requires at least PHP 5.4.
+If you are still using PHP 5.3, stay on version 1.9.1.
 
 = 1.8.0 =
 Filters have been modified and now get the WP2D_Post object to allow access to all post details.

@@ -1,13 +1,17 @@
 <?php
 /**
- * Plugin Name: WP to diaspora*
- * Plugin URI:  https://github.com/DiasPHPora/wp-to-diaspora
- * Description: Automatically shares WordPress posts on diaspora*
- * Version:     1.9.1
- * Author:      Augusto Bennemann
- * Author URI:  https://github.com/gutobenn
- * Text Domain: wp-to-diaspora
- * Domain Path: /languages
+ * Plugin Name:       WP to diaspora*
+ * Plugin URI:        https://github.com/DiasPHPora/wp-to-diaspora
+ * Description:       Automatically shares WordPress posts on diaspora*
+ * Version:           1.9.1
+ * Author:            Augusto Bennemann
+ * Author URI:        https://github.com/gutobenn
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       wp-to-diaspora
+ * Domain Path:       /languages
+ * GitHub Plugin URI: DiasPHPora/wp-to-diaspora
+ * GitHub Branch:     master
  *
  * Copyright 2014-2015 Augusto Bennemann (email: gutobenn at gmail.com)
  *
