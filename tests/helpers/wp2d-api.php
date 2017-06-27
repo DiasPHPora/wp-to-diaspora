@@ -3,7 +3,7 @@
  * All helper methods for the WP2D tests.
  *
  * @package WP_To_Diaspora\Tests\Helpers
- * @since 1.7.0
+ * @since   1.7.0
  */
 
 /**
@@ -15,6 +15,7 @@
  *
  * @param string $pod   Pod to fake.
  * @param string $token Token to fake.
+ *
  * @return WP2D_API The fakely initialised API instance.
  */
 function wp2d_api_helper_get_fake_api_init( $pod = 'pod', $token = 'token' ) {
@@ -37,6 +38,7 @@ function wp2d_api_helper_get_fake_api_init( $pod = 'pod', $token = 'token' ) {
  * @param string $token    Token to fake.
  * @param string $username Username to fake.
  * @param string $password Password to fake.
+ *
  * @return WP2D_API The fakely initialised and logged in API instance.
  */
 function wp2d_api_helper_get_fake_api_init_login( $pod = 'pod', $token = 'token', $username = 'username', $password = 'password' ) {

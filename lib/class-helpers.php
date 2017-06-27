@@ -3,7 +3,7 @@
  * Plugin Helpers.
  *
  * @package WP_To_Diaspora\Helpers
- * @since 1.3.0
+ * @since   1.3.0
  */
 
 // Exit if accessed directly.
@@ -25,6 +25,8 @@ class WP2D_Helpers {
 	 * Add a line to the debug output. Include the stack trace to see where it's coming from.
 	 *
 	 * @param string $text Text to add.
+	 *
+	 * @return bool
 	 */
 	public static function add_debugging( $text ) {
 		// Make sure we're in debug mode.
@@ -33,7 +35,7 @@ class WP2D_Helpers {
 			foreach ( debug_backtrace() as $dbt ) {
 				extract( $dbt );
 				// Only trace back as far as the plugin goes.
-				if ( strstr( $file, plugin_dir_path( dirname( __FILE__ ) ) ) ) {
+				if ( strstr( $file, plugin_dir_path( __DIR__ ) ) ) {
 					$d = sprintf( "%s%s%s [%s:%s]\n", $class, $type, $function, basename( $file ), $line ) . $d;
 				}
 			}
@@ -42,6 +44,7 @@ class WP2D_Helpers {
 
 			return true;
 		}
+
 		return false;
 	}
 
@@ -54,6 +57,7 @@ class WP2D_Helpers {
 		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
 			return self::$_debugging;
 		}
+
 		return false;
 	}
 
@@ -63,6 +67,7 @@ class WP2D_Helpers {
 	 * @todo Make $input by value.
 	 *
 	 * @param array|string $input The string to be converted.
+	 *
 	 * @return array The converted array.
 	 */
 	public static function str_to_arr( &$input ) {
@@ -74,6 +79,7 @@ class WP2D_Helpers {
 			self::arr_to_str( $input );
 			self::str_to_arr( $input );
 		}
+
 		return $input;
 	}
 
@@ -83,6 +89,7 @@ class WP2D_Helpers {
 	 * @todo Make $input by value.
 	 *
 	 * @param array|string $input The array to be converted.
+	 *
 	 * @return string The converted string.
 	 */
 	public static function arr_to_str( &$input ) {
@@ -94,6 +101,7 @@ class WP2D_Helpers {
 			self::str_to_arr( $input );
 			self::arr_to_str( $input );
 		}
+
 		return $input;
 	}
 
@@ -102,13 +110,15 @@ class WP2D_Helpers {
 	 *
 	 * @param string $input String to be encrypted.
 	 * @param string $key   The key used for the encryption.
+	 *
 	 * @return string The encrypted string.
 	 */
 	public static function encrypt( $input, $key = AUTH_KEY ) {
-		if ( is_null( $input ) || '' === $input ) {
+		if ( null === $input || '' === $input ) {
 			return false;
 		}
 		global $wpdb;
+
 		return $wpdb->get_var( $wpdb->prepare( 'SELECT HEX(AES_ENCRYPT(%s,%s))', $input, $key ) );
 	}
 
@@ -117,13 +127,15 @@ class WP2D_Helpers {
 	 *
 	 * @param string $input String to be decrypted.
 	 * @param string $key   The key used for the decryption.
+	 *
 	 * @return string The decrypted string.
 	 */
 	public static function decrypt( $input, $key = AUTH_KEY ) {
-		if ( is_null( $input ) || '' === $input ) {
+		if ( null === $input || '' === $input ) {
 			return false;
 		}
 		global $wpdb;
+
 		return $wpdb->get_var( $wpdb->prepare( 'SELECT AES_DECRYPT(UNHEX(%s),%s)', $input, $key ) );
 	}
 

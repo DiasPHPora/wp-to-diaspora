@@ -3,7 +3,7 @@
  * Plugin Options.
  *
  * @package WP_To_Diaspora\Options
- * @since 1.3.0
+ * @since   1.3.0
  */
 
 // Exit if accessed directly.
@@ -26,29 +26,29 @@ class WP2D_Options {
 	 *
 	 * @var array
 	 */
-	private static $_default_options = array(
-		'aspects_list'       => array(),
-		'services_list'      => array(),
+	private static $_default_options = [
+		'aspects_list'       => [],
+		'services_list'      => [],
 		'post_to_diaspora'   => true,
-		'enabled_post_types' => array( 'post' ),
+		'enabled_post_types' => [ 'post' ],
 		'fullentrylink'      => true,
 		'display'            => 'full',
-		'tags_to_post'       => array( 'global', 'custom', 'post' ),
+		'tags_to_post'       => [ 'global', 'custom', 'post' ],
 		'global_tags'        => '',
-		'aspects'            => array( 'public' ),
-		'services'           => array(),
+		'aspects'            => [ 'public' ],
+		'services'           => [],
 		'version'            => WP2D_VERSION,
-	);
+	];
 
 	/**
 	 * Valid values for select fields.
 	 *
 	 * @var array
 	 */
-	private static $_valid_values = array(
-		'display'      => array( 'full', 'excerpt' ),
-		'tags_to_post' => array( 'global', 'custom', 'post' ),
-	);
+	private static $_valid_values = [
+		'display'      => [ 'full', 'excerpt' ],
+		'tags_to_post' => [ 'global', 'custom', 'post' ],
+	];
 
 	/**
 	 * All plugin options.
@@ -58,10 +58,12 @@ class WP2D_Options {
 	private static $_options;
 
 	/** Singleton, keep private. */
-	final private function __clone() { }
+	final private function __clone() {
+	}
 
 	/** Singleton, keep private. */
-	final private function __construct() { }
+	final private function __construct() {
+	}
 
 	/**
 	 * Create / Get the instance of this class.
@@ -69,10 +71,11 @@ class WP2D_Options {
 	 * @return WP2D_Options Instance of this class.
 	 */
 	public static function instance() {
-		if ( ! isset( self::$_instance ) ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 			self::$_instance->_setup();
 		}
+
 		return self::$_instance;
 	}
 
@@ -85,10 +88,10 @@ class WP2D_Options {
 		$this->get_option();
 
 		// Setup Options page and Contextual Help.
-		add_action( 'admin_menu', array( $this, 'setup_wpadmin_pages' ) );
+		add_action( 'admin_menu', [ $this, 'setup_wpadmin_pages' ] );
 
 		// Register all settings.
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_init', [ $this, 'register_settings' ] );
 	}
 
 
@@ -98,6 +101,7 @@ class WP2D_Options {
 	 * @todo Multi-level if statement to make it look prettier.
 	 *
 	 * @param string $default Tab to select if the current selection is invalid.
+	 *
 	 * @return string Return the currently selected tab.
 	 */
 	private function _current_tab( $default = 'defaults' ) {
@@ -115,11 +119,12 @@ class WP2D_Options {
 	 * Output all options tabs and return an array of them all, if requested by $return.
 	 *
 	 * @param bool $return Define if the options tabs should be returned.
+	 *
 	 * @return array (If requested) An array of the outputted options tabs.
 	 */
 	private function _options_page_tabs( $return = false ) {
 		// The array defining all options sections to be shown as tabs.
-		$tabs = array();
+		$tabs = [];
 		if ( $this->is_pod_set_up() ) {
 			$tabs['defaults'] = __( 'Defaults', 'wp-to-diaspora' );
 		}
@@ -131,7 +136,7 @@ class WP2D_Options {
 		$out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
 		foreach ( $tabs as $tab => $name ) {
 			// The tab link.
-			$out .= '<a class="nav-tab' . ( ( $tab === $this->_current_tab() ) ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
+			$out .= '<a class="nav-tab' . ( $this->_current_tab() === $tab ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
 		}
 		$out .= '</h2>';
 
@@ -142,6 +147,8 @@ class WP2D_Options {
 		if ( $return ) {
 			return $tabs;
 		}
+
+		return [];
 	}
 
 
@@ -153,7 +160,7 @@ class WP2D_Options {
 		<div class="wrap">
 			<h2>WP to diaspora*</h2>
 
-			<div id="wp2d-message" class="notice hidden" <?php echo ( defined( 'WP2D_DEBUGGING' ) ) ? ' data-debugging' : ''; ?>></div>
+			<div id="wp2d-message" class="notice hidden" <?php echo defined( 'WP2D_DEBUGGING' ) ? ' data-debugging' : ''; ?>></div>
 
 			<?php
 			// Check the connection status to diaspora.
@@ -197,7 +204,7 @@ class WP2D_Options {
 							'wp_to_diaspora_settings',
 							'wp_to_diaspora_connected',
 							$message,
-							( ! $api->has_last_error() ) ? 'updated' : 'error'
+							$api->has_last_error() ? 'error' : 'updated'
 						);
 					}
 				}
@@ -209,7 +216,7 @@ class WP2D_Options {
 
 			<?php $page_tabs = array_keys( $this->_options_page_tabs( true ) ); ?>
 
-			<form action="options.php" method="post">
+			<form action="<?php echo admin_url( 'options.php' ); ?>" method="post">
 				<input id="wp2d_no_js" type="hidden" name="wp_to_diaspora_settings[no_js]" value="1">
 				<?php
 				// Load the settings fields.
@@ -235,7 +242,7 @@ class WP2D_Options {
 	/**
 	 * Return if the settings for the pod setup have been entered.
 	 *
-	 * @return boolean If the setup for the pod has been done.
+	 * @return bool If the setup for the pod has been done.
 	 */
 	public function is_pod_set_up() {
 		return ( $this->get_option( 'pod' ) && $this->get_option( 'username' ) && $this->get_option( 'password' ) );
@@ -246,14 +253,14 @@ class WP2D_Options {
 	 */
 	public function setup_wpadmin_pages() {
 		// Add options page.
-		$hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', array( $this, 'admin_options_page' ) );
+		$hook = add_options_page( 'WP to diaspora*', 'WP to diaspora*', 'manage_options', 'wp_to_diaspora', [ $this, 'admin_options_page' ] );
 
 		// Setup the contextual help menu after the options page has been loaded.
-		add_action( 'load-' . $hook, array( 'WP2D_Contextual_Help', 'instance' ) );
+		add_action( 'load-' . $hook, [ 'WP2D_Contextual_Help', 'instance' ] );
 
 		// Setup the contextual help menu tab for post types. Checks are made there!
-		add_action( 'load-post.php', array( 'WP2D_Contextual_Help', 'instance' ) );
-		add_action( 'load-post-new.php', array( 'WP2D_Contextual_Help', 'instance' ) );
+		add_action( 'load-post.php', [ 'WP2D_Contextual_Help', 'instance' ] );
+		add_action( 'load-post-new.php', [ 'WP2D_Contextual_Help', 'instance' ] );
 	}
 
 	/**
@@ -261,17 +268,17 @@ class WP2D_Options {
 	 */
 	public function register_settings() {
 		// Register the settings with validation callback.
-		register_setting( 'wp_to_diaspora_settings', 'wp_to_diaspora_settings', array( $this, 'validate_settings' ) );
+		register_setting( 'wp_to_diaspora_settings', 'wp_to_diaspora_settings', [ $this, 'validate_settings' ] );
 
 		// Load only the sections of the selected tab.
 		switch ( $this->_current_tab() ) {
 			case 'defaults' :
 				// Add a "Defaults" section that contains all posting settings to be used by default.
-				add_settings_section( 'wp_to_diaspora_defaults_section', __( 'Posting Defaults', 'wp-to-diaspora' ), array( $this, 'defaults_section' ), 'wp_to_diaspora_settings' );
+				add_settings_section( 'wp_to_diaspora_defaults_section', __( 'Posting Defaults', 'wp-to-diaspora' ), [ $this, 'defaults_section' ], 'wp_to_diaspora_settings' );
 				break;
 			case 'setup' :
 				// Add a "Setup" section that contains the Pod domain, Username and Password.
-				add_settings_section( 'wp_to_diaspora_setup_section', __( 'diaspora* Setup', 'wp-to-diaspora' ), array( $this, 'setup_section' ), 'wp_to_diaspora_settings' );
+				add_settings_section( 'wp_to_diaspora_setup_section', __( 'diaspora* Setup', 'wp-to-diaspora' ), [ $this, 'setup_section' ], 'wp_to_diaspora_settings' );
 				break;
 		}
 	}
@@ -284,13 +291,13 @@ class WP2D_Options {
 		esc_html_e( 'Set up the connection to your diaspora* account.', 'wp-to-diaspora' );
 
 		// Pod entry field.
-		add_settings_field( 'pod', __( 'Diaspora* Pod', 'wp-to-diaspora' ), array( $this, 'pod_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
+		add_settings_field( 'pod', __( 'Diaspora* Pod', 'wp-to-diaspora' ), [ $this, 'pod_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
 
 		// Username entry field.
-		add_settings_field( 'username', __( 'Username' ), array( $this, 'username_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
+		add_settings_field( 'username', __( 'Username' ), [ $this, 'username_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
 
 		// Password entry field.
-		add_settings_field( 'password', __( 'Password' ), array( $this, 'password_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
+		add_settings_field( 'password', __( 'Password' ), [ $this, 'password_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
 	}
 
 	/**
@@ -298,7 +305,7 @@ class WP2D_Options {
 	 */
 	public function pod_render() {
 		// Update entries: curl 'https://podupti.me/api.php?key=4r45tg&format=json' | jq '.pods[].domain'
-		$pod_list = array(
+		$pod_list = [
 			'berdaguermontes.eu',
 			'berlinspora.de',
 			'bip.tw',
@@ -446,13 +453,13 @@ class WP2D_Options {
 			'wk3.org',
 			'www.datataffel.dk',
 			'www.diasporaix.de',
-		);
+		];
 		?>
 		https://<input type="text" name="wp_to_diaspora_settings[pod]" value="<?php echo esc_attr( $this->get_option( 'pod' ) ); ?>" placeholder="e.g. joindiaspora.com" autocomplete="on" list="pod-list" required>
 		<datalist id="pod-list">
-		<?php foreach ( $pod_list as $pod ) : ?>
-			<option value="<?php echo esc_attr( $pod ); ?>"></option>
-		<?php endforeach; ?>
+			<?php foreach ( $pod_list as $pod ) : ?>
+				<option value="<?php echo esc_attr( $pod ); ?>"></option>
+			<?php endforeach; ?>
 		</datalist>
 		<?php
 	}
@@ -472,8 +479,8 @@ class WP2D_Options {
 	public function password_render() {
 		// Special case if we already have a password.
 		$has_password = ( '' !== $this->get_option( 'password', '' ) );
-		$placeholder  = ( $has_password ) ? __( 'Password already set.', 'wp-to-diaspora' ) : __( 'Password' );
-		$required     = ( $has_password ) ? '' : ' required';
+		$placeholder  = $has_password ? __( 'Password already set.', 'wp-to-diaspora' ) : __( 'Password' );
+		$required     = $has_password ? '' : ' required';
 		?>
 		<input type="password" name="wp_to_diaspora_settings[password]" value="" placeholder="<?php echo esc_attr( $placeholder ); ?>"<?php echo esc_attr( $required ); ?>>
 		<?php if ( $has_password ) : ?>
@@ -489,47 +496,47 @@ class WP2D_Options {
 		esc_html_e( 'Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the "WP to diaspora*" meta box, which gets displayed in your post edit screen.', 'wp-to-diaspora' );
 
 		// Post types field.
-		add_settings_field( 'enabled_post_types', __( 'Post types', 'wp-to-diaspora' ), array( $this, 'post_types_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section' );
+		add_settings_field( 'enabled_post_types', __( 'Post types', 'wp-to-diaspora' ), [ $this, 'post_types_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section' );
 
-		 // Post to diaspora* checkbox.
-		add_settings_field( 'post_to_diaspora', __( 'Post to diaspora*', 'wp-to-diaspora' ), array( $this, 'post_to_diaspora_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'post_to_diaspora' ) );
+		// Post to diaspora* checkbox.
+		add_settings_field( 'post_to_diaspora', __( 'Post to diaspora*', 'wp-to-diaspora' ), [ $this, 'post_to_diaspora_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'post_to_diaspora' ) );
 
 		// Full entry link checkbox.
-		add_settings_field( 'fullentrylink', __( 'Show "Posted at" link?', 'wp-to-diaspora' ), array( $this, 'fullentrylink_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'fullentrylink' ) );
+		add_settings_field( 'fullentrylink', __( 'Show "Posted at" link?', 'wp-to-diaspora' ), [ $this, 'fullentrylink_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'fullentrylink' ) );
 
 		// Full text or excerpt radio buttons.
-		add_settings_field( 'display', __( 'Display', 'wp-to-diaspora' ), array( $this, 'display_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'display' ) );
+		add_settings_field( 'display', __( 'Display', 'wp-to-diaspora' ), [ $this, 'display_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'display' ) );
 
 		// Tags to post dropdown.
-		add_settings_field( 'tags_to_post', __( 'Tags to post', 'wp-to-diaspora' ), array( $this, 'tags_to_post_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'tags_to_post', 'gc' ) );
+		add_settings_field( 'tags_to_post', __( 'Tags to post', 'wp-to-diaspora' ), [ $this, 'tags_to_post_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'tags_to_post', 'gc' ) );
 
 		// Global tags field.
-		add_settings_field( 'global_tags', __( 'Global tags', 'wp-to-diaspora' ), array( $this, 'global_tags_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'global_tags' ) );
+		add_settings_field( 'global_tags', __( 'Global tags', 'wp-to-diaspora' ), [ $this, 'global_tags_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'global_tags' ) );
 
 		// Aspects checkboxes.
-		add_settings_field( 'aspects', __( 'Aspects', 'wp-to-diaspora' ), array( $this, 'aspects_services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', array( 'aspects', $this->get_option( 'aspects' ) ) );
+		add_settings_field( 'aspects', __( 'Aspects', 'wp-to-diaspora' ), [ $this, 'aspects_services_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', [ 'aspects', $this->get_option( 'aspects' ) ] );
 
 		// Services checkboxes.
-		add_settings_field( 'services', __( 'Services', 'wp-to-diaspora' ), array( $this, 'aspects_services_render' ), 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', array( 'services', $this->get_option( 'services' ) ) );
+		add_settings_field( 'services', __( 'Services', 'wp-to-diaspora' ), [ $this, 'aspects_services_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', [ 'services', $this->get_option( 'services' ) ] );
 	}
 
 	/**
 	 * Render the "Post types" checkboxes.
 	 */
 	public function post_types_render() {
-		$post_types = get_post_types( array( 'public' => true ), 'objects' );
+		$post_types = get_post_types( [ 'public' => true ], 'objects' );
 
 		// Remove excluded post types from the list.
-		$excluded_post_types = array( 'attachment', 'nav_menu_item', 'revision' );
+		$excluded_post_types = [ 'attachment', 'nav_menu_item', 'revision' ];
 		foreach ( $excluded_post_types as $excluded ) {
 			unset( $post_types[ $excluded ] );
 		}
 		?>
 
 		<select id="enabled-post-types" multiple data-placeholder="<?php esc_attr_e( 'None', 'wp-to-diaspora' ); ?>" class="chosen" name="wp_to_diaspora_settings[enabled_post_types][]">
-		<?php foreach ( $post_types as $post_type ) : ?>
-			<option value="<?php echo esc_attr( $post_type->name ); ?>" <?php selected( in_array( $post_type->name, $this->get_option( 'enabled_post_types' ) ) ); ?>><?php echo esc_html( $post_type->label ); ?></option>
-		<?php endforeach; ?>
+			<?php foreach ( $post_types as $post_type ) : ?>
+				<option value="<?php echo esc_attr( $post_type->name ); ?>" <?php selected( in_array( $post_type->name, $this->get_option( 'enabled_post_types' ), true ) ); ?>><?php echo esc_html( $post_type->label ); ?></option>
+			<?php endforeach; ?>
 		</select>
 
 		<p class="description"><?php esc_html_e( 'Choose which post types can be posted to diaspora*.', 'wp-to-diaspora' ); ?></p>
@@ -556,7 +563,7 @@ class WP2D_Options {
 	 */
 	public function fullentrylink_render( $show_link ) {
 		$description = __( 'Include a link back to your original post.', 'wp-to-diaspora' );
-		$checkbox = '<input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1"' . checked( $show_link, true, false ) . '>';
+		$checkbox    = '<input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1"' . checked( $show_link, true, false ) . '>';
 
 		if ( 'settings_page_wp_to_diaspora' === get_current_screen()->id ) : ?>
 			<label><?php echo $checkbox; ?><?php esc_html_e( 'Yes' ); ?></label>
@@ -573,7 +580,7 @@ class WP2D_Options {
 	 */
 	public function display_render( $display ) {
 		?>
-		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $display, 'full' ); ?>><?php esc_html_e( 'Full Post', 'wp-to-diaspora' ); ?></label><br />
+		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $display, 'full' ); ?>><?php esc_html_e( 'Full Post', 'wp-to-diaspora' ); ?></label><br/>
 		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php esc_html_e( 'Excerpt' ); ?></label>
 		<?php
 	}
@@ -585,7 +592,7 @@ class WP2D_Options {
 	 */
 	public function tags_to_post_render( $tags_to_post ) {
 		$on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
-		$description = esc_html__( 'Choose which tags should be posted to diaspora*.', 'wp-to-diaspora' );
+		$description      = esc_html__( 'Choose which tags should be posted to diaspora*.', 'wp-to-diaspora' );
 
 		if ( ! $on_settings_page ) {
 			echo '<label>' . esc_html( $description );
@@ -593,9 +600,9 @@ class WP2D_Options {
 
 		?>
 		<select id="tags-to-post" multiple data-placeholder="<?php esc_attr_e( 'No tags', 'wp-to-diaspora' ); ?>" class="chosen" name="wp_to_diaspora_settings[tags_to_post][]">
-			<option value="global" <?php selected( in_array( 'global', $tags_to_post ) ); ?>><?php esc_html_e( 'Global tags', 'wp-to-diaspora' ); ?></option>
-			<option value="custom" <?php selected( in_array( 'custom', $tags_to_post ) ); ?>><?php esc_html_e( 'Custom tags', 'wp-to-diaspora' ); ?></option>
-			<option value="post"   <?php selected( in_array( 'post',   $tags_to_post ) ); ?>><?php esc_html_e( 'Post tags',   'wp-to-diaspora' ); ?></option>
+			<option value="global" <?php selected( in_array( 'global', $tags_to_post, true ) ); ?>><?php esc_html_e( 'Global tags', 'wp-to-diaspora' ); ?></option>
+			<option value="custom" <?php selected( in_array( 'custom', $tags_to_post, true ) ); ?>><?php esc_html_e( 'Custom tags', 'wp-to-diaspora' ); ?></option>
+			<option value="post" <?php selected( in_array( 'post', $tags_to_post, true ) ); ?>><?php esc_html_e( 'Post tags', 'wp-to-diaspora' ); ?></option>
 		</select>
 
 		<?php if ( $on_settings_page ) : ?>
@@ -613,7 +620,7 @@ class WP2D_Options {
 	public function global_tags_render( $tags ) {
 		WP2D_Helpers::arr_to_str( $tags );
 		?>
-		<input type="text" class="wp2dtags" name="wp_to_diaspora_settings[global_tags]" value="<?php echo esc_attr( $tags ); ?>" placeholder="<?php esc_attr_e( 'Global tags', 'wp-to-diaspora' ); ?>" class="regular-text">
+		<input type="text" class="regular-text wp2d-tags" name="wp_to_diaspora_settings[global_tags]" value="<?php echo esc_attr( $tags ); ?>" placeholder="<?php esc_attr_e( 'Global tags', 'wp-to-diaspora' ); ?>">
 		<p class="description"><?php esc_html_e( 'Custom tags to add to all posts being posted to diaspora*.', 'wp-to-diaspora' ); ?></p>
 		<?php
 	}
@@ -628,7 +635,7 @@ class WP2D_Options {
 		?>
 		<label title="<?php esc_attr_e( 'Custom tags to add to this post when it\'s posted to diaspora*.', 'wp-to-diaspora' ); ?>">
 			<?php esc_html_e( 'Custom tags', 'wp-to-diaspora' ); ?>
-			<input type="text" class="wp2dtags" name="wp_to_diaspora_settings[custom_tags]" value="<?php echo esc_attr( $tags ); ?>" class="widefat">
+			<input type="text" class="widefat wp2d-tags" name="wp_to_diaspora_settings[custom_tags]" value="<?php echo esc_attr( $tags ); ?>">
 		</label>
 		<p class="description"><?php esc_html_e( 'Separate tags with commas' ); ?></p>
 		<?php
@@ -642,10 +649,6 @@ class WP2D_Options {
 	public function aspects_services_render( $args ) {
 		list( $type, $items ) = $args;
 
-		$refresh_button = '';
-		$description    = '';
-		$empty_label    = '';
-
 		// This is where the 2 types show their differences.
 		switch ( $type ) {
 			case 'aspects':
@@ -656,7 +659,8 @@ class WP2D_Options {
 
 			case 'services':
 				$refresh_button = __( 'Refresh Services', 'wp-to-diaspora' );
-				$description    = sprintf( '%1$s<br><a href="%2$s" target="_blank">%3$s</a>',
+				$description    = sprintf(
+					'%1$s<br><a href="%2$s" target="_blank">%3$s</a>',
 					esc_html__( 'Choose which services to share to.', 'wp-to-diaspora' ),
 					esc_url( 'https://' . $this->get_option( 'pod' ) . '/services' ),
 					esc_html__( 'Show available services on my pod.', 'wp-to-diaspora' )
@@ -668,7 +672,7 @@ class WP2D_Options {
 				return;
 		}
 
-		$items = array_filter( (array) $items ) ?: array();
+		$items = array_filter( (array) $items ) ?: [];
 
 		// Special case for this field if it's displayed on the settings page.
 		$on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
@@ -701,19 +705,20 @@ class WP2D_Options {
 	/**
 	 * Get a specific option.
 	 *
-	 * @param string       $option  ID of option to get.
-	 * @param array|string $default Override default value if option not found.
-	 * @return array|string Requested option value.
+	 * @param null|string $option  ID of option to get.
+	 * @param mixed       $default Override default value if option not found.
+	 *
+	 * @return mixed Requested option value.
 	 */
 	public function get_option( $option = null, $default = null ) {
-		if ( ! isset( self::$_options ) ) {
+		if ( null === self::$_options ) {
 			self::$_options = get_option( 'wp_to_diaspora_settings', self::$_default_options );
 		}
-		if ( isset( $option ) ) {
+		if ( null !== $option ) {
 			if ( isset( self::$_options[ $option ] ) ) {
 				// Return found option value.
 				return self::$_options[ $option ];
-			} elseif ( isset( $default ) ) {
+			} elseif ( null !== $default ) {
 				// Return overridden default value.
 				return $default;
 			} elseif ( isset( self::$_default_options[ $option ] ) ) {
@@ -721,6 +726,8 @@ class WP2D_Options {
 				return self::$_default_options[ $option ];
 			}
 		}
+
+		return $default;
 	}
 
 	/**
@@ -737,19 +744,18 @@ class WP2D_Options {
 	 *
 	 * @param string       $option ID of option to get.
 	 * @param array|string $value  Value to be set for the passed option.
-	 * @param boolean      $save   Save the options immediately after setting them.
+	 * @param bool         $save   Save the options immediately after setting them.
 	 */
 	public function set_option( $option, $value, $save = false ) {
-		if ( isset( $option ) ) {
-			if ( isset( $value ) ) {
+		if ( null !== $option ) {
+			if ( null !== $value ) {
 				self::$_options[ $option ] = $value;
 			} else {
 				unset( self::$_options[ $option ] );
 			}
 		}
-		if ( $save ) {
-			self::save();
-		}
+
+		$save && $this->save();
 	}
 
 	/**
@@ -763,6 +769,7 @@ class WP2D_Options {
 	 * Get all valid input values for the passed field.
 	 *
 	 * @param string $field Field to get the valid values for.
+	 *
 	 * @return array List of valid values.
 	 */
 	public function get_valid_values( $field ) {
@@ -775,13 +782,15 @@ class WP2D_Options {
 	 * Check if a value is valid for the passed field.
 	 *
 	 * @param string $field Field to check the valid value for.
-	 * @param object $value Value to check validity.
-	 * @return boolean If the passed value is valid.
+	 * @param mixed  $value Value to check validity.
+	 *
+	 * @return bool If the passed value is valid.
 	 */
 	public function is_valid_value( $field, $value ) {
-		if ( $valids = self::get_valid_values( $field ) ) {
-			return ( in_array( $value, $valids ) );
+		if ( $valids = $this->get_valid_values( $field ) ) {
+			return in_array( $value, $valids, true );
 		}
+
 		return false;
 	}
 
@@ -789,6 +798,7 @@ class WP2D_Options {
 	 * Validate all settings.
 	 *
 	 * @param array $input RAW input values.
+	 *
 	 * @return array Validated input values.
 	 */
 	public function validate_settings( $input ) {
@@ -818,11 +828,11 @@ class WP2D_Options {
 		// Saving the default options.
 		if ( isset( $input['submit_defaults'] ) ) {
 			if ( ! isset( $input['enabled_post_types'] ) ) {
-				$input['enabled_post_types'] = array();
+				$input['enabled_post_types'] = [];
 			}
 
 			// Checkboxes.
-			$this->validate_checkboxes( array( 'post_to_diaspora', 'fullentrylink' ), $input );
+			$this->validate_checkboxes( [ 'post_to_diaspora', 'fullentrylink' ], $input );
 
 			// Single Selects.
 			$this->validate_single_selects( 'display', $input );
@@ -834,7 +844,7 @@ class WP2D_Options {
 			$this->validate_tags( $input['global_tags'] );
 
 			// Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
-			$this->validate_aspects_services( $input['aspects'], array( 'public' ) );
+			$this->validate_aspects_services( $input['aspects'], [ 'public' ] );
 
 			// Clean up the list of services.
 			$this->validate_aspects_services( $input['services'] );
@@ -846,14 +856,11 @@ class WP2D_Options {
 			$input = self::$_default_options;
 
 			// Don't reset the fetched lists of aspects and services.
-			unset( $input['aspects_list'] );
-			unset( $input['services_list'] );
+			unset( $input['pod_list'], $input['aspects_list'], $input['services_list'] );
 		}
 
 		// Unset all unused input fields.
-		unset( $input['submit_defaults'] );
-		unset( $input['reset_defaults'] );
-		unset( $input['submit_setup'] );
+		unset( $input['submit_defaults'], $input['reset_defaults'], $input['submit_setup'] );
 
 		// Parse inputs with default options and return.
 		return wp_parse_args( $input, array_merge( self::$_default_options, self::$_options ) );
@@ -864,12 +871,14 @@ class WP2D_Options {
 	 *
 	 * @param string|array $checkboxes Checkboxes to validate.
 	 * @param array        $options    Options values themselves.
+	 *
 	 * @return array The validated options.
 	 */
 	public function validate_checkboxes( $checkboxes, &$options ) {
 		foreach ( WP2D_Helpers::str_to_arr( $checkboxes ) as $checkbox ) {
 			$options[ $checkbox ] = isset( $options[ $checkbox ] );
 		}
+
 		return $options;
 	}
 
@@ -878,6 +887,7 @@ class WP2D_Options {
 	 *
 	 * @param string|array $selects Name(s) of the select fields.
 	 * @param array        $options Options values themselves.
+	 *
 	 * @return array The validated options.
 	 */
 	public function validate_single_selects( $selects, &$options ) {
@@ -886,6 +896,7 @@ class WP2D_Options {
 				unset( $options[ $select ] );
 			}
 		}
+
 		return $options;
 	}
 
@@ -894,6 +905,7 @@ class WP2D_Options {
 	 *
 	 * @param string|array $selects Name(s) of the select fields.
 	 * @param array        $options Options values themselves.
+	 *
 	 * @return array The validated options.
 	 */
 	public function validate_multi_selects( $selects, &$options ) {
@@ -906,9 +918,10 @@ class WP2D_Options {
 					}
 				}
 			} else {
-				$options[ $select ] = array();
+				$options[ $select ] = [];
 			}
 		}
+
 		return $options;
 	}
 
@@ -916,16 +929,18 @@ class WP2D_Options {
 	 * Clean up the passed tags. Keep only alphanumeric, hyphen and underscore characters.
 	 *
 	 * @param array|string $tags Tags to be cleaned as array or comma seperated values.
+	 *
 	 * @return array The cleaned tags.
 	 */
 	public function validate_tags( &$tags ) {
 		WP2D_Helpers::str_to_arr( $tags );
 
-		$tags = array_map( array( $this, 'validate_tag' ),
+		$tags = array_map( [ $this, 'validate_tag' ],
 			array_unique(
 				array_filter( $tags, 'trim' )
 			)
 		);
+
 		return $tags;
 	}
 
@@ -935,10 +950,12 @@ class WP2D_Options {
 	 * @todo What about eastern characters? (chinese, indian, etc.)
 	 *
 	 * @param string $tag Tag to be cleaned.
+	 *
 	 * @return string The clean tag.
 	 */
 	public function validate_tag( &$tag ) {
 		$tag = preg_replace( '/[^\w $\-]/u', '', str_replace( ' ', '-', trim( $tag ) ) );
+
 		return $tag;
 	}
 
@@ -947,14 +964,16 @@ class WP2D_Options {
 	 *
 	 * @param array $aspects_services List of aspects or services that need to be validated.
 	 * @param array $default          Default value if not valid.
+	 *
 	 * @return array The validated list of aspects or services.
 	 */
-	public function validate_aspects_services( &$aspects_services, $default = array() ) {
+	public function validate_aspects_services( &$aspects_services, array $default = [] ) {
 		if ( empty( $aspects_services ) || ! is_array( $aspects_services ) ) {
 			$aspects_services = $default;
 		} else {
 			array_walk( $aspects_services, 'sanitize_text_field' );
 		}
+
 		return $aspects_services;
 	}
 }

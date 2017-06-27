@@ -3,7 +3,7 @@
  * A diaspora* flavoured WP Post class.
  *
  * @package WP_To_Diaspora\Post
- * @since 1.5.0
+ * @since   1.5.0
  */
 
 // Exit if accessed directly.
@@ -119,15 +119,15 @@ class WP2D_Post {
 		$instance = new WP2D_Post( null );
 
 		// Notices when a post has been shared or if it has failed.
-		add_action( 'admin_notices', array( $instance, 'admin_notices' ) );
-		add_action( 'admin_init', array( $instance, 'ignore_post_error' ) );
+		add_action( 'admin_notices', [ $instance, 'admin_notices' ] );
+		add_action( 'admin_init', [ $instance, 'ignore_post_error' ] );
 
 		// Handle diaspora* posting when saving the post.
-		add_action( 'save_post', array( $instance, 'post' ), 11, 2 );
-		add_action( 'save_post', array( $instance, 'save_meta_box_data' ), 10 );
+		add_action( 'save_post', [ $instance, 'post' ], 20, 2 );
+		add_action( 'save_post', [ $instance, 'save_meta_box_data' ], 10 );
 
 		// Add meta boxes.
-		add_action( 'add_meta_boxes', array( $instance, 'add_meta_boxes' ) );
+		add_action( 'add_meta_boxes', [ $instance, 'add_meta_boxes' ] );
 
 		self::$_is_set_up = true;
 	}
@@ -158,7 +158,7 @@ class WP2D_Post {
 
 			// Assign all meta values, expanding non-existent ones with the defaults.
 			$meta_current = get_post_meta( $this->ID, '_wp_to_diaspora', true );
-			$meta = wp_parse_args(
+			$meta         = wp_parse_args(
 				$meta_current,
 				$options->get_options()
 			);
@@ -173,7 +173,7 @@ class WP2D_Post {
 			// Check DiasPHPora/wp-to-diaspora#91 for reference.
 			// Also, when we have a post scheduled for publishing, don't touch it.
 			// This is important when modifying scheduled posts using Quick Edit.
-			if ( ! in_array( $this->post->post_status, array( 'auto-draft', 'future' ) ) && ! $meta_current ) {
+			if ( ! $meta_current && ! in_array( $this->post->post_status, [ 'auto-draft', 'future' ], true ) ) {
 				$this->post_to_diaspora = false;
 			}
 
@@ -186,11 +186,12 @@ class WP2D_Post {
 	 *
 	 * @since 1.5.0
 	 *
-	 * @todo Maybe somebody wants to share a password protected post to a closed aspect.
+	 * @todo  Maybe somebody wants to share a password protected post to a closed aspect.
 	 *
 	 * @param integer $post_id ID of the post being saved.
 	 * @param WP_Post $post    Post object being saved.
-	 * @return boolean If the post was posted successfully.
+	 *
+	 * @return bool If the post was posted successfully.
 	 */
 	public function post( $post_id, $post ) {
 		$this->_assign_wp_post( $post );
@@ -198,7 +199,7 @@ class WP2D_Post {
 		$options = WP2D_Options::instance();
 
 		// Is this post type enabled for posting?
-		if ( ! in_array( $post->post_type, $options->get_option( 'enabled_post_types' ) ) ) {
+		if ( ! in_array( $post->post_type, $options->get_option( 'enabled_post_types' ), true ) ) {
 			return false;
 		}
 
@@ -222,39 +223,45 @@ class WP2D_Post {
 		// Add the original entry link to the post?
 		$status_message .= $this->_get_posted_at_link();
 
-		$status_converter = new HtmlConverter( array( 'strip_tags' => true ) );
-		$status_message  = $status_converter->convert( $status_message );
+		$status_converter = new HtmlConverter( [ 'strip_tags' => true ] );
+		$status_message   = $status_converter->convert( $status_message );
 
 		// Set up the connection to diaspora*.
 		$api = WP2D_Helpers::api_quick_connect();
-		if ( ! empty( $status_message ) ) {
-			if ( $api->has_last_error() ) {
-				// Save the post error as post meta data, so we can display it to the user.
-				update_post_meta( $post_id, '_wp_to_diaspora_post_error', $api->get_last_error() );
-				return false;
-			}
-
-			// Add services to share to via diaspora*.
-			$extra_data = array(
-				'services' => $this->services,
-			);
-
-			// Try to post to diaspora*.
-			if ( $response = $api->post( $status_message, $this->aspects, $extra_data ) ) {
-				// Save certain diaspora* post data as meta data for future reference.
-				$this->_save_to_history( (object) $response );
-
-				// If there is still a previous post error around, remove it.
-				delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
-
-				// Unset post_to_diaspora meta field to prevent mistakenly republishing to diaspora*.
-				$meta = get_post_meta( $post_id, '_wp_to_diaspora', true );
-				$meta['post_to_diaspora'] = false;
-				update_post_meta( $post_id, '_wp_to_diaspora', $meta );
-			}
-		} else {
+		if ( empty( $status_message ) ) {
 			return false;
 		}
+
+		if ( $api->has_last_error() ) {
+			// Save the post error as post meta data, so we can display it to the user.
+			update_post_meta( $post_id, '_wp_to_diaspora_post_error', $api->get_last_error() );
+
+			return false;
+		}
+
+		// Add services to share to via diaspora*.
+		$extra_data = [
+			'services' => $this->services,
+		];
+
+		// Try to post to diaspora*.
+		$response = $api->post( $status_message, $this->aspects, $extra_data );
+		if ( ! $response ) {
+			return false;
+		}
+
+		// Save certain diaspora* post data as meta data for future reference.
+		$this->_save_to_history( (object) $response );
+
+		// If there is still a previous post error around, remove it.
+		delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
+
+		// Unset post_to_diaspora meta field to prevent mistakenly republishing to diaspora*.
+		$meta                     = get_post_meta( $post_id, '_wp_to_diaspora', true );
+		$meta['post_to_diaspora'] = false;
+		update_post_meta( $post_id, '_wp_to_diaspora', $meta );
+
+		return true;
 	}
 
 	/**
@@ -265,9 +272,9 @@ class WP2D_Post {
 	 * @return string Post title as a link.
 	 */
 	private function _get_title_link() {
-		$title = esc_html( $this->post->post_title );
+		$title     = esc_html( $this->post->post_title );
 		$permalink = get_permalink( $this->ID );
-		$default = sprintf( '<strong><a href="%2$s" title="%2$s">%1$s</a></strong>', $title, $permalink );
+		$default   = sprintf( '<strong><a href="%2$s" title="%2$s">%1$s</a></strong>', $title, $permalink );
 
 		/**
 		 * Filter the title link at the top of the post.
@@ -292,10 +299,10 @@ class WP2D_Post {
 	private function _get_full_content() {
 		// Only allow certain shortcodes.
 		global $shortcode_tags;
-		$shortcode_tags_bkp = array();
+		$shortcode_tags_bkp = [];
 
 		foreach ( $shortcode_tags as $shortcode_tag => $shortcode_function ) {
-			if ( ! in_array( $shortcode_tag, apply_filters( 'wp2d_shortcodes_filter', array( 'wp_caption', 'caption', 'gallery' ) ) ) ) {
+			if ( ! in_array( $shortcode_tag, apply_filters( 'wp2d_shortcodes_filter', [ 'wp_caption', 'caption', 'gallery' ] ), true ) ) {
 				$shortcode_tags_bkp[ $shortcode_tag ] = $shortcode_function;
 				unset( $shortcode_tags[ $shortcode_tag ] );
 			}
@@ -303,19 +310,22 @@ class WP2D_Post {
 
 		// Disable all filters and then enable only defaults. This prevents additional filters from being posted to diaspora*.
 		remove_all_filters( 'the_content' );
-		foreach ( apply_filters( 'wp2d_content_filters_filter', array( 'do_shortcode', 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', array( $this, 'embed_remove' ) ) ) as $filter ) {
+
+		/** @var array $content_filters */
+		$content_filters = apply_filters( 'wp2d_content_filters_filter', [ 'do_shortcode', 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', [ $this, 'embed_remove' ] ] );
+		foreach ( $content_filters as $filter ) {
 			add_filter( 'the_content', $filter );
 		}
 
 		// Extract URLs from [embed] shortcodes.
-		add_filter( 'embed_oembed_html', array( $this, 'embed_url' ), 10, 2 );
+		add_filter( 'embed_oembed_html', [ $this, 'embed_url' ], 10, 2 );
 
 		// Add the pretty caption after the images.
-		add_filter( 'img_caption_shortcode', array( $this, 'custom_img_caption' ), 10, 3 );
+		add_filter( 'img_caption_shortcode', [ $this, 'custom_img_caption' ], 10, 3 );
 
 		// Overwrite the native shortcode handler to add pretty captions.
 		// http://wordpress.stackexchange.com/a/74675/54456 for explanation.
-		add_shortcode( 'gallery', array( $this, 'custom_gallery_shortcode' ) );
+		add_shortcode( 'gallery', [ $this, 'custom_gallery_shortcode' ] );
 
 		$full_content = apply_filters( 'the_content', $this->post->post_content );
 
@@ -346,6 +356,7 @@ class WP2D_Post {
 				$excerpt = wp_trim_words( $content, 42, '[...]' );
 			}
 		}
+
 		return '<p>' . $excerpt . '</p>';
 	}
 
@@ -357,29 +368,29 @@ class WP2D_Post {
 	 * @return string Tags added to the post.
 	 */
 	private function _get_tags_to_add() {
-		$options = WP2D_Options::instance();
+		$options      = WP2D_Options::instance();
 		$tags_to_post = $this->tags_to_post;
 		$tags_to_add  = '';
 
 		// Add any diaspora* tags?
 		if ( ! empty( $tags_to_post ) ) {
 			// The diaspora* tags to add to the post.
-			$diaspora_tags = array();
+			$diaspora_tags = [];
 
 			// Add global tags?
 			$global_tags = $options->get_option( 'global_tags' );
-			if ( in_array( 'global', $tags_to_post ) && is_array( $global_tags ) ) {
+			if ( is_array( $global_tags ) && in_array( 'global', $tags_to_post, true ) ) {
 				$diaspora_tags += array_flip( $global_tags );
 			}
 
 			// Add custom tags?
-			if ( in_array( 'custom', $tags_to_post ) && is_array( $this->custom_tags ) ) {
+			if ( is_array( $this->custom_tags ) && in_array( 'custom', $tags_to_post, true ) ) {
 				$diaspora_tags += array_flip( $this->custom_tags );
 			}
 
 			// Add post tags?
-			$post_tags = wp_get_post_tags( $this->ID, array( 'fields' => 'slugs' ) );
-			if ( in_array( 'post', $tags_to_post ) && is_array( $post_tags ) ) {
+			$post_tags = wp_get_post_tags( $this->ID, [ 'fields' => 'slugs' ] );
+			if ( is_array( $post_tags ) && in_array( 'post', $tags_to_post, true ) ) {
 				$diaspora_tags += array_flip( $post_tags );
 			}
 
@@ -389,7 +400,7 @@ class WP2D_Post {
 			$options->validate_tags( $diaspora_tags );
 
 			// Get all the tags and list them all nicely in a row.
-			$diaspora_tags_clean = array();
+			$diaspora_tags_clean = [];
 			foreach ( $diaspora_tags as $tag ) {
 				$diaspora_tags_clean[] = '#' . $tag;
 			}
@@ -414,10 +425,10 @@ class WP2D_Post {
 		$link = '';
 		if ( $this->fullentrylink ) {
 
-			$text = esc_html__( 'Originally posted at:', 'wp-to-diaspora' );
+			$text      = esc_html__( 'Originally posted at:', 'wp-to-diaspora' );
 			$permalink = get_permalink( $this->ID );
-			$title = esc_html__( 'Permalink', 'wp-to-diaspora' );
-			$default = sprintf( '%1$s <a href="%2$s" title="%3$s">%2$s</a>', $text, $permalink, $title );
+			$title     = esc_html__( 'Permalink', 'wp-to-diaspora' );
+			$default   = sprintf( '%1$s <a href="%2$s" title="%3$s">%2$s</a>', $text, $permalink, $title );
 
 			/**
 			 * Filter the "Originally posted at" link at the bottom of the post.
@@ -446,18 +457,18 @@ class WP2D_Post {
 	private function _save_to_history( $response ) {
 		// Make sure the post history is an array.
 		if ( empty( $this->post_history ) ) {
-			$this->post_history = array();
+			$this->post_history = [];
 		}
 
 		// Add a new entry to the history.
-		$this->post_history[] = array(
+		$this->post_history[] = [
 			'id'         => $response->id,
 			'guid'       => $response->guid,
 			'created_at' => $this->post->post_modified,
 			'aspects'    => $this->aspects,
 			'nsfw'       => $response->nsfw,
 			'post_url'   => $response->permalink,
-		);
+		];
 
 		update_post_meta( $this->ID, '_wp_to_diaspora_post_history', $this->post_history );
 	}
@@ -466,10 +477,11 @@ class WP2D_Post {
 	 * Return URL from [embed] shortcode instead of generated iframe.
 	 *
 	 * @since 1.5.0
-	 * @see WP_Embed::shortcode()
+	 * @see   WP_Embed::shortcode()
 	 *
 	 * @param mixed  $html The cached HTML result, stored in post meta.
 	 * @param string $url  The attempted embed URL.
+	 *
 	 * @return string URL of the embed.
 	 */
 	public function embed_url( $html, $url ) {
@@ -480,14 +492,15 @@ class WP2D_Post {
 	 * Removes '[embed]' and '[/embed]' left by embed_url.
 	 *
 	 * @since 1.5.0
-	 * @todo It would be great to fix it using only one filter.
+	 * @todo  It would be great to fix it using only one filter.
 	 *       It's happening because embed filter is being removed by remove_all_filters('the_content') on WP2D_Post::post().
 	 *
 	 * @param string $content Content of the post.
+	 *
 	 * @return string The content with the embed tags removed.
 	 */
 	public function embed_remove( $content ) {
-		return str_replace( array( '[embed]', '[/embed]' ), array( '<p>', '</p>' ), $content );
+		return str_replace( [ '[embed]', '[/embed]' ], [ '<p>', '</p>' ], $content );
 	}
 
 	/**
@@ -496,6 +509,7 @@ class WP2D_Post {
 	 * @since 1.5.3
 	 *
 	 * @param string $caption Caption to be prettified.
+	 *
 	 * @return string Prettified image caption.
 	 */
 	public function get_img_caption( $caption ) {
@@ -504,7 +518,7 @@ class WP2D_Post {
 			return '';
 		}
 
-		$default = sprintf( '<blockquote>%s</blockquote>',  $caption );
+		$default = sprintf( '<blockquote>%s</blockquote>', $caption );
 
 		/**
 		 * Filter the image caption to be displayed after images with captions.
@@ -521,11 +535,12 @@ class WP2D_Post {
 	 * Filter the default caption shortcode output.
 	 *
 	 * @since 1.5.3
-	 * @see img_caption_shortcode()
+	 * @see   img_caption_shortcode()
 	 *
 	 * @param string $empty   The caption output. Default empty.
 	 * @param array  $attr    Attributes of the caption shortcode.
 	 * @param string $content The image element, possibly wrapped in a hyperlink.
+	 *
 	 * @return string The caption shortcode output.
 	 */
 	public function custom_img_caption( $empty, $attr, $content ) {
@@ -545,11 +560,12 @@ class WP2D_Post {
 	 * @since 1.5.3
 	 *
 	 * @param   array $attr Gallery attributes.
+	 *
 	 * @return  string
 	 */
 	public function custom_gallery_shortcode( $attr ) {
 		// Default value in WordPress.
-		$captiontag = ( current_theme_supports( 'html5', 'gallery' ) ) ? 'figcaption' : 'dd';
+		$captiontag = current_theme_supports( 'html5', 'gallery' ) ? 'figcaption' : 'dd';
 
 		// User value.
 		if ( isset( $attr['captiontag'] ) ) {
@@ -562,7 +578,7 @@ class WP2D_Post {
 		// Change the content of the captions.
 		$gallery = preg_replace_callback(
 			'~(<' . $captiontag . '.*>)(.*)(</' . $captiontag . '>)~mUus',
-			array( $this, 'custom_gallery_regex_callback' ),
+			[ $this, 'custom_gallery_regex_callback' ],
 			$gallery
 		);
 
@@ -573,6 +589,7 @@ class WP2D_Post {
 	 * Change the result of the regex match from custom_gallery_shortcode.
 	 *
 	 * @param array $m Regex matches.
+	 *
 	 * @return string Prettified gallery image caption.
 	 */
 	public function custom_gallery_regex_callback( $m ) {
@@ -594,7 +611,7 @@ class WP2D_Post {
 			add_meta_box(
 				'wp_to_diaspora_meta_box',
 				'WP to diaspora*',
-				array( $this, 'meta_box_render' ),
+				[ $this, 'meta_box_render' ],
 				$post_type,
 				'side',
 				'high'
@@ -619,12 +636,12 @@ class WP2D_Post {
 		$options = WP2D_Options::instance();
 
 		// Make sure we have some value for post meta fields.
-		$this->custom_tags = $this->custom_tags ?: array();
+		$this->custom_tags = $this->custom_tags ?: [];
 
 		// If this post is already published, don't post again to diaspora* by default.
 		$this->post_to_diaspora = ( $this->post_to_diaspora && 'publish' !== get_post_status( $this->ID ) );
-		$this->aspects          = $this->aspects  ?: array();
-		$this->services         = $this->services ?: array();
+		$this->aspects          = $this->aspects ?: [];
+		$this->services         = $this->services ?: [];
 
 		// Have we already posted on diaspora*?
 		if ( is_array( $this->post_history ) ) {
@@ -640,8 +657,8 @@ class WP2D_Post {
 		<p><?php $options->display_render( $this->display ); ?></p>
 		<p><?php $options->tags_to_post_render( $this->tags_to_post ); ?></p>
 		<p><?php $options->custom_tags_render( $this->custom_tags ); ?></p>
-		<p><?php $options->aspects_services_render( array( 'aspects', $this->aspects ) ); ?></p>
-		<p><?php $options->aspects_services_render( array( 'services', $this->services ) ); ?></p>
+		<p><?php $options->aspects_services_render( [ 'aspects', $this->aspects ] ); ?></p>
+		<p><?php $options->aspects_services_render( [ 'services', $this->services ] ); ?></p>
 
 		<?php
 	}
@@ -666,10 +683,10 @@ class WP2D_Post {
 
 		// Meta data to save.
 		$meta_to_save = $_POST['wp_to_diaspora_settings'];
-		$options = WP2D_Options::instance();
+		$options      = WP2D_Options::instance();
 
 		// Checkboxes.
-		$options->validate_checkboxes( array( 'post_to_diaspora', 'fullentrylink' ), $meta_to_save );
+		$options->validate_checkboxes( [ 'post_to_diaspora', 'fullentrylink' ], $meta_to_save );
 
 		// Single Selects.
 		$options->validate_single_selects( 'display', $meta_to_save );
@@ -681,7 +698,7 @@ class WP2D_Post {
 		$options->validate_tags( $meta_to_save['custom_tags'] );
 
 		// Clean up the list of aspects. If the list is empty, only use the 'Public' aspect.
-		$options->validate_aspects_services( $meta_to_save['aspects'], array( 'public' ) );
+		$options->validate_aspects_services( $meta_to_save['aspects'], [ 'public' ] );
 
 		// Clean up the list of services.
 		$options->validate_aspects_services( $meta_to_save['services'] );
@@ -695,7 +712,7 @@ class WP2D_Post {
 	 *
 	 * @since 1.5.0
 	 *
-	 * @return boolean If the verification checks have passed.
+	 * @return bool If the verification checks have passed.
 	 */
 	private function _is_safe_to_save() {
 		// Verify that our nonce is set and  valid.
@@ -727,7 +744,7 @@ class WP2D_Post {
 	 *
 	 * @since 1.5.0
 	 *
-	 * @todo Ignore post error with AJAX.
+	 * @todo  Ignore post error with AJAX.
 	 */
 	public function admin_notices() {
 		global $post, $pagenow;

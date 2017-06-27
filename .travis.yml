@@ -1,28 +1,19 @@
+dist: trusty
 sudo: false
-
 language: php
-
-env: WP_VERSION=4.7
 
 matrix:
   include:
-    - php: 5.3
-      env: WP_VERSION=3.9.2 DEPS=low # earliest supported
-    - php: 7.1
-      env: WP_VERSION=master COVERAGE=1 # trunk
-    - php: 7.1
-      env: WP_VERSION=4.6
-    - php: 7.1
-      env: WP_VERSION=4.5
-    - php: 7.1
-    - php: 7.0
-    - php: 5.6
-    - php: 5.5
-    - php: 5.4
-    - php: 5.3
-    - php: hhvm
-  allow_failures:
-    - php: hhvm
+    - { php: 5.4, env: WP_VERSION=3.9.2 LOW_DEPS=1 } # earliest supported
+    - { php: 7.1, env: WP_VERSION=master COVERAGE=1 } # trunk
+    - { php: 7.1, env: WP_VERSION=4.7 }
+    - { php: 7.1, env: WP_VERSION=4.6 }
+    - { php: 7.1, env: WP_VERSION=4.5 }
+    - { php: 7.0, env: WP_VERSION=4.7 }
+    - { php: 5.6, env: WP_VERSION=4.7 }
+    - { php: 5.5, env: WP_VERSION=4.7 }
+    - { php: 5.4, env: WP_VERSION=4.7 }
+    - { php: hhvm, env: WP_VERSION=4.7 }
   fast_finish: true
 
 cache:
@@ -34,8 +25,8 @@ git:
   depth: 1
 
 install:
-  - if [ "$DEPS" == "low" ]; then composer update --prefer-source --prefer-lowest --prefer-stable; fi
-  - if [ "$DEPS" != "low" ]; then composer install --prefer-source; fi
+  - if [ $LOW_DEPS ]; then composer update --prefer-source --prefer-lowest --prefer-stable; fi
+  - if [ ! $LOW_DEPS ]; then composer install --prefer-source; fi
 
 before_script:
   # set up WP install
@@ -52,11 +43,11 @@ before_script:
 
 script:
   - cd "$TRAVIS_BUILD_DIR"
-  - if [[ "$COVERAGE" == "1" ]] ; then composer test-cov; fi
-  - if [[ "$COVERAGE" != "1" ]] ; then composer test; fi
+  - if [ $COVERAGE ]; then composer test-cov; fi
+  - if [ ! $COVERAGE ]; then composer test; fi
 
 after_success:
-  - if [[ "$COVERAGE" == "1" ]]; then bash <(curl -s https://codecov.io/bash); fi
+  - if [ $COVERAGE ]; then bash <(curl -s https://codecov.io/bash); fi
 
 notifications:
   email: false
