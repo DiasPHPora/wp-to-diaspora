@@ -33,7 +33,7 @@ These settings can easily be adjusted for each individual post by using the meta
 Additional documentation can be found in our [wiki](https://github.com/DiasPHPora/wp-to-diaspora/wiki)
 
 = What's diaspora*? =
-diaspora* is a decentralized social network. More about it on https://diasporafoundation.org/
+diaspora* is a decentralized social network. Read more about the [diaspora* project](https://diasporafoundation.org/).
 
 = This plugin speaks your language =
 Many thanks to our many friendly translators, doing an amazing job.
