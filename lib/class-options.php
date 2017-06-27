@@ -686,7 +686,7 @@ class WP2D_Options {
 		<div id="<?php echo esc_attr( $type ); ?>-container" data-<?php echo esc_attr( $type ); ?>-selected="<?php echo esc_attr( implode( ',', $items ) ); ?>">
 			<?php if ( $list = (array) $this->get_option( $type . '_list' ) ) : ?>
 				<?php foreach ( $list as $id => $name ) : ?>
-					<label><input type="checkbox" name="wp_to_diaspora_settings[<?php echo esc_attr( $type ); ?>][]" value="<?php echo esc_attr( $id ); ?>" <?php checked( in_array( $id, $items, true ) ); ?>><?php echo esc_html( $name ); ?></label>
+					<label><input type="checkbox" name="wp_to_diaspora_settings[<?php echo esc_attr( $type ); ?>][]" value="<?php echo esc_attr( $id ); ?>" <?php checked( in_array( $id, $items ) ); ?>><?php echo esc_html( $name ); ?></label>
 				<?php endforeach; ?>
 			<?php else : ?>
 				<label><?php echo $empty_label; ?></label>
