@@ -64,10 +64,10 @@ For a manual installation:
 
 == Screenshots ==
 
-1. Configuration page
-2. Meta box on post editor page
-3. Example post on diaspora*
-4. Example post on WordPress
+1. Account setup page
+2. Default settings setup page
+3. Creating an example post in WordPress
+4. The example post created on diaspora*
 
 == Learn ==
 
