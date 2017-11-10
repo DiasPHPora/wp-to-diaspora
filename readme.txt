@@ -85,6 +85,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= unreleased =
+* Update pod list
+
 = 2.0.1 =
 * Update screenshots
 * Update Russian translation
