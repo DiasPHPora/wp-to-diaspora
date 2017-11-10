@@ -4,7 +4,7 @@ Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
 Tested up to: 4.9.0
-Stable tag: unreleased
+Stable tag: 2.0.2
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -85,7 +85,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= unreleased =
+= 2.0.2 =
 * Update pod list
 * Test for WP 4.9
 * Fix tests
