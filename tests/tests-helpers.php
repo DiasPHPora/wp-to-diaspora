@@ -141,12 +141,12 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_encryption() {
-		define( 'AUTH_KEY', 'you know, the random and very salty WordPress auth key...' );
+		defined( 'AUTH_KEY' ) || define( 'AUTH_KEY', 'put your unique phrase here' );
 
 		// Using the default key (AUTH_KEY).
 		$enc1 = WP2D_Helpers::encrypt( 'text-to-encrypt' );
-		$this->assertEquals( 'F4FDCDCC4CF10C748D4DEB0647F55626', $enc1 );
-		$dec1 = WP2D_Helpers::decrypt( 'F4FDCDCC4CF10C748D4DEB0647F55626' );
+		$this->assertEquals( '6692CEB1300B16CF41E38E6C45BE25DD', $enc1 );
+		$dec1 = WP2D_Helpers::decrypt( '6692CEB1300B16CF41E38E6C45BE25DD' );
 		$this->assertEquals( 'text-to-encrypt', $dec1 );
 
 		// Using a custom key.

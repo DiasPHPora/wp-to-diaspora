@@ -6,14 +6,15 @@ matrix:
   include:
     - { php: 5.4, env: WP_VERSION=3.9.2 LOW_DEPS=1 } # earliest supported
     - { php: 7.1, env: WP_VERSION=master COVERAGE=1 } # trunk
+    - { php: 7.1, env: WP_VERSION=4.9 }
+    - { php: 7.1, env: WP_VERSION=4.8 }
     - { php: 7.1, env: WP_VERSION=4.7 }
     - { php: 7.1, env: WP_VERSION=4.6 }
-    - { php: 7.1, env: WP_VERSION=4.5 }
-    - { php: 7.0, env: WP_VERSION=4.7 }
-    - { php: 5.6, env: WP_VERSION=4.7 }
-    - { php: 5.5, env: WP_VERSION=4.7 }
-    - { php: 5.4, env: WP_VERSION=4.7 }
-    - { php: hhvm, env: WP_VERSION=4.7 }
+    - { php: 7.0, env: WP_VERSION=4.9 }
+    - { php: 5.6, env: WP_VERSION=4.9 }
+    - { php: 5.5, env: WP_VERSION=4.9 }
+    - { php: 5.4, env: WP_VERSION=4.9 }
+    - { php: hhvm, env: WP_VERSION=4.9 }
   fast_finish: true
 
 cache:
