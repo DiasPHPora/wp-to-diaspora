@@ -87,6 +87,7 @@ Quite straightforward, right?
 
 = unreleased =
 * Add new filters (wp2d_full_content_filter, wp2d_excerpt_content_filter, wp2d_tags_filter)
+* Add new display type "None", to not display the post content
 
 = 2.0.2 =
 * Update pod list

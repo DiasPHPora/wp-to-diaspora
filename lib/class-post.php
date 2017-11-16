@@ -210,10 +210,10 @@ class WP2D_Post {
 
 		$status_message = $this->_get_title_link();
 
-		// Post the full post text or just the excerpt?
+		// Post the full post text, just the excerpt, or nothing at all?
 		if ( 'full' === $this->display ) {
 			$status_message .= $this->_get_full_content();
-		} else {
+		} elseif ( 'excerpt' === $this->display ) {
 			$status_message .= $this->_get_excerpt_content();
 		}
 
