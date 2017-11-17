@@ -210,10 +210,10 @@ class WP2D_Post {
 
 		$status_message = $this->_get_title_link();
 
-		// Post the full post text or just the excerpt?
+		// Post the full post text, just the excerpt, or nothing at all?
 		if ( 'full' === $this->display ) {
 			$status_message .= $this->_get_full_content();
-		} else {
+		} elseif ( 'excerpt' === $this->display ) {
 			$status_message .= $this->_get_excerpt_content();
 		}
 
@@ -272,9 +272,9 @@ class WP2D_Post {
 	 * @return string Post title as a link.
 	 */
 	private function _get_title_link() {
-		$title     = esc_html( $this->post->post_title );
-		$permalink = get_permalink( $this->ID );
-		$default   = sprintf( '<strong><a href="%2$s" title="%2$s">%1$s</a></strong>', $title, $permalink );
+		$title      = esc_html( $this->post->post_title );
+		$permalink  = get_permalink( $this->ID );
+		$title_link = sprintf( '<strong><a href="%2$s" title="%2$s">%1$s</a></strong>', $title, $permalink );
 
 		/**
 		 * Filter the title link at the top of the post.
@@ -284,9 +284,7 @@ class WP2D_Post {
 		 * @param string    $default   The whole HTML of the title link to be outputted.
 		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
 		 */
-		$link = apply_filters( 'wp2d_title_filter', $default, $this );
-
-		return '<p>' . $link . '</p>';
+		return apply_filters( 'wp2d_title_filter', "<p>{$title_link}</p>", $this );
 	}
 
 	/**
@@ -327,12 +325,20 @@ class WP2D_Post {
 		// http://wordpress.stackexchange.com/a/74675/54456 for explanation.
 		add_shortcode( 'gallery', [ $this, 'custom_gallery_shortcode' ] );
 
-		$full_content = apply_filters( 'the_content', $this->post->post_content );
+		$post_content = apply_filters( 'the_content', $this->post->post_content );
 
 		// Put the removed shortcode tags back again.
 		$shortcode_tags += $shortcode_tags_bkp;
 
-		return $full_content;
+		/**
+		 * Filter the full content of the post.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string    $default   The whole HTML of the post to be outputted.
+		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the post.
+		 */
+		return apply_filters( 'wp2d_post_filter', $post_content, $this );
 	}
 
 	/**
@@ -357,7 +363,15 @@ class WP2D_Post {
 			}
 		}
 
-		return '<p>' . $excerpt . '</p>';
+		/**
+		 * Filter the excerpt of the post.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string    $default   The whole HTML of the excerpt to be outputted.
+		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the excerpt.
+		 */
+		return apply_filters( 'wp2d_excerpt_filter', "<p>{$excerpt}</p>", $this );
 	}
 
 	/**
@@ -368,50 +382,59 @@ class WP2D_Post {
 	 * @return string Tags added to the post.
 	 */
 	private function _get_tags_to_add() {
-		$options      = WP2D_Options::instance();
-		$tags_to_post = $this->tags_to_post;
-		$tags_to_add  = '';
+		$options       = WP2D_Options::instance();
+		$tags_to_post  = $this->tags_to_post;
+		$tags_to_add   = '';
+		$diaspora_tags = [];
 
 		// Add any diaspora* tags?
 		if ( ! empty( $tags_to_post ) ) {
 			// The diaspora* tags to add to the post.
-			$diaspora_tags = [];
+			$diaspora_tags_tmp = [];
 
 			// Add global tags?
 			$global_tags = $options->get_option( 'global_tags' );
 			if ( is_array( $global_tags ) && in_array( 'global', $tags_to_post, true ) ) {
-				$diaspora_tags += array_flip( $global_tags );
+				$diaspora_tags_tmp += array_flip( $global_tags );
 			}
 
 			// Add custom tags?
 			if ( is_array( $this->custom_tags ) && in_array( 'custom', $tags_to_post, true ) ) {
-				$diaspora_tags += array_flip( $this->custom_tags );
+				$diaspora_tags_tmp += array_flip( $this->custom_tags );
 			}
 
 			// Add post tags?
 			$post_tags = wp_get_post_tags( $this->ID, [ 'fields' => 'slugs' ] );
 			if ( is_array( $post_tags ) && in_array( 'post', $tags_to_post, true ) ) {
-				$diaspora_tags += array_flip( $post_tags );
+				$diaspora_tags_tmp += array_flip( $post_tags );
 			}
 
 			// Get an array of cleaned up tags.
 			// NOTE: Validate method needs a variable, as it's passed by reference!
-			$diaspora_tags = array_keys( $diaspora_tags );
-			$options->validate_tags( $diaspora_tags );
+			$diaspora_tags_tmp = array_keys( $diaspora_tags_tmp );
+			$options->validate_tags( $diaspora_tags_tmp );
 
 			// Get all the tags and list them all nicely in a row.
-			$diaspora_tags_clean = [];
-			foreach ( $diaspora_tags as $tag ) {
-				$diaspora_tags_clean[] = '#' . $tag;
+			foreach ( $diaspora_tags_tmp as $tag ) {
+				$diaspora_tags[] = '#' . $tag;
 			}
 
 			// Add all the found tags.
-			if ( ! empty( $diaspora_tags_clean ) ) {
-				$tags_to_add = implode( ' ', $diaspora_tags_clean ) . '<br />';
+			if ( ! empty( $diaspora_tags ) ) {
+				$tags_to_add = implode( ' ', $diaspora_tags ) . '<br/>';
 			}
 		}
 
-		return $tags_to_add;
+		/**
+		 * Filter the tags of the post.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string    $default   The whole string of tags to be outputted.
+		 * @param array     $tags      All tags that are assigned to this post.
+		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the tags output.
+		 */
+		return apply_filters( 'wp2d_tags_filter', $tags_to_add, $diaspora_tags, $this );
 	}
 
 	/**
@@ -422,13 +445,11 @@ class WP2D_Post {
 	 * @return string Original post link.
 	 */
 	private function _get_posted_at_link() {
-		$link = '';
 		if ( $this->fullentrylink ) {
-
-			$text      = esc_html__( 'Originally posted at:', 'wp-to-diaspora' );
-			$permalink = get_permalink( $this->ID );
-			$title     = esc_html__( 'Permalink', 'wp-to-diaspora' );
-			$default   = sprintf( '%1$s <a href="%2$s" title="%3$s">%2$s</a>', $text, $permalink, $title );
+			$prefix         = esc_html__( 'Originally posted at:', 'wp-to-diaspora' );
+			$permalink      = get_permalink( $this->ID );
+			$title          = esc_html__( 'Permalink', 'wp-to-diaspora' );
+			$posted_at_link = sprintf( '%1$s <a href="%2$s" title="%3$s">%2$s</a>', $prefix, $permalink, $title );
 
 			/**
 			 * Filter the "Originally posted at" link at the bottom of the post.
@@ -437,14 +458,12 @@ class WP2D_Post {
 			 *
 			 * @param string    $default   The whole HTML of the text and link to be outputted.
 			 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
-			 * @param string    $text      The "Originally posted at:" text before the link.
+			 * @param string    $prefix    The "Originally posted at:" prefix before the link.
 			 */
-			$link = apply_filters( 'wp2d_posted_at_link_filter', $default, $this, $text );
-
-			$link = '<p>' . $link . '</p>';
+			return apply_filters( 'wp2d_posted_at_link_filter', "<p>{$posted_at_link}</p>", $this, $prefix );
 		}
 
-		return $link;
+		return '';
 	}
 
 	/**
@@ -518,8 +537,6 @@ class WP2D_Post {
 			return '';
 		}
 
-		$default = sprintf( '<blockquote>%s</blockquote>', $caption );
-
 		/**
 		 * Filter the image caption to be displayed after images with captions.
 		 *
@@ -528,7 +545,7 @@ class WP2D_Post {
 		 * @param string $default The whole HTML of the caption.
 		 * @param string $caption The caption text.
 		 */
-		return apply_filters( 'wp2d_image_caption', $default, $caption );
+		return apply_filters( 'wp2d_image_caption', "<blockquote>{$caption}</blockquote>", $caption );
 	}
 
 	/**

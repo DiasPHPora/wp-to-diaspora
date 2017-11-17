@@ -46,7 +46,7 @@ class WP2D_Options {
 	 * @var array
 	 */
 	private static $_valid_values = [
-		'display'      => [ 'full', 'excerpt' ],
+		'display'      => [ 'full', 'excerpt', 'none' ],
 		'tags_to_post' => [ 'global', 'custom', 'post' ],
 	];
 
@@ -582,7 +582,7 @@ class WP2D_Options {
 		// Full entry link checkbox.
 		add_settings_field( 'fullentrylink', __( 'Show "Posted at" link?', 'wp-to-diaspora' ), [ $this, 'fullentrylink_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'fullentrylink' ) );
 
-		// Full text or excerpt radio buttons.
+		// Full text, excerpt or none radio buttons.
 		add_settings_field( 'display', __( 'Display', 'wp-to-diaspora' ), [ $this, 'display_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_defaults_section', $this->get_option( 'display' ) );
 
 		// Tags to post dropdown.
@@ -659,7 +659,8 @@ class WP2D_Options {
 	public function display_render( $display ) {
 		?>
 		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $display, 'full' ); ?>><?php esc_html_e( 'Full Post', 'wp-to-diaspora' ); ?></label><br/>
-		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php esc_html_e( 'Excerpt' ); ?></label>
+		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php esc_html_e( 'Excerpt' ); ?></label><br/>
+		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="none" <?php checked( $display, 'none' ); ?>><?php esc_html_e( 'None' ); ?></label>
 		<?php
 	}
 
