@@ -325,7 +325,7 @@ class WP2D_Post {
 		// http://wordpress.stackexchange.com/a/74675/54456 for explanation.
 		add_shortcode( 'gallery', [ $this, 'custom_gallery_shortcode' ] );
 
-		$full_content = apply_filters( 'the_content', $this->post->post_content );
+		$post_content = apply_filters( 'the_content', $this->post->post_content );
 
 		// Put the removed shortcode tags back again.
 		$shortcode_tags += $shortcode_tags_bkp;
@@ -335,10 +335,10 @@ class WP2D_Post {
 		 *
 		 * @since 2.1.0
 		 *
-		 * @param string    $default   The whole HTML of the full post content to be outputted.
-		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the full content.
+		 * @param string    $default   The whole HTML of the post to be outputted.
+		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the post.
 		 */
-		return apply_filters( 'wp2d_full_content_filter', $full_content, $this );
+		return apply_filters( 'wp2d_post_filter', $post_content, $this );
 	}
 
 	/**
@@ -364,14 +364,14 @@ class WP2D_Post {
 		}
 
 		/**
-		 * Filter the excerpt content of the post.
+		 * Filter the excerpt of the post.
 		 *
 		 * @since 2.1.0
 		 *
-		 * @param string    $default   The whole HTML of the excerpt content to be outputted.
-		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the excerpt content.
+		 * @param string    $default   The whole HTML of the excerpt to be outputted.
+		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the excerpt.
 		 */
-		return apply_filters( 'wp2d_excerpt_content_filter', "<p>{$excerpt}</p>", $this );
+		return apply_filters( 'wp2d_excerpt_filter', "<p>{$excerpt}</p>", $this );
 	}
 
 	/**
