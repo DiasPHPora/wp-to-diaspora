@@ -4,7 +4,7 @@ Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
 Tested up to: 4.9.0
-Stable tag: 2.0.2
+Stable tag: 2.1.0
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -85,7 +85,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= unreleased =
+= 2.1.0 =
 * Add new filters (wp2d_post_filter, wp2d_excerpt_filter, wp2d_tags_filter)
 * Add new display type "None", to not display the post content
 
