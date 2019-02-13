@@ -3,7 +3,8 @@ Contributors: gutobenn, noplanman
 Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 3.9.2
-Tested up to: 4.9.0
+Tested up to: 5.0.0
+Minimum PHP: 5.4
 Stable tag: 2.1.0
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
@@ -86,6 +87,7 @@ Quite straightforward, right?
 == Changelog ==
 
 = unreleased =
+* Test for WP 5.0 and up to PHP 7.3
 * Update html-to-markdown to 4.8.1
 
 = 2.1.0 =
