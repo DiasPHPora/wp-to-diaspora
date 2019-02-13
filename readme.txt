@@ -85,6 +85,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= unreleased =
+* Update html-to-markdown to 4.8.1
+
 = 2.1.0 =
 * Add new filters (wp2d_post_filter, wp2d_excerpt_filter, wp2d_tags_filter)
 * Add new display type "None", to not display the post content
