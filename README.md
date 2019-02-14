@@ -3,7 +3,6 @@ WP to diaspora*
 [![Build Status](https://travis-ci.org/DiasPHPora/wp-to-diaspora.svg?branch=master)](https://travis-ci.org/DiasPHPora/wp-to-diaspora)
 [![Coverage via Codecov](https://codecov.io/github/DiasPHPora/wp-to-diaspora/coverage.svg?branch=master)](https://codecov.io/github/DiasPHPora/wp-to-diaspora?branch=master)
 [![Scrutinizer Code Quality Score](https://scrutinizer-ci.com/g/DiasPHPora/wp-to-diaspora/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/DiasPHPora/wp-to-diaspora)
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/DiasPHPora/wp-to-diaspora)
 
 Automatically share WordPress posts on diaspora*
 
