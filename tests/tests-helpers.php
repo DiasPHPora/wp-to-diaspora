@@ -141,8 +141,6 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_encryption() {
-		defined( 'AUTH_KEY' ) || define( 'AUTH_KEY', 'put your unique phrase here' );
-
 		// Using the default key (AUTH_KEY).
 		$enc1 = WP2D_Helpers::encrypt( 'text-to-encrypt' );
 		$this->assertEquals( '6692CEB1300B16CF41E38E6C45BE25DD', $enc1 );

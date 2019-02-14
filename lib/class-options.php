@@ -37,6 +37,7 @@ class WP2D_Options {
 		'global_tags'        => '',
 		'aspects'            => [ 'public' ],
 		'services'           => [],
+		'auth_key_hash'      => '',
 		'version'            => WP2D_VERSION,
 	];
 
@@ -902,6 +903,23 @@ class WP2D_Options {
 	}
 
 	/**
+	 * Attempt to upgrade the password from using AUTH_KEY to using WP2D_AUTH_KEY.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param bool $save
+	 */
+	public function attempt_password_upgrade( $save = false ) {
+		if ( AUTH_KEY !== WP2D_ENC_KEY ) {
+			$old_pw = WP2D_Helpers::decrypt( (string) $this->get_option( 'password' ), AUTH_KEY );
+			if ( $old_pw !== null ) {
+				$new_pw = WP2D_Helpers::encrypt( $old_pw, WP2D_ENC_KEY );
+				$this->set_option( 'password', $new_pw, $save );
+			}
+		}
+	}
+
+	/**
 	 * Validate all settings.
 	 *
 	 * @param array $input RAW input values.
@@ -920,13 +938,18 @@ class WP2D_Options {
 			// If password is blank, it hasn't been changed.
 			// If new password is equal to the encrypted password already saved, it was just passed again. It happens everytime update_option('wp_to_diaspora_settings') is called.
 			if ( '' === $input['password'] || $this->get_option( 'password' ) === $input['password'] ) {
+				// Attempt a password upgrade if applicable.
+				$this->attempt_password_upgrade( true );
 				$input['password'] = $this->get_option( 'password' );
 			} else {
 				$input['password'] = WP2D_Helpers::encrypt( $input['password'] );
 			}
 
+			// Keep a note of the current AUTH_KEY.
+			$this->set_option( 'auth_key_hash', md5( AUTH_KEY ), true );
+
 			// This is for when JS in not enabled, to make sure that the aspects and services
-			// are refetched when displaying the options page after saving.
+			// are re-fetched when displaying the options page after saving.
 			if ( isset( $input['no_js'] ) ) {
 				set_transient( 'wp2d_no_js_force_refetch', true );
 			}
