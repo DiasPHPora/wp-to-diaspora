@@ -3,7 +3,7 @@
 # Based on:
 # - https://github.com/deanc/wordpress-plugin-git-svn
 # - https://gist.github.com/kloon/6487562
-# - https://github.com/GaryJones/wordpress-plugin-git-flow-svn-deploy
+# - https://github.com/GaryJones/wordpress-plugin-svn-deploy
 
 set -e
 
@@ -46,7 +46,7 @@ SVN_EDITOR="${SVN_EDITOR:-${EDITOR}}"
 # Check version in readme.txt is the same as in the plugin file.
 NEW_VERSION="$(grep "Stable tag" ${PLUGIN_PATH}/readme.txt | awk -F' ' '{ print $NF}')"
 VERSION_CHECK="$(grep "Version" ${PLUGIN_FILE} | awk -F' ' '{ print $NF}')"
-if [ "${NEW_VERSION}" != "${VERSION_CHECK}" ]; then
+if [[ "${NEW_VERSION}" != "${VERSION_CHECK}" ]]; then
   echo "Plugin file and readme.txt versions don't match. Exiting..."
   exit 1
 fi
@@ -76,7 +76,7 @@ echo
 
 printf "Get this show on the road (Y|n)? "
 read -e input
-if [ "${input:-y}" != "y" ]; then echo "Exiting..."; exit 1; fi
+if [[ "${input:-y}" != "y" ]]; then echo "Exiting..."; exit 1; fi
 echo
 
 # Let's begin...
@@ -135,7 +135,7 @@ printf " - Removing deleted files..."
 svn status | grep -v "^.[ \t]*\..*" | grep "^\!" | awk '{print $2}' | xargs svn del &>/dev/null
 echo " Done."
 printf " - Commit assets..."
-svn commit --username="${SVN_USER}"
+svn commit --username="${SVN_USER}" -m "Version ${NEW_VERSION}"
 echo " Done!"
 
 echo
@@ -167,7 +167,7 @@ svn status | grep -v "^.[ \t]*\..*" | grep "^\!" | awk '{print $2}' | xargs svn 
 echo " Done."
 
 printf " - Commit to trunk..."
-svn commit --username="${SVN_USER}"
+svn commit --username="${SVN_USER}" -m "Version ${NEW_VERSION}"
 echo " Done!"
 
 echo
@@ -176,7 +176,7 @@ echo
 # Tag new version on SVN
 ###
 printf "Creating new SVN tag..."
-svn copy "${SVN_URL}/trunk" "${SVN_URL}/tags/${NEW_VERSION}"
+svn copy "${SVN_URL}/trunk" "${SVN_URL}/tags/${NEW_VERSION}" -m "Version ${NEW_VERSION}"
 echo " Done."
 
 echo
