@@ -198,7 +198,7 @@ class WP_To_Diaspora {
 	/**
 	 * Load the diaspora* API for ease of use.
 	 *
-	 * @return WP2D_API|bool The API object, or false.
+	 * @return WP2D_API The API object.
 	 */
 	private function _load_api() {
 		if ( null === $this->_api ) {
@@ -279,6 +279,7 @@ class WP_To_Diaspora {
 			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), [ 'jquery' ], false, true );
 			// Javascript-specific l10n.
 			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', [
+				'resave_credentials'    => __( 'Resave your credentials and try again.', 'wp-to-diaspora' ),
 				'no_services_connected' => __( 'No services connected yet.', 'wp-to-diaspora' ),
 				'sure_reset_defaults'   => __( 'Are you sure you want to reset to default values?', 'wp-to-diaspora' ),
 				'conn_testing'          => __( 'Testing connection...', 'wp-to-diaspora' ),
@@ -368,7 +369,7 @@ class WP_To_Diaspora {
 	/**
 	 * Check the pod connection status.
 	 *
-	 * @return string The status of the connection.
+	 * @return bool The status of the connection.
 	 */
 	private function _check_pod_connection_status() {
 		$options = WP2D_Options::instance();
