@@ -36,7 +36,7 @@ jQuery( document ).ready( function ( $ ) {
 	function smartAspectSelection() {
 		var $allAspectCheckboxes = $( '#aspects-container' ).find( 'input[type="checkbox"]' );
 		var setDisabledAttrs = function () {
-			var disabled = ( $allAspectCheckboxes.filter( '[value="public"]' ).removeAttr( 'disabled' ).is( ':checked' ) ) ? 'disabled' : null;
+			var disabled = ($allAspectCheckboxes.filter( '[value="public"]' ).removeAttr( 'disabled' ).is( ':checked' )) ? 'disabled' : null;
 			$allAspectCheckboxes.not( '[value="public"]' ).attr( 'disabled', disabled );
 			// We only have a 'Public' checkbox, so it can't be unchecked.
 			if ( 1 === $allAspectCheckboxes.length ) {
@@ -59,6 +59,11 @@ jQuery( document ).ready( function ( $ ) {
 		var $aspectsCheckboxes = $aspectsContainer.find( 'input[type="checkbox"]' ).attr( 'disabled', 'disabled' );
 
 		$.post( ajaxurl, { 'action': 'wp_to_diaspora_update_aspects_list' }, function ( aspects ) {
+			if ( false === aspects ) {
+				$aspectsContainer.append( '<p class="error-message">' + WP2DL10n.conn_failed + ' ' + WP2DL10n.resave_credentials + '</p>' );
+				return;
+			}
+
 			// Remember the selected aspects and clear the list.
 			$aspectsContainer.empty();
 			var aspectsSelected = [];
@@ -76,12 +81,13 @@ jQuery( document ).ready( function ( $ ) {
 			// Add fresh checkboxes.
 			for ( var id in aspects ) {
 				if ( aspects.hasOwnProperty( id ) ) {
-					var checked = ( -1 !== $.inArray( id, aspectsSelected ) ) ? ' checked="checked"' : '';
+					var checked = (-1 !== $.inArray( id, aspectsSelected )) ? ' checked="checked"' : '';
 					$aspectsContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="' + id + '"' + checked + '>' + aspects[ id ] + '</label> ' );
 				}
 			}
 			smartAspectSelection();
 
+		} ).always( function () {
 			$spinner.removeClass( 'is-active' );
 			$refreshButton.show();
 		} );
@@ -97,6 +103,10 @@ jQuery( document ).ready( function ( $ ) {
 		var $servicesCheckboxes = $servicesContainer.find( 'input[type="checkbox"]' ).attr( 'disabled', 'disabled' );
 
 		$.post( ajaxurl, { 'action': 'wp_to_diaspora_update_services_list' }, function ( services ) {
+			if ( false === services ) {
+				$servicesContainer.append( '<p class="error-message">' + WP2DL10n.conn_failed + ' ' + WP2DL10n.resave_credentials + '</p>' );
+			}
+
 			// Remember the selected services and clear the list.
 			$servicesContainer.empty();
 			var servicesSelected = [];
@@ -115,7 +125,7 @@ jQuery( document ).ready( function ( $ ) {
 			if ( services.length > 0 ) {
 				for ( var id in services ) {
 					if ( services.hasOwnProperty( id ) ) {
-						var checked = ( -1 !== $.inArray( id, servicesSelected ) ) ? ' checked="checked"' : '';
+						var checked = (-1 !== $.inArray( id, servicesSelected )) ? ' checked="checked"' : '';
 						$servicesContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="' + id + '"' + checked + '>' + services[ id ] + '</label> ' );
 					}
 				}
@@ -123,6 +133,7 @@ jQuery( document ).ready( function ( $ ) {
 				$servicesContainer.append( WP2DL10n.no_services_connected );
 			}
 
+		} ).always( function () {
 			$spinner.removeClass( 'is-active' );
 			$refreshButton.show();
 		} );

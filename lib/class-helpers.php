@@ -113,7 +113,7 @@ class WP2D_Helpers {
 	 *
 	 * @return string The encrypted string.
 	 */
-	public static function encrypt( $input, $key = AUTH_KEY ) {
+	public static function encrypt( $input, $key = WP2D_ENC_KEY ) {
 		if ( null === $input || '' === $input ) {
 			return false;
 		}
@@ -130,7 +130,7 @@ class WP2D_Helpers {
 	 *
 	 * @return string The decrypted string.
 	 */
-	public static function decrypt( $input, $key = AUTH_KEY ) {
+	public static function decrypt( $input, $key = WP2D_ENC_KEY ) {
 		if ( null === $input || '' === $input ) {
 			return false;
 		}

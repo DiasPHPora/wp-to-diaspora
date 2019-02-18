@@ -207,6 +207,9 @@ class WP2D_Contextual_Help {
 						</ul>
 					<li><strong>' . esc_html__( 'Login failed. Check your login details.', 'wp-to-diaspora' ) . '</strong>: ' .
 			             esc_html__( 'Make sure that your username and password are entered correctly.', 'wp-to-diaspora' ) . '
+					<li><strong>' . esc_html__( 'Invalid credentials. Please re-save your login info.', 'wp-to-diaspora' ) . '</strong>: ' .
+			             esc_html__( 'This may be due to defining WP2D_ENC_KEY after upgrading to 2.2.0, which saves a new encrypted version of your password.', 'wp-to-diaspora' ) .
+			             sprintf( ' <a href="https://github.com/DiasPHPora/wp-to-diaspora/wiki/Configuration#wp2d_enc_key-since-220" target="_blank">%s</a>', esc_html__( 'Learn more', 'wp-to-diaspora' ) ) . '
 				</ul>',
 		] );
 

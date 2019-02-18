@@ -308,6 +308,12 @@ class WP2D_API {
 
 		// Username and password both need to be set.
 		if ( ! isset( $username, $password ) || '' === $username || '' === $password ) {
+			// Invalid credentials.
+			$this->_error(
+				'wp2d_api_login_failed',
+				__( 'Invalid credentials. Please re-save your login info.', 'wp-to-diaspora' ),
+				[ 'help_tab' => 'troubleshooting' ]
+			);
 			$this->logout();
 
 			return false;

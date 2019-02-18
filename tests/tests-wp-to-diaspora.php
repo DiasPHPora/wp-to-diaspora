@@ -35,7 +35,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test for existance of included files.
+	 * Test for existence of included files.
 	 *
 	 * @since 1.7.0
 	 */

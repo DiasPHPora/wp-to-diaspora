@@ -110,6 +110,9 @@ class WP_To_Diaspora {
 		define( 'WP2D_DIR', __DIR__ );
 		define( 'WP2D_LIB_DIR', WP2D_DIR . '/lib' );
 		define( 'WP2D_VENDOR_DIR', WP2D_DIR . '/vendor' );
+
+		// Fall back to WordPress AUTH_KEY for password encryption.
+		defined( 'WP2D_ENC_KEY' ) || define( 'WP2D_ENC_KEY', AUTH_KEY );
 	}
 
 	/**
@@ -178,6 +181,9 @@ class WP_To_Diaspora {
 		// Perform any necessary data upgrades.
 		add_action( 'admin_init', [ $this, 'upgrade' ] );
 
+		// Admin notice when the AUTH_KEY has changed and credentials need to be re-saved.
+		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
+
 		// Enqueue CSS and JS scripts.
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_load_scripts' ] );
 
@@ -198,7 +204,7 @@ class WP_To_Diaspora {
 	/**
 	 * Load the diaspora* API for ease of use.
 	 *
-	 * @return WP2D_API|bool The API object, or false.
+	 * @return WP2D_API The API object.
 	 */
 	private function _load_api() {
 		if ( null === $this->_api ) {
@@ -246,6 +252,15 @@ class WP_To_Diaspora {
 				$options->set_option( 'tags_to_post', $tags_to_post );
 			}
 
+			// Encryption key is set in WP2D_ENC_KEY since version 2.2.0.
+			if ( version_compare( $version, '2.2.0', '<' ) ) {
+				// Remember AUTH_KEY hash to notice a change.
+				$options->set_option( 'auth_key_hash', md5( AUTH_KEY ) );
+
+				// Upgrade encrypted password if new WP2D_ENC_KEY is used.
+				$options->attempt_password_upgrade();
+			}
+
 			// Update version.
 			$options->set_option( 'version', WP2D_VERSION );
 			$options->save();
@@ -279,12 +294,36 @@ class WP_To_Diaspora {
 			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), [ 'jquery' ], false, true );
 			// Javascript-specific l10n.
 			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', [
+				'resave_credentials'    => __( 'Resave your credentials and try again.', 'wp-to-diaspora' ),
 				'no_services_connected' => __( 'No services connected yet.', 'wp-to-diaspora' ),
 				'sure_reset_defaults'   => __( 'Are you sure you want to reset to default values?', 'wp-to-diaspora' ),
 				'conn_testing'          => __( 'Testing connection...', 'wp-to-diaspora' ),
 				'conn_successful'       => __( 'Connection successful.', 'wp-to-diaspora' ),
 				'conn_failed'           => __( 'Connection failed.', 'wp-to-diaspora' ),
 			] );
+		}
+	}
+
+	/**
+	 * Add "AUTH_KEY" changed admin notice.
+	 *
+	 * @since 2.2.0
+	 */
+	public function admin_notices() {
+		// If a custom WP2D_ENC_KEY is set, it doesn't matter if the AUTH_KEY has changed.
+		if ( AUTH_KEY !== WP2D_ENC_KEY ) {
+			return;
+		}
+
+		$options = WP2D_Options::instance();
+		if ( md5( AUTH_KEY ) !== $options->get_option( 'auth_key_hash' ) ) {
+			printf( '<div class="error notice is-dismissible"><p>%1$s</p></div>',
+				sprintf(
+					esc_html_x( 'Looks like your WordPress secret keys have changed! Please %sre-save your login info%s.', 'placeholders are link tags to the settings page.', 'wp-to-diaspora' ),
+					'<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '&amp;tab=setup" target="_blank">',
+					'</a>'
+				)
+			);
 		}
 	}
 
@@ -368,7 +407,7 @@ class WP_To_Diaspora {
 	/**
 	 * Check the pod connection status.
 	 *
-	 * @return string The status of the connection.
+	 * @return bool The status of the connection.
 	 */
 	private function _check_pod_connection_status() {
 		$options = WP2D_Options::instance();

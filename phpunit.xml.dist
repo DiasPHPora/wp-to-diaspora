@@ -9,4 +9,7 @@
 			<directory suffix=".php">.</directory>
 		</whitelist>
 	</filter>
+	<php>
+		<const name="AUTH_KEY" value="put your unique phrase here"/>
+	</php>
 </phpunit>
