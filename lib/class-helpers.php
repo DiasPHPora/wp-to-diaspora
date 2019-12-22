@@ -19,7 +19,7 @@ class WP2D_Helpers {
 	 *
 	 * @var string
 	 */
-	private static $_debugging = '';
+	private static $debugging = '';
 
 	/**
 	 * Add a line to the debug output. Include the stack trace to see where it's coming from.
@@ -40,7 +40,7 @@ class WP2D_Helpers {
 				}
 			}
 
-			self::$_debugging .= sprintf( "%s\n%s\n", date( 'Y.m.d H:i:s' ), $d . $text );
+			self::$debugging .= sprintf( "%s\n%s\n", date( 'Y.m.d H:i:s' ), $d . $text );
 
 			return true;
 		}
@@ -55,7 +55,7 @@ class WP2D_Helpers {
 	 */
 	public static function get_debugging() {
 		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
-			return self::$_debugging;
+			return self::$debugging;
 		}
 
 		return false;

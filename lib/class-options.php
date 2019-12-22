@@ -19,14 +19,14 @@ class WP2D_Options {
 	 *
 	 * @var WP2D_Options
 	 */
-	private static $_instance;
+	private static $instance;
 
 	/**
 	 * All default plugin options.
 	 *
 	 * @var array
 	 */
-	private static $_default_options = [
+	private static $default_options = [
 		'aspects_list'       => [],
 		'services_list'      => [],
 		'post_to_diaspora'   => true,
@@ -46,7 +46,7 @@ class WP2D_Options {
 	 *
 	 * @var array
 	 */
-	private static $_valid_values = [
+	private static $valid_values = [
 		'display'      => [ 'full', 'excerpt', 'none' ],
 		'tags_to_post' => [ 'global', 'custom', 'post' ],
 	];
@@ -56,7 +56,7 @@ class WP2D_Options {
 	 *
 	 * @var array
 	 */
-	private static $_options;
+	private static $options;
 
 	/** Singleton, keep private. */
 	final private function __clone() {
@@ -72,18 +72,18 @@ class WP2D_Options {
 	 * @return WP2D_Options Instance of this class.
 	 */
 	public static function instance() {
-		if ( null === self::$_instance ) {
-			self::$_instance = new self();
-			self::$_instance->_setup();
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+			self::$instance->setup();
 		}
 
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
 	 * Set up the options menu.
 	 */
-	private function _setup() {
+	private function setup() {
 
 		// Populate options array.
 		$this->get_option();
@@ -105,7 +105,7 @@ class WP2D_Options {
 	 *
 	 * @return string Return the currently selected tab.
 	 */
-	private function _current_tab( $default = 'defaults' ) {
+	private function current_tab( $default = 'defaults' ) {
 		$tab = ( isset ( $_GET['tab'] ) ? $_GET['tab'] : $default );
 
 		// If the pod settings aren't configured yet, open the 'Setup' tab.
@@ -123,7 +123,7 @@ class WP2D_Options {
 	 *
 	 * @return array (If requested) An array of the outputted options tabs.
 	 */
-	private function _options_page_tabs( $return = false ) {
+	private function options_page_tabs( $return = false ) {
 		// The array defining all options sections to be shown as tabs.
 		$tabs = [];
 		if ( $this->is_pod_set_up() ) {
@@ -137,7 +137,7 @@ class WP2D_Options {
 		$out = '<h2 id="options-tabs" class="nav-tab-wrapper">';
 		foreach ( $tabs as $tab => $name ) {
 			// The tab link.
-			$out .= '<a class="nav-tab' . ( $this->_current_tab() === $tab ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
+			$out .= '<a class="nav-tab' . ( $this->current_tab() === $tab ? ' nav-tab-active' : '' ) . '" href="?page=wp_to_diaspora&tab=' . $tab . '">' . $name . '</a>';
 		}
 		$out .= '</h2>';
 
@@ -215,7 +215,7 @@ class WP2D_Options {
 			settings_errors( 'wp_to_diaspora_settings' );
 			?>
 
-			<?php $page_tabs = array_keys( $this->_options_page_tabs( true ) ); ?>
+			<?php $page_tabs = array_keys( $this->options_page_tabs( true ) ); ?>
 
 			<form action="<?php echo admin_url( 'options.php' ); ?>" method="post">
 				<input id="wp2d_no_js" type="hidden" name="wp_to_diaspora_settings[no_js]" value="1">
@@ -225,7 +225,7 @@ class WP2D_Options {
 				do_settings_sections( 'wp_to_diaspora_settings' );
 
 				// Get the name of the current tab, if set, else take the first one from the list.
-				$tab = $this->_current_tab( $page_tabs[0] );
+				$tab = $this->current_tab( $page_tabs[0] );
 
 				// Add Save and Reset buttons.
 				echo '<input id="submit-' . esc_attr( $tab ) . '" name="wp_to_diaspora_settings[submit_' . esc_attr( $tab ) . ']" type="submit" class="button-primary" value="' . esc_attr__( 'Save Changes' ) . '" />&nbsp;';
@@ -272,7 +272,7 @@ class WP2D_Options {
 		register_setting( 'wp_to_diaspora_settings', 'wp_to_diaspora_settings', [ $this, 'validate_settings' ] );
 
 		// Load only the sections of the selected tab.
-		switch ( $this->_current_tab() ) {
+		switch ( $this->current_tab() ) {
 			case 'defaults' :
 				// Add a "Defaults" section that contains all posting settings to be used by default.
 				add_settings_section( 'wp_to_diaspora_defaults_section', __( 'Posting Defaults', 'wp-to-diaspora' ), [ $this, 'defaults_section' ], 'wp_to_diaspora_settings' );
@@ -819,19 +819,19 @@ class WP2D_Options {
 	 * @return mixed Requested option value.
 	 */
 	public function get_option( $option = null, $default = null ) {
-		if ( null === self::$_options ) {
-			self::$_options = get_option( 'wp_to_diaspora_settings', self::$_default_options );
+		if ( null === self::$options ) {
+			self::$options = get_option( 'wp_to_diaspora_settings', self::$default_options );
 		}
 		if ( null !== $option ) {
-			if ( isset( self::$_options[ $option ] ) ) {
+			if ( isset( self::$options[ $option ] ) ) {
 				// Return found option value.
-				return self::$_options[ $option ];
+				return self::$options[ $option ];
 			} elseif ( null !== $default ) {
 				// Return overridden default value.
 				return $default;
-			} elseif ( isset( self::$_default_options[ $option ] ) ) {
+			} elseif ( isset( self::$default_options[ $option ] ) ) {
 				// Return default option value.
-				return self::$_default_options[ $option ];
+				return self::$default_options[ $option ];
 			}
 		}
 
@@ -844,7 +844,7 @@ class WP2D_Options {
 	 * @return array All the options.
 	 */
 	public function get_options() {
-		return self::$_options;
+		return self::$options;
 	}
 
 	/**
@@ -857,9 +857,9 @@ class WP2D_Options {
 	public function set_option( $option, $value, $save = false ) {
 		if ( null !== $option ) {
 			if ( null !== $value ) {
-				self::$_options[ $option ] = $value;
+				self::$options[ $option ] = $value;
 			} else {
-				unset( self::$_options[ $option ] );
+				unset( self::$options[ $option ] );
 			}
 		}
 
@@ -870,7 +870,7 @@ class WP2D_Options {
 	 * Save the options.
 	 */
 	public function save() {
-		update_option( 'wp_to_diaspora_settings', self::$_options );
+		update_option( 'wp_to_diaspora_settings', self::$options );
 	}
 
 	/**
@@ -881,8 +881,8 @@ class WP2D_Options {
 	 * @return array List of valid values.
 	 */
 	public function get_valid_values( $field ) {
-		if ( array_key_exists( $field, self::$_valid_values ) ) {
-			return self::$_valid_values[ $field ];
+		if ( array_key_exists( $field, self::$valid_values ) ) {
+			return self::$valid_values[ $field ];
 		}
 	}
 
@@ -983,7 +983,7 @@ class WP2D_Options {
 		// Reset to defaults.
 		if ( isset( $input['reset_defaults'] ) ) {
 			// Set the input to the default options.
-			$input = self::$_default_options;
+			$input = self::$default_options;
 
 			// Don't reset the fetched lists of aspects and services.
 			unset( $input['pod_list'], $input['aspects_list'], $input['services_list'] );
@@ -993,7 +993,7 @@ class WP2D_Options {
 		unset( $input['submit_defaults'], $input['reset_defaults'], $input['submit_setup'] );
 
 		// Parse inputs with default options and return.
-		return wp_parse_args( $input, array_merge( self::$_default_options, self::$_options ) );
+		return wp_parse_args( $input, array_merge( self::$default_options, self::$options ) );
 	}
 
 	/**

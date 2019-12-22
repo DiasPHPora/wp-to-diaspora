@@ -19,7 +19,7 @@ class WP2D_Contextual_Help {
 	 *
 	 * @var WP2D_Contextual_Help
 	 */
-	private static $_instance;
+	private static $instance;
 
 	/**
 	 * Create / Get the instance of this class.
@@ -27,13 +27,13 @@ class WP2D_Contextual_Help {
 	 * @return WP2D_Contextual_Help Instance of this class.
 	 */
 	public static function instance() {
-		if ( null === self::$_instance ) {
-			self::$_instance = new self();
-			self::$_instance->_constants();
-			self::$_instance->_setup();
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+			self::$instance->constants();
+			self::$instance->setup();
 		}
 
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
@@ -41,7 +41,7 @@ class WP2D_Contextual_Help {
 	 *
 	 * @since 1.5.0
 	 */
-	private function _constants() {
+	private function constants() {
 		define( 'WP2D_EXT_WPORG', esc_url( 'https://wordpress.org/plugins/wp-to-diaspora' ) );
 		define( 'WP2D_EXT_I18N', esc_url( 'https://poeditor.com/join/project?hash=c085b3654a5e04c69ec942e0f136716a' ) );
 		define( 'WP2D_EXT_GH', esc_url( 'https://github.com/DiasPHPora/wp-to-diaspora' ) );
@@ -53,7 +53,7 @@ class WP2D_Contextual_Help {
 	/**
 	 * Set up the contextual help menu.
 	 */
-	private function _setup() {
+	private function setup() {
 		// Do we display the help tabs?
 		$post_type          = get_current_screen()->post_type;
 		$enabled_post_types = WP2D_Options::instance()->get_option( 'enabled_post_types' );
@@ -64,13 +64,13 @@ class WP2D_Contextual_Help {
 		// If we don't have a post type, we're on the main settings page.
 		if ( '' === $post_type ) {
 			// Set the sidebar in the contextual help.
-			$this->_set_sidebar();
+			$this->set_sidebar();
 
 			// Add the main settings tabs and their content.
-			$this->_add_settings_help_tabs();
+			$this->add_settings_help_tabs();
 		} else {
 			// Add the post type specific tabs and their content.
-			$this->_add_post_type_help_tabs();
+			$this->add_post_type_help_tabs();
 		}
 	}
 
@@ -85,7 +85,7 @@ class WP2D_Contextual_Help {
 	/**
 	 * Set the sidebar in the contextual help.
 	 */
-	private function _set_sidebar() {
+	private function set_sidebar() {
 		get_current_screen()->set_help_sidebar(
 			'<p><strong>' . esc_html__( 'WP to diaspora*', 'wp-to-diaspora' ) . '</strong></p>
 			<ul>
@@ -100,7 +100,7 @@ class WP2D_Contextual_Help {
 	/**
 	 * Add help tabs to the contextual help on the settings page.
 	 */
-	private function _add_settings_help_tabs() {
+	private function add_settings_help_tabs() {
 		$screen = get_current_screen();
 
 		// A short overview of the plugin.
@@ -231,7 +231,7 @@ class WP2D_Contextual_Help {
 	/**
 	 * Add help tabs to the contextual help on the post pages.
 	 */
-	private function _add_post_type_help_tabs() {
+	private function add_post_type_help_tabs() {
 		get_current_screen()->add_help_tab( [
 			'id'      => 'wp-to-diaspora',
 			'title'   => esc_html__( 'WP to diaspora*', 'wp-to-diaspora' ),

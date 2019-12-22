@@ -49,7 +49,7 @@ class WP_To_Diaspora {
 	 *
 	 * @var WP_To_Diaspora
 	 */
-	private static $_instance;
+	private static $instance;
 
 	/**
 	 * The minimum required WordPress version.
@@ -58,7 +58,7 @@ class WP_To_Diaspora {
 	 *
 	 * @var string
 	 */
-	private $_min_wp = '3.9.2-src';
+	private $min_wp = '3.9.2-src';
 
 	/**
 	 * The minimum required PHP version.
@@ -67,14 +67,14 @@ class WP_To_Diaspora {
 	 *
 	 * @var string
 	 */
-	private $_min_php = '5.4';
+	private $min_php = '5.4';
 
 	/**
 	 * Instance of the API class.
 	 *
 	 * @var WP2D_API
 	 */
-	private $_api;
+	private $api;
 
 	/**
 	 * Create / Get the instance of this class.
@@ -82,18 +82,18 @@ class WP_To_Diaspora {
 	 * @return WP_To_Diaspora Instance of this class.
 	 */
 	public static function instance() {
-		if ( null === self::$_instance ) {
-			self::$_instance = new self();
-			if ( self::$_instance->_version_check() ) {
-				self::$_instance->_constants();
-				self::$_instance->_includes();
-				self::$_instance->_setup();
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+			if ( self::$instance->version_check() ) {
+				self::$instance->constants();
+				self::$instance->includes();
+				self::$instance->setup();
 			} else {
-				self::$_instance = null;
+				self::$instance = null;
 			}
 		}
 
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
@@ -101,7 +101,7 @@ class WP_To_Diaspora {
 	 *
 	 * @since 1.5.0
 	 */
-	private function _constants() {
+	private function constants() {
 		// Are we in debugging mode?
 		if ( isset( $_GET['debugging'] ) ) {
 			define( 'WP2D_DEBUGGING', true );
@@ -122,9 +122,9 @@ class WP_To_Diaspora {
 	 *
 	 * @return bool If version requirements are met.
 	 */
-	private function _version_check() {
+	private function version_check() {
 		// Check for version requirements.
-		if ( version_compare( PHP_VERSION, $this->_min_php, '<' ) || version_compare( $GLOBALS['wp_version'], $this->_min_wp, '<' ) ) {
+		if ( version_compare( PHP_VERSION, $this->min_php, '<' ) || version_compare( $GLOBALS['wp_version'], $this->min_wp, '<' ) ) {
 			add_action( 'admin_notices', [ $this, 'deactivate' ] );
 
 			return false;
@@ -148,7 +148,7 @@ class WP_To_Diaspora {
 		// Then display the admin notice.
 		?>
 		<div class="error">
-			<p><?php echo esc_html( sprintf( 'WP to diaspora* requires at least WordPress %1$s (you have %2$s) and PHP %3$s (you have %4$s)!', $this->_min_wp, $GLOBALS['wp_version'], $this->_min_php, PHP_VERSION ) ); ?></p>
+			<p><?php echo esc_html( sprintf( 'WP to diaspora* requires at least WordPress %1$s (you have %2$s) and PHP %3$s (you have %4$s)!', $this->min_wp, $GLOBALS['wp_version'], $this->min_php, PHP_VERSION ) ); ?></p>
 		</div>
 		<?php
 	}
@@ -158,7 +158,7 @@ class WP_To_Diaspora {
 	 *
 	 * @since 1.5.0
 	 */
-	private function _includes() {
+	private function includes() {
 		require_once WP2D_VENDOR_DIR . '/autoload.php';
 		require_once WP2D_LIB_DIR . '/class-api.php';
 		require_once WP2D_LIB_DIR . '/class-contextual-help.php';
@@ -170,7 +170,7 @@ class WP_To_Diaspora {
 	/**
 	 * Set up the plugin.
 	 */
-	private function _setup() {
+	private function setup() {
 
 		// Load languages.
 		add_action( 'plugins_loaded', [ $this, 'l10n' ] );
@@ -206,12 +206,12 @@ class WP_To_Diaspora {
 	 *
 	 * @return WP2D_API The API object.
 	 */
-	private function _load_api() {
-		if ( null === $this->_api ) {
-			$this->_api = WP2D_Helpers::api_quick_connect();
+	private function load_api() {
+		if ( null === $this->api ) {
+			$this->api = WP2D_Helpers::api_quick_connect();
 		}
 
-		return $this->_api;
+		return $this->api;
 	}
 
 	/**
@@ -349,7 +349,7 @@ class WP_To_Diaspora {
 	 *
 	 * @return array|bool The list of aspects or services, false if an illegal parameter is passed.
 	 */
-	private function _update_aspects_services_list( $type ) {
+	private function update_aspects_services_list( $type ) {
 		// Check for correct argument value.
 		if ( ! in_array( $type, [ 'aspects', 'services' ], true ) ) {
 			return false;
@@ -364,7 +364,7 @@ class WP_To_Diaspora {
 		}
 
 		// Set up the connection to diaspora*.
-		$api = $this->_load_api();
+		$api = $this->load_api();
 
 		// If there was a problem loading the API, return false.
 		if ( $api->has_last_error() ) {
@@ -394,14 +394,14 @@ class WP_To_Diaspora {
 	 * Update the list of aspects and return them for use with AJAX.
 	 */
 	public function update_aspects_list_callback() {
-		wp_send_json( $this->_update_aspects_services_list( 'aspects' ) );
+		wp_send_json( $this->update_aspects_services_list( 'aspects' ) );
 	}
 
 	/**
 	 * Update the list of services and return them for use with AJAX.
 	 */
 	public function update_services_list_callback() {
-		wp_send_json( $this->_update_aspects_services_list( 'services' ) );
+		wp_send_json( $this->update_aspects_services_list( 'services' ) );
 	}
 
 	/**
@@ -409,13 +409,13 @@ class WP_To_Diaspora {
 	 *
 	 * @return bool The status of the connection.
 	 */
-	private function _check_pod_connection_status() {
+	private function check_pod_connection_status() {
 		$options = WP2D_Options::instance();
 
 		$status = null;
 
 		if ( $options->is_pod_set_up() ) {
-			$status = ! $this->_load_api()->has_last_error();
+			$status = ! $this->load_api()->has_last_error();
 		}
 
 		return $status;
@@ -431,7 +431,7 @@ class WP_To_Diaspora {
 			define( 'WP2D_DEBUGGING', true );
 		}
 
-		$status = $this->_check_pod_connection_status();
+		$status = $this->check_pod_connection_status();
 
 		$data = [
 			'debug'   => esc_textarea( WP2D_Helpers::get_debugging() ),
@@ -440,8 +440,8 @@ class WP_To_Diaspora {
 
 		if ( true === $status ) {
 			wp_send_json_success( $data );
-		} elseif ( false === $status && $this->_load_api()->has_last_error() ) {
-			$data['message'] = $this->_load_api()->get_last_error() . ' ' . WP2D_Contextual_Help::get_help_tab_quick_link( $this->_load_api()->get_last_error_object() );
+		} elseif ( false === $status && $this->load_api()->has_last_error() ) {
+			$data['message'] = $this->load_api()->get_last_error() . ' ' . WP2D_Contextual_Help::get_help_tab_quick_link( $this->load_api()->get_last_error_object() );
 			wp_send_json_error( $data );
 		}
 		// If $status === null, do nothing.

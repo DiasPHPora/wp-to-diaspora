@@ -104,7 +104,7 @@ class WP2D_Post {
 	 * @var boolean
 	 * @since 1.5.0
 	 */
-	private static $_is_set_up = false;
+	private static $is_set_up = false;
 
 	/**
 	 * Setup all the necessary WP callbacks.
@@ -112,7 +112,7 @@ class WP2D_Post {
 	 * @since 1.5.0
 	 */
 	public static function setup() {
-		if ( self::$_is_set_up ) {
+		if ( self::$is_set_up ) {
 			return;
 		}
 
@@ -129,7 +129,7 @@ class WP2D_Post {
 		// Add meta boxes.
 		add_action( 'add_meta_boxes', [ $instance, 'add_meta_boxes' ] );
 
-		self::$_is_set_up = true;
+		self::$is_set_up = true;
 	}
 
 	/**
@@ -140,7 +140,7 @@ class WP2D_Post {
 	 * @param int|WP_Post $post Post ID or the post itself.
 	 */
 	public function __construct( $post ) {
-		$this->_assign_wp_post( $post );
+		$this->assign_wp_post( $post );
 	}
 
 	/**
@@ -150,7 +150,7 @@ class WP2D_Post {
 	 *
 	 * @param int|WP_Post $post Post ID or the post itself.
 	 */
-	private function _assign_wp_post( $post ) {
+	private function assign_wp_post( $post ) {
 		if ( $this->post = get_post( $post ) ) {
 			$this->ID = $this->post->ID;
 
@@ -194,7 +194,7 @@ class WP2D_Post {
 	 * @return bool If the post was posted successfully.
 	 */
 	public function post( $post_id, $post ) {
-		$this->_assign_wp_post( $post );
+		$this->assign_wp_post( $post );
 
 		$options = WP2D_Options::instance();
 
@@ -208,20 +208,20 @@ class WP2D_Post {
 			return false;
 		}
 
-		$status_message = $this->_get_title_link();
+		$status_message = $this->get_title_link();
 
 		// Post the full post text, just the excerpt, or nothing at all?
 		if ( 'full' === $this->display ) {
-			$status_message .= $this->_get_full_content();
+			$status_message .= $this->get_full_content();
 		} elseif ( 'excerpt' === $this->display ) {
-			$status_message .= $this->_get_excerpt_content();
+			$status_message .= $this->get_excerpt_content();
 		}
 
 		// Add the tags assigned to the post.
-		$status_message .= $this->_get_tags_to_add();
+		$status_message .= $this->get_tags_to_add();
 
 		// Add the original entry link to the post?
-		$status_message .= $this->_get_posted_at_link();
+		$status_message .= $this->get_posted_at_link();
 
 		$status_converter = new HtmlConverter( [ 'strip_tags' => true ] );
 		$status_message   = $status_converter->convert( $status_message );
@@ -251,7 +251,7 @@ class WP2D_Post {
 		}
 
 		// Save certain diaspora* post data as meta data for future reference.
-		$this->_save_to_history( (object) $response );
+		$this->save_to_history( (object) $response );
 
 		// If there is still a previous post error around, remove it.
 		delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
@@ -271,7 +271,7 @@ class WP2D_Post {
 	 *
 	 * @return string Post title as a link.
 	 */
-	private function _get_title_link() {
+	private function get_title_link() {
 		$title      = esc_html( $this->post->post_title );
 		$permalink  = get_permalink( $this->ID );
 		$title_link = sprintf( '<strong><a href="%2$s" title="%2$s">%1$s</a></strong>', $title, $permalink );
@@ -294,7 +294,7 @@ class WP2D_Post {
 	 *
 	 * @return string The full post content.
 	 */
-	private function _get_full_content() {
+	private function get_full_content() {
 		// Only allow certain shortcodes.
 		global $shortcode_tags;
 		$shortcode_tags_bkp = [];
@@ -348,7 +348,7 @@ class WP2D_Post {
 	 *
 	 * @return string Post's excerpt.
 	 */
-	private function _get_excerpt_content() {
+	private function get_excerpt_content() {
 		// Look for the excerpt in the following order:
 		// 1. Custom post excerpt.
 		// 2. Text up to the <!--more--> tag.
@@ -381,7 +381,7 @@ class WP2D_Post {
 	 *
 	 * @return string Tags added to the post.
 	 */
-	private function _get_tags_to_add() {
+	private function get_tags_to_add() {
 		$options       = WP2D_Options::instance();
 		$tags_to_post  = $this->tags_to_post;
 		$tags_to_add   = '';
@@ -444,7 +444,7 @@ class WP2D_Post {
 	 *
 	 * @return string Original post link.
 	 */
-	private function _get_posted_at_link() {
+	private function get_posted_at_link() {
 		if ( $this->fullentrylink ) {
 			$prefix         = esc_html__( 'Originally posted at:', 'wp-to-diaspora' );
 			$permalink      = get_permalink( $this->ID );
@@ -473,7 +473,7 @@ class WP2D_Post {
 	 *
 	 * @param object $response Response from the API containing the diaspora* post details.
 	 */
-	private function _save_to_history( $response ) {
+	private function save_to_history( $response ) {
 		// Make sure the post history is an array.
 		if ( empty( $this->post_history ) ) {
 			$this->post_history = [];
@@ -644,7 +644,7 @@ class WP2D_Post {
 	 * @param WP_Post $post The object for the current post.
 	 */
 	public function meta_box_render( $post ) {
-		$this->_assign_wp_post( $post );
+		$this->assign_wp_post( $post );
 
 		// Add an nonce field so we can check for it later.
 		wp_nonce_field( 'wp_to_diaspora_meta_box', 'wp_to_diaspora_meta_box_nonce' );
@@ -692,7 +692,7 @@ class WP2D_Post {
 		 * We need to verify this came from our screen and with proper authorization,
 		 * because the save_post action can be triggered at other times.
 		 */
-		if ( ! $this->_is_safe_to_save() ) {
+		if ( ! $this->is_safe_to_save() ) {
 			return;
 		}
 
@@ -731,7 +731,7 @@ class WP2D_Post {
 	 *
 	 * @return bool If the verification checks have passed.
 	 */
-	private function _is_safe_to_save() {
+	private function is_safe_to_save() {
 		// Verify that our nonce is set and  valid.
 		if ( ! ( isset( $_POST['wp_to_diaspora_meta_box_nonce'] ) && wp_verify_nonce( $_POST['wp_to_diaspora_meta_box_nonce'], 'wp_to_diaspora_meta_box' ) ) ) {
 			return false;
