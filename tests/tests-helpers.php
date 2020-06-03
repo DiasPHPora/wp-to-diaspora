@@ -25,13 +25,13 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	 * @runInSeparateProcess
 	 */
 	public function test_debugging_disabled() {
-		$this->assertClassHasAttribute( '_debugging', 'WP2D_Helpers' );
-		$this->assertAttributeEmpty( '_debugging', 'WP2D_Helpers' );
+		$this->assertClassHasAttribute( 'debugging', 'WP2D_Helpers' );
+		$this->assertAttributeEmpty( 'debugging', 'WP2D_Helpers' );
 
 		define( 'WP2D_DEBUGGING', false );
 
 		$this->assertFalse( WP2D_Helpers::add_debugging( 'some debug info' ) );
-		$this->assertAttributeEmpty( '_debugging', 'WP2D_Helpers' );
+		$this->assertAttributeEmpty( 'debugging', 'WP2D_Helpers' );
 
 		$this->assertFalse( WP2D_Helpers::get_debugging() );
 	}
@@ -48,8 +48,8 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 	 * @runInSeparateProcess
 	 */
 	public function test_debugging_enabled() {
-		$this->assertClassHasAttribute( '_debugging', 'WP2D_Helpers' );
-		$this->assertAttributeEmpty( '_debugging', 'WP2D_Helpers' );
+		$this->assertClassHasAttribute( 'debugging', 'WP2D_Helpers' );
+		$this->assertAttributeEmpty( 'debugging', 'WP2D_Helpers' );
 
 		define( 'WP2D_DEBUGGING', true );
 

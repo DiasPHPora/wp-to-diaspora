@@ -20,12 +20,12 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 */
 	public function test_constructor() {
 		$api = new WP2D_API( 'pod1' );
-		$this->assertAttributeSame( true, '_is_secure', $api );
-		$this->assertAttributeSame( 'pod1', '_pod', $api );
+		$this->assertAttributeSame( true, 'is_secure', $api );
+		$this->assertAttributeSame( 'pod1', 'pod', $api );
 
 		$api = new WP2D_API( 'pod2', false );
-		$this->assertAttributeSame( false, '_is_secure', $api );
-		$this->assertAttributeSame( 'pod2', '_pod', $api );
+		$this->assertAttributeSame( false, 'is_secure', $api );
+		$this->assertAttributeSame( 'pod2', 'pod', $api );
 	}
 
 	/**
@@ -60,7 +60,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$api = new WP2D_API( 'pod' );
 
 		// Directly check if the connection has been initialised.
-		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_init' ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, 'check_init' ) );
 		$this->assertEquals(
 			'Connection not initialised.',
 			$api->get_last_error()
@@ -95,21 +95,21 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		// First initialisation.
 		$this->assertTrue( $api->init() );
-		$this->assertAttributeSame( 'token-a', '_token', $api );
+		$this->assertAttributeSame( 'token-a', 'token', $api );
 		// Only check for the cookie once, since it's always the same one.
-		$this->assertAttributeSame( [ 'the_cookie' ], '_cookies', $api );
+		$this->assertAttributeSame( [ 'the_cookie' ], 'cookies', $api );
 
 		// Reinitialise with same pod, token isn't reloaded.
 		$this->assertTrue( $api->init( 'pod1' ) );
-		$this->assertAttributeSame( 'token-a', '_token', $api );
+		$this->assertAttributeSame( 'token-a', 'token', $api );
 
 		// Reinitialise with different pod.
 		$this->assertTrue( $api->init( 'pod2' ) );
-		$this->assertAttributeSame( 'token-b', '_token', $api );
+		$this->assertAttributeSame( 'token-b', 'token', $api );
 
 		// Reinitialise with different protocol.
 		$this->assertTrue( $api->init( 'pod2', false ) );
-		$this->assertAttributeSame( 'token-c', '_token', $api );
+		$this->assertAttributeSame( 'token-c', 'token', $api );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_success' );
 	}
@@ -125,14 +125,14 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$api = wp2d_api_helper_get_fake_api_init( 'pod', 'token-initial' );
 
 		// Check the initial token.
-		$this->assertEquals( 'token-initial', wp2d_helper_call_private_method( $api, '_fetch_token' ) );
+		$this->assertEquals( 'token-initial', wp2d_helper_call_private_method( $api, 'fetch_token' ) );
 
 		// Directly set a new token.
-		wp2d_helper_set_private_property( $api, '_token', 'token-new' );
-		$this->assertEquals( 'token-new', wp2d_helper_call_private_method( $api, '_fetch_token' ) );
+		wp2d_helper_set_private_property( $api, 'token', 'token-new' );
+		$this->assertEquals( 'token-new', wp2d_helper_call_private_method( $api, 'fetch_token' ) );
 
 		// Force fetch a new token.
-		$this->assertEquals( 'token-forced', wp2d_helper_call_private_method( $api, '_fetch_token', true ) );
+		$this->assertEquals( 'token-forced', wp2d_helper_call_private_method( $api, 'fetch_token', true ) );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_fetch_token' );
 	}
@@ -146,19 +146,19 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$api = new WP2D_API( 'pod' );
 		// Try to check login before initialised.
 		$this->assertFalse( $api->is_logged_in() );
-		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_login' ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, 'check_login' ) );
 		$this->assertEquals( 'Connection not initialised.', $api->get_last_error() );
 
 		$api = wp2d_api_helper_get_fake_api_init();
 
 		$this->assertFalse( $api->is_logged_in() );
-		$this->assertFalse( wp2d_helper_call_private_method( $api, '_check_login' ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, 'check_login' ) );
 		$this->assertEquals( 'Not logged in.', $api->get_last_error() );
 
-		wp2d_helper_set_private_property( $api, '_is_logged_in', true );
+		wp2d_helper_set_private_property( $api, 'is_logged_in', true );
 
 		$this->assertTrue( $api->is_logged_in() );
-		$this->assertTrue( wp2d_helper_call_private_method( $api, '_check_login' ) );
+		$this->assertTrue( wp2d_helper_call_private_method( $api, 'check_login' ) );
 	}
 
 	/**
@@ -232,11 +232,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
 
 		// Testing with WP_Error response (check filter).
-		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', [], true ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, 'get_aspects_services', 'invalid-argument', [], true ) );
 		$this->assertEquals( 'Unknown error occurred.', $api->get_last_error() );
 
 		// Testing invalid code response (check filter).
-		$this->assertFalse( wp2d_helper_call_private_method( $api, '_get_aspects_services', 'invalid-argument', [], true ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $api, 'get_aspects_services', 'invalid-argument', [], true ) );
 		$this->assertEquals( 'Unknown error occurred.', $api->get_last_error() );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_services_fail' );
@@ -282,21 +282,21 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		// The aspects that should be returned.
 		$aspects = [ 'public' => 'Public', 1 => 'Family' ];
 		$this->assertEquals( $aspects, $api->get_aspects() );
-		$this->assertAttributeSame( $aspects, '_aspects', $api );
+		$this->assertAttributeSame( $aspects, 'aspects', $api );
 
 		// Fetching the aspects again should pass the same list without a new request.
 		$this->assertEquals( $aspects, $api->get_aspects() );
-		$this->assertAttributeSame( $aspects, '_aspects', $api );
+		$this->assertAttributeSame( $aspects, 'aspects', $api );
 
 		// Force a new fetch request.
 		$aspects = [ 'public' => 'Public', 2 => 'Friends' ];
 		$this->assertEquals( $aspects, $api->get_aspects( true ) );
-		$this->assertAttributeSame( $aspects, '_aspects', $api );
+		$this->assertAttributeSame( $aspects, 'aspects', $api );
 
 		// Make sure that there is always at least a Public aspect.
 		$aspects = [ 'public' => 'Public' ];
 		$this->assertEquals( $aspects, $api->get_aspects( true ) );
-		$this->assertAttributeSame( $aspects, '_aspects', $api );
+		$this->assertAttributeSame( $aspects, 'aspects', $api );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_aspects_success' );
 	}
@@ -341,20 +341,20 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		// The services that should be returned.
 		$services = [ 'facebook' => 'Facebook' ];
 		$this->assertEquals( $services, $api->get_services() );
-		$this->assertAttributeSame( $services, '_services', $api );
+		$this->assertAttributeSame( $services, 'services', $api );
 
 		// Fetching the services again should pass the same list without a new request.
 		$this->assertEquals( $services, $api->get_services() );
-		$this->assertAttributeSame( $services, '_services', $api );
+		$this->assertAttributeSame( $services, 'services', $api );
 
 		// Force a new fetch request.
 		$services = [ 'twitter' => 'Twitter' ];
 		$this->assertEquals( $services, $api->get_services( true ) );
-		$this->assertAttributeSame( $services, '_services', $api );
+		$this->assertAttributeSame( $services, 'services', $api );
 
 		// If no services are connected, make sure we get an empty array.
 		$this->assertEquals( [], $api->get_services( true ) );
-		$this->assertAttributeSame( [], '_services', $api );
+		$this->assertAttributeSame( [], 'services', $api );
 
 		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_get_services_success' );
 	}
@@ -496,11 +496,11 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		$api->logout();
 
-		$this->assertAttributeSame( false, '_is_logged_in', $api );
-		$this->assertAttributeSame( null, '_username', $api );
-		$this->assertAttributeSame( null, '_password', $api );
-		$this->assertAttributeSame( [], '_aspects', $api );
-		$this->assertAttributeSame( [], '_services', $api );
+		$this->assertAttributeSame( false, 'is_logged_in', $api );
+		$this->assertAttributeSame( null, 'username', $api );
+		$this->assertAttributeSame( null, 'password', $api );
+		$this->assertAttributeSame( [], 'aspects', $api );
+		$this->assertAttributeSame( [], 'services', $api );
 	}
 
 	/**
@@ -514,13 +514,13 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$api->deinit();
 
 		$this->assertFalse( $api->has_last_error() );
-		$this->assertAttributeSame( null, '_token', $api );
-		$this->assertAttributeSame( [], '_cookies', $api );
-		$this->assertAttributeSame( null, '_last_request', $api );
-		$this->assertAttributeSame( false, '_is_logged_in', $api );
-		$this->assertAttributeSame( null, '_username', $api );
-		$this->assertAttributeSame( null, '_password', $api );
-		$this->assertAttributeSame( [], '_aspects', $api );
-		$this->assertAttributeSame( [], '_services', $api );
+		$this->assertAttributeSame( null, 'token', $api );
+		$this->assertAttributeSame( [], 'cookies', $api );
+		$this->assertAttributeSame( null, 'last_request', $api );
+		$this->assertAttributeSame( false, 'is_logged_in', $api );
+		$this->assertAttributeSame( null, 'username', $api );
+		$this->assertAttributeSame( null, 'password', $api );
+		$this->assertAttributeSame( [], 'aspects', $api );
+		$this->assertAttributeSame( [], 'services', $api );
 	}
 }

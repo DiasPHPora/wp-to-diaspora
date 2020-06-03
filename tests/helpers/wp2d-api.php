@@ -22,7 +22,7 @@ function wp2d_api_helper_get_fake_api_init( $pod = 'pod', $token = 'token' ) {
 	$api = new WP2D_API( $pod );
 
 	// Fake initialisation.
-	wp2d_helper_set_private_property( $api, '_token', $token );
+	wp2d_helper_set_private_property( $api, 'token', $token );
 
 	return $api;
 }
@@ -45,9 +45,9 @@ function wp2d_api_helper_get_fake_api_init_login( $pod = 'pod', $token = 'token'
 	$api = wp2d_api_helper_get_fake_api_init( $pod, $token );
 
 	// Fake valid login.
-	wp2d_helper_set_private_property( $api, '_is_logged_in', true );
-	wp2d_helper_set_private_property( $api, '_username', $username );
-	wp2d_helper_set_private_property( $api, '_password', $password );
+	wp2d_helper_set_private_property( $api, 'is_logged_in', true );
+	wp2d_helper_set_private_property( $api, 'username', $username );
+	wp2d_helper_set_private_property( $api, 'password', $password );
 
 	return $api;
 }

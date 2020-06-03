@@ -41,7 +41,7 @@ if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
 require_once $test_root . '/includes/functions.php';
 
 // Load the plugin manually.
-tests_add_filter( 'muplugins_loaded', function () {
+tests_add_filter( 'muplugins_loaded', static function () {
 	require_once __DIR__ . '/../wp-to-diaspora.php';
 } );
 

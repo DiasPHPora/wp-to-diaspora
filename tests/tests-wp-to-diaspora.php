@@ -19,7 +19,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_wp_to_diaspora_instance() {
-		$this->assertClassHasStaticAttribute( '_instance', 'WP_To_Diaspora' );
+		$this->assertClassHasStaticAttribute( 'instance', 'WP2D' );
 	}
 
 	/**
@@ -31,7 +31,6 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		$path = str_replace( '/tests', '', __DIR__ );
 		$this->assertSame( WP2D_DIR, $path );
 		$this->assertSame( WP2D_LIB_DIR, $path . '/lib' );
-		$this->assertSame( WP2D_VENDOR_DIR, $path . '/vendor' );
 	}
 
 	/**
@@ -40,12 +39,11 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_includes_exist() {
-		$this->assertFileExists( WP2D_VENDOR_DIR . '/autoload.php' );
-		$this->assertFileExists( WP2D_LIB_DIR . '/class-api.php' );
-		$this->assertFileExists( WP2D_LIB_DIR . '/class-contextual-help.php' );
-		$this->assertFileExists( WP2D_LIB_DIR . '/class-helpers.php' );
-		$this->assertFileExists( WP2D_LIB_DIR . '/class-options.php' );
-		$this->assertFileExists( WP2D_LIB_DIR . '/class-post.php' );
+		$this->assertFileExists( WP2D_LIB_DIR . '/class-wp2d-api.php' );
+		$this->assertFileExists( WP2D_LIB_DIR . '/class-wp2d-contextual-help.php' );
+		$this->assertFileExists( WP2D_LIB_DIR . '/class-wp2d-helpers.php' );
+		$this->assertFileExists( WP2D_LIB_DIR . '/class-wp2d-options.php' );
+		$this->assertFileExists( WP2D_LIB_DIR . '/class-wp2d-post.php' );
 	}
 
 	/**
@@ -68,14 +66,13 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_setup() {
-		$wp2d = WP_To_Diaspora::instance();
-		$hook = plugin_basename( WP2D_DIR . '/wp-to-diaspora.php' );
+		$wp2d = WP2D::instance();
 
 		// Load languages.
 		$this->assertNotEmpty( has_action( 'plugins_loaded', [ $wp2d, 'l10n' ] ) );
 
 		// Add "Settings" link to plugin page.
-		$this->assertNotEmpty( has_filter( 'plugin_action_links_' . $hook, [ $wp2d, 'settings_link' ] ) );
+		$this->assertNotEmpty( has_filter( 'plugin_action_links_' . WP2D_BASENAME, [ $wp2d, 'settings_link' ] ) );
 
 		// Perform any necessary data upgrades.
 		$this->assertNotEmpty( has_action( 'admin_init', [ $wp2d, 'upgrade' ] ) );
@@ -104,12 +101,12 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	 */
 	public function test_update_aspects_services_list() {
 		// Get the necessary instances.
-		$wp2d    = WP_To_Diaspora::instance();
+		$wp2d    = WP2D::instance();
 		$options = WP2D_Options::instance();
 		$api     = wp2d_api_helper_get_fake_api_init_login();
 
 		// Set our fake initialised API object.
-		wp2d_helper_set_private_property( $wp2d, '_api', $api );
+		wp2d_helper_set_private_property( $wp2d, 'api', $api );
 
 		add_filter( 'pre_http_request', 'wp_to_diaspora_pre_http_request_filter_update_aspects' );
 
@@ -120,48 +117,48 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		 * Make update calls for aspects.
 		 */
 		$res = [ 'public' => 'Public', 1 => 'Family' ];
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'aspects' ) );
+		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
 		$res = [ 'public' => 'Public', 2 => 'Friends' ];
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'aspects' ) );
+		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
 		// When an update fails (WP_Error or error code response), the previously set option remains unchanged.
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'aspects' ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 		$this->assertEquals( 'Error loading aspects.', $api->get_last_error( true ) );
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'aspects' ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 		$this->assertEquals( 'Error loading aspects.', $api->get_last_error( true ) );
 
 		// When getting an empty return, only the public aspect should exist.
 		$res = [ 'public' => 'Public' ];
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'aspects' ) );
+		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
 		/**
 		 * Make update calls for services.
 		 */
 		$res = [ 'facebook' => 'Facebook' ];
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'services' ) );
+		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
 		$res = [ 'twitter' => 'Twitter' ];
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'services' ) );
+		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
 		// When an update fails (WP_Error or error code response), the previously set option remains unchanged.
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'services' ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 		$this->assertEquals( 'Error loading services.', $api->get_last_error( true ) );
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'services' ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 		$this->assertEquals( 'Error loading services.', $api->get_last_error( true ) );
 
 		// When getting an empty return, we get an empty array.
 		$res = [];
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, '_update_aspects_services_list', 'services' ) );
+		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
 		remove_filter( 'pre_http_request', 'wp_to_diaspora_pre_http_request_filter_update_aspects' );
@@ -174,14 +171,14 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	 */
 	public function test_check_pod_connection_status() {
 		// Get the necessary instances.
-		$wp2d    = WP_To_Diaspora::instance();
+		$wp2d    = WP2D::instance();
 		$options = WP2D_Options::instance();
 		$api     = wp2d_api_helper_get_fake_api_init_login();
 		// Set our fake initialised API object.
-		wp2d_helper_set_private_property( $wp2d, '_api', $api );
+		wp2d_helper_set_private_property( $wp2d, 'api', $api );
 
 		// Pod hasn't been set up yet, so return is null.
-		$this->assertNull( wp2d_helper_call_private_method( $wp2d, '_check_pod_connection_status' ) );
+		$this->assertNull( wp2d_helper_call_private_method( $wp2d, 'check_pod_connection_status' ) );
 
 		// Set pseudo options to simulate a set up pod.
 		$options->set_option( 'pod', 'pod1' );
@@ -190,10 +187,10 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		$options->save();
 
 		// Fake init has no last_error, so it simulates a successful connection.
-		$this->assertTrue( wp2d_helper_call_private_method( $wp2d, '_check_pod_connection_status' ) );
+		$this->assertTrue( wp2d_helper_call_private_method( $wp2d, 'check_pod_connection_status' ) );
 
 		// Simulate an error in the API object.
-		wp2d_helper_set_private_property( $api, '_last_error', new WP_Error( 'wp_error_code', 'WP_Error message' ) );
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, '_check_pod_connection_status' ) );
+		wp2d_helper_set_private_property( $api, 'last_error', new WP_Error( 'wp_error_code', 'WP_Error message' ) );
+		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'check_pod_connection_status' ) );
 	}
 }
