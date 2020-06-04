@@ -124,10 +124,6 @@ class WP2D {
 	 * Set up the plugin.
 	 */
 	private function setup() {
-
-		// Load languages.
-		add_action( 'plugins_loaded', [ $this, 'l10n' ] );
-
 		// Add "Settings" link to plugin page.
 		add_filter( 'plugin_action_links_' . WP2D_BASENAME, [ $this, 'settings_link' ] );
 
@@ -218,13 +214,6 @@ class WP2D {
 			$options->set_option( 'version', WP2D_VERSION );
 			$options->save();
 		}
-	}
-
-	/**
-	 * Set up i18n.
-	 */
-	public function l10n() {
-		load_plugin_textdomain( 'wp-to-diaspora', false, 'wp-to-diaspora/languages' );
 	}
 
 	/**

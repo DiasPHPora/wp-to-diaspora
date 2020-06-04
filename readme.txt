@@ -2,9 +2,9 @@
 Contributors: gutobenn, noplanman
 Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
-Requires at least: 3.9.2
+Requires at least: 4.6
 Tested up to: 5.0.0
-Minimum PHP: 5.4
+Minimum PHP: 7.2
 Stable tag: 2.1.0
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
@@ -22,7 +22,7 @@ With the focus on being **intuitive**, sharing your posts to diaspora* is made *
 Simply write your post and have it shared to diaspora* at the same time you publish it on your website.
 
 = Minimum requirements =
-WordPress 3.9.2, PHP 5.4.
+WordPress 4.6, PHP 7.2.
 
 = Getting started =
 After installing and activating the plugin, be sure to visit the plugin's settings page at 'Settings -> WP to diaspora' on your WordPress Admin page.
