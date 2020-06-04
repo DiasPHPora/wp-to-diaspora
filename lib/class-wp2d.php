@@ -27,7 +27,7 @@ class WP2D {
 	 *
 	 * @var string
 	 */
-	private $min_wp = '3.9.2-src';
+	private $min_wp = '4.6-src';
 
 	/**
 	 * The minimum required PHP version.
@@ -107,7 +107,7 @@ class WP2D {
 	 */
 	public function deactivate() {
 		// First of all, deactivate the plugin.
-		deactivate_plugins( plugin_basename( __FILE__ ) );
+		deactivate_plugins( WP2D_BASENAME );
 
 		// Get rid of the "Plugin activated" message.
 		unset( $_GET['activate'] );
@@ -239,12 +239,12 @@ class WP2D {
 
 		// Only load the styles and scripts on the settings page and the allowed post types.
 		if ( 'settings_page_wp_to_diaspora' === $screen->id || ( in_array( $screen->post_type, $enabled_post_types, true ) && 'post' === $screen->base ) ) {
-			wp_enqueue_style( 'tag-it', plugins_url( '/css/jquery.tagit.css', __FILE__ ) );
-			wp_enqueue_style( 'chosen', plugins_url( '/css/chosen.min.css', __FILE__ ) );
-			wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', __FILE__ ) );
-			wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.min.js', __FILE__ ), [ 'jquery' ], false, true );
-			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', __FILE__ ), [ 'jquery', 'jquery-ui-autocomplete' ], false, true );
-			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', __FILE__ ), [ 'jquery' ], false, true );
+			wp_enqueue_style( 'tag-it', plugins_url( '/css/jquery.tagit.css', WP2D_BASENAME ) );
+			wp_enqueue_style( 'chosen', plugins_url( '/css/chosen.min.css', WP2D_BASENAME ) );
+			wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', WP2D_BASENAME ) );
+			wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.min.js', WP2D_BASENAME ), [ 'jquery' ], false, true );
+			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', WP2D_BASENAME ), [ 'jquery', 'jquery-ui-autocomplete' ], false, true );
+			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', WP2D_BASENAME ), [ 'jquery' ], false, true );
 			// Javascript-specific l10n.
 			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', [
 				'resave_credentials'    => __( 'Resave your credentials and try again.', 'wp-to-diaspora' ),
