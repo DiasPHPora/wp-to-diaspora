@@ -6,7 +6,7 @@ checks:
 filter:
   excluded_paths:
     - 'js/chosen.jquery.min.js'
-    - 'js/tag-it.min.js'
+    - 'js/tag-it.jquery.min.js'
     - 'tests/*'
     - 'vendor/*'
 

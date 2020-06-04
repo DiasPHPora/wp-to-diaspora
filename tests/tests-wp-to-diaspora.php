@@ -52,11 +52,11 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_styles_scripts_exist() {
-		$this->assertFileExists( WP2D_DIR . '/css/jquery.tagit.css' );
 		$this->assertFileExists( WP2D_DIR . '/css/chosen.min.css' );
+		$this->assertFileExists( WP2D_DIR . '/css/tag-it.min.css' );
 		$this->assertFileExists( WP2D_DIR . '/css/wp-to-diaspora.css' );
 		$this->assertFileExists( WP2D_DIR . '/js/chosen.jquery.min.js' );
-		$this->assertFileExists( WP2D_DIR . '/js/tag-it.min.js' );
+		$this->assertFileExists( WP2D_DIR . '/js/tag-it.jquery.min.js' );
 		$this->assertFileExists( WP2D_DIR . '/js/wp-to-diaspora.js' );
 	}
 

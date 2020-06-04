@@ -239,11 +239,11 @@ class WP2D {
 
 		// Only load the styles and scripts on the settings page and the allowed post types.
 		if ( 'settings_page_wp_to_diaspora' === $screen->id || ( in_array( $screen->post_type, $enabled_post_types, true ) && 'post' === $screen->base ) ) {
-			wp_enqueue_style( 'tag-it', plugins_url( '/css/jquery.tagit.css', WP2D_BASENAME ), [], WP2D_VERSION );
+			wp_enqueue_style( 'tag-it', plugins_url( '/css/tag-it.min.css', WP2D_BASENAME ), [], WP2D_VERSION );
 			wp_enqueue_style( 'chosen', plugins_url( '/css/chosen.min.css', WP2D_BASENAME ), [], WP2D_VERSION );
 			wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', WP2D_BASENAME ), [], WP2D_VERSION );
 			wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.min.js', WP2D_BASENAME ), [ 'jquery' ], WP2D_VERSION, true );
-			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', WP2D_BASENAME ), [ 'jquery', 'jquery-ui-autocomplete' ], WP2D_VERSION, true );
+			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.jquery.min.js', WP2D_BASENAME ), [ 'jquery', 'jquery-ui-autocomplete' ], WP2D_VERSION, true );
 			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', WP2D_BASENAME ), [ 'jquery' ], WP2D_VERSION, true );
 			// Javascript-specific l10n.
 			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', [
