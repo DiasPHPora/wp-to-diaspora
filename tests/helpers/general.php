@@ -20,7 +20,7 @@
  * @return mixed The return value of the called private method.
  */
 function wp2d_helper_call_private_method( $object, $method ) {
-	$refClass  = new \ReflectionClass( $object );
+	$refClass  = new ReflectionClass( $object );
 	$refMethod = $refClass->getMethod( $method );
 	$refMethod->setAccessible( true );
 
@@ -39,7 +39,7 @@ function wp2d_helper_call_private_method( $object, $method ) {
  * @param mixed  $value    The value to set to the property.
  */
 function wp2d_helper_set_private_property( $object, $property, $value ) {
-	$refObject   = new \ReflectionObject( $object );
+	$refObject   = new ReflectionObject( $object );
 	$refProperty = $refObject->getProperty( $property );
 	$refProperty->setAccessible( true );
 	$refProperty->setValue( $object, $value );

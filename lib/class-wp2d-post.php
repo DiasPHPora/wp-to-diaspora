@@ -21,88 +21,99 @@ class WP2D_Post {
 	/**
 	 * The original post object.
 	 *
-	 * @var WP_Post
 	 * @since 1.5.0
+	 *
+	 * @var WP_Post
 	 */
 	public $post;
 
 	/**
 	 * The original post ID.
 	 *
-	 * @var int
 	 * @since 1.5.0
+	 *
+	 * @var int
 	 */
 	public $ID;
 
 	/**
 	 * If this post should be shared on diaspora*.
 	 *
-	 * @var bool
 	 * @since 1.5.0
+	 *
+	 * @var bool
 	 */
 	public $post_to_diaspora;
 
 	/**
 	 * If a link back to the original post should be added.
 	 *
-	 * @var bool
 	 * @since 1.5.0
+	 *
+	 * @var bool
 	 */
 	public $fullentrylink;
 
 	/**
 	 * What content gets posted.
 	 *
-	 * @var string
 	 * @since 1.5.0
+	 *
+	 * @var string
 	 */
 	public $display;
 
 	/**
 	 * The types of tags to post. (global,custom,post)
 	 *
-	 * @var array
 	 * @since 1.5.0
+	 *
+	 * @var array
 	 */
 	public $tags_to_post;
 
 	/**
 	 * The post's custom tags.
 	 *
-	 * @var array
 	 * @since 1.5.0
+	 *
+	 * @var array
 	 */
 	public $custom_tags;
 
 	/**
 	 * Aspects this post gets posted to.
 	 *
-	 * @var array
 	 * @since 1.5.0
+	 *
+	 * @var array
 	 */
 	public $aspects;
 
 	/**
 	 * Services this post gets posted to.
 	 *
-	 * @var array
 	 * @since 1.5.0
+	 *
+	 * @var array
 	 */
 	public $services;
 
 	/**
 	 * The post's history of diaspora* posts.
 	 *
-	 * @var array
 	 * @since 1.5.0
+	 *
+	 * @var array
 	 */
 	public $post_history;
 
 	/**
 	 * If the post actions have all been set up already.
 	 *
-	 * @var boolean
 	 * @since 1.5.0
+	 *
+	 * @var boolean
 	 */
 	private static $is_set_up = false;
 
@@ -309,7 +320,7 @@ class WP2D_Post {
 		// Disable all filters and then enable only defaults. This prevents additional filters from being posted to diaspora*.
 		remove_all_filters( 'the_content' );
 
-		/** @var array $content_filters */
+		/** @var array $content_filters List of filters to apply to the content. */
 		$content_filters = apply_filters( 'wp2d_content_filters_filter', [ 'do_shortcode', 'wptexturize', 'convert_smilies', 'convert_chars', 'wpautop', 'shortcode_unautop', 'prepend_attachment', [ $this, 'embed_remove' ] ] );
 		foreach ( $content_filters as $filter ) {
 			add_filter( 'the_content', $filter );
@@ -328,7 +339,7 @@ class WP2D_Post {
 		$post_content = apply_filters( 'the_content', $this->post->post_content );
 
 		// Put the removed shortcode tags back again.
-		$shortcode_tags += $shortcode_tags_bkp;
+		$shortcode_tags += $shortcode_tags_bkp; // phpcs:ignore
 
 		/**
 		 * Filter the full content of the post.
@@ -511,6 +522,7 @@ class WP2D_Post {
 	 * Removes '[embed]' and '[/embed]' left by embed_url.
 	 *
 	 * @since 1.5.0
+	 *
 	 * @todo  It would be great to fix it using only one filter.
 	 *       It's happening because embed filter is being removed by remove_all_filters('the_content') on WP2D_Post::post().
 	 *
@@ -552,6 +564,7 @@ class WP2D_Post {
 	 * Filter the default caption shortcode output.
 	 *
 	 * @since 1.5.3
+	 *
 	 * @see   img_caption_shortcode()
 	 *
 	 * @param string $empty   The caption output. Default empty.
@@ -576,18 +589,13 @@ class WP2D_Post {
 	 *
 	 * @since 1.5.3
 	 *
-	 * @param   array $attr Gallery attributes.
+	 * @param array $attr Gallery attributes.
 	 *
 	 * @return  string
 	 */
 	public function custom_gallery_shortcode( $attr ) {
-		// Default value in WordPress.
-		$captiontag = current_theme_supports( 'html5', 'gallery' ) ? 'figcaption' : 'dd';
-
-		// User value.
-		if ( isset( $attr['captiontag'] ) ) {
-			$captiontag = $attr['captiontag'];
-		}
+		// Try user value and fall back to default value in WordPress.
+		$captiontag = $attr['captiontag'] ?? ( current_theme_supports( 'html5', 'gallery' ) ? 'figcaption' : 'dd' );
 
 		// Let WordPress create the regular gallery.
 		$gallery = gallery_shortcode( $attr );
@@ -699,7 +707,7 @@ class WP2D_Post {
 		/* OK, it's safe for us to save the data now. */
 
 		// Meta data to save.
-		$meta_to_save = $_POST['wp_to_diaspora_settings'];
+		$meta_to_save = $_POST['wp_to_diaspora_settings']; // phpcs:ignore
 		$options      = WP2D_Options::instance();
 
 		// Checkboxes.
@@ -733,7 +741,7 @@ class WP2D_Post {
 	 */
 	private function is_safe_to_save() {
 		// Verify that our nonce is set and  valid.
-		if ( ! ( isset( $_POST['wp_to_diaspora_meta_box_nonce'] ) && wp_verify_nonce( $_POST['wp_to_diaspora_meta_box_nonce'], 'wp_to_diaspora_meta_box' ) ) ) {
+		if ( ! ( isset( $_POST['wp_to_diaspora_meta_box_nonce'] ) && wp_verify_nonce( sanitize_key( $_POST['wp_to_diaspora_meta_box_nonce'] ), 'wp_to_diaspora_meta_box' ) ) ) {
 			return false;
 		}
 
@@ -774,10 +782,11 @@ class WP2D_Post {
 			$help_link = WP2D_Contextual_Help::get_help_tab_quick_link( $error );
 
 			// This notice will only be shown if posting to diaspora* has failed.
-			printf( '<div class="error notice is-dismissible"><p>%1$s %2$s %3$s <a href="%4$s">%5$s</a></p></div>',
+			printf(
+				'<div class="error notice is-dismissible"><p>%1$s %2$s %3$s <a href="%4$s">%5$s</a></p></div>',
 				esc_html__( 'Failed to post to diaspora*.', 'wp-to-diaspora' ),
-				esc_html__( $error->get_error_message() ),
-				$help_link,
+				esc_html( $error->get_error_message() ),
+				$help_link,  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				esc_url( add_query_arg( 'wp2d_ignore_post_error', '' ) ),
 				esc_html__( 'Ignore', 'wp-to-diaspora' )
 			);
@@ -786,11 +795,12 @@ class WP2D_Post {
 			$latest_post = end( $diaspora_post_history );
 
 			// Only show if this post is showing a message and the post is a fresh share.
-			if ( isset( $_GET['message'] ) && $post->post_modified === $latest_post['created_at'] ) {
-				printf( '<div class="updated notice is-dismissible"><p>%1$s <a href="%2$s" target="_blank">%3$s</a></p></div>',
+			if ( isset( $_GET['message'] ) && $post->post_modified === $latest_post['created_at'] ) { // phpcs:ignore
+				printf(
+					'<div class="updated notice is-dismissible"><p>%1$s <a href="%2$s" target="_blank">%3$s</a></p></div>',
 					esc_html__( 'Successfully posted to diaspora*.', 'wp-to-diaspora' ),
 					esc_url( $latest_post['post_url'] ),
-					esc_html__( 'View Post' )
+					esc_html__( 'View Post', 'wp-to-diaspora' )
 				);
 			}
 		}
@@ -803,8 +813,8 @@ class WP2D_Post {
 	 */
 	public function ignore_post_error() {
 		// If "Ignore" link has been clicked, delete the post error meta data.
-		if ( isset( $_GET['wp2d_ignore_post_error'], $_GET['post'] ) ) {
-			delete_post_meta( $_GET['post'], '_wp_to_diaspora_post_error' );
+		if ( isset( $_GET['wp2d_ignore_post_error'], $_GET['post'] ) ) { // phpcs:ignore
+			delete_post_meta( absint( $_GET['post'] ), '_wp_to_diaspora_post_error' ); // phpcs:ignore
 		}
 	}
 }

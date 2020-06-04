@@ -3,7 +3,7 @@
  * Called when uninstalling the plugin.
  *
  * @package WP_To_Diaspora
- * @todo What about all the post meta data?
+ * @todo    What about all the post meta data?
  */
 
 // Exit if accessed directly.

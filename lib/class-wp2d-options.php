@@ -106,7 +106,7 @@ class WP2D_Options {
 	 * @return string Return the currently selected tab.
 	 */
 	private function current_tab( $default = 'defaults' ) {
-		$tab = ( isset ( $_GET['tab'] ) ? $_GET['tab'] : $default );
+		$tab = sanitize_key( $_GET['tab'] ?? $default ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// If the pod settings aren't configured yet, open the 'Setup' tab.
 		if ( ! $this->is_pod_set_up() ) {
@@ -142,7 +142,7 @@ class WP2D_Options {
 		$out .= '</h2>';
 
 		// Output the container with all tabs.
-		echo $out;
+		echo $out; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		// Check if the tabs should be returned.
 		if ( $return ) {
@@ -217,7 +217,7 @@ class WP2D_Options {
 
 			<?php $page_tabs = array_keys( $this->options_page_tabs( true ) ); ?>
 
-			<form action="<?php echo admin_url( 'options.php' ); ?>" method="post">
+			<form action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
 				<input id="wp2d_no_js" type="hidden" name="wp_to_diaspora_settings[no_js]" value="1">
 				<?php
 				// Load the settings fields.
@@ -228,7 +228,7 @@ class WP2D_Options {
 				$tab = $this->current_tab( $page_tabs[0] );
 
 				// Add Save and Reset buttons.
-				echo '<input id="submit-' . esc_attr( $tab ) . '" name="wp_to_diaspora_settings[submit_' . esc_attr( $tab ) . ']" type="submit" class="button-primary" value="' . esc_attr__( 'Save Changes' ) . '" />&nbsp;';
+				echo '<input id="submit-' . esc_attr( $tab ) . '" name="wp_to_diaspora_settings[submit_' . esc_attr( $tab ) . ']" type="submit" class="button-primary" value="' . esc_attr__( 'Save Changes', 'wp-to-diaspora' ) . '" />&nbsp;';
 				if ( 'setup' !== $tab ) {
 					echo '<input id="reset-' . esc_attr( $tab ) . '" name="wp_to_diaspora_settings[reset_' . esc_attr( $tab ) . ']" type="submit" class="button-secondary" value="' . esc_attr__( 'Reset Defaults', 'wp-to-diaspora' ) . '" />';
 				}
@@ -273,11 +273,11 @@ class WP2D_Options {
 
 		// Load only the sections of the selected tab.
 		switch ( $this->current_tab() ) {
-			case 'defaults' :
+			case 'defaults':
 				// Add a "Defaults" section that contains all posting settings to be used by default.
 				add_settings_section( 'wp_to_diaspora_defaults_section', __( 'Posting Defaults', 'wp-to-diaspora' ), [ $this, 'defaults_section' ], 'wp_to_diaspora_settings' );
 				break;
-			case 'setup' :
+			case 'setup':
 				// Add a "Setup" section that contains the Pod domain, Username and Password.
 				add_settings_section( 'wp_to_diaspora_setup_section', __( 'diaspora* Setup', 'wp-to-diaspora' ), [ $this, 'setup_section' ], 'wp_to_diaspora_settings' );
 				break;
@@ -295,10 +295,10 @@ class WP2D_Options {
 		add_settings_field( 'pod', __( 'Diaspora* Pod', 'wp-to-diaspora' ), [ $this, 'pod_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
 
 		// Username entry field.
-		add_settings_field( 'username', __( 'Username' ), [ $this, 'username_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
+		add_settings_field( 'username', __( 'Username', 'wp-to-diaspora' ), [ $this, 'username_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
 
 		// Password entry field.
-		add_settings_field( 'password', __( 'Password' ), [ $this, 'password_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
+		add_settings_field( 'password', __( 'Password', 'wp-to-diaspora' ), [ $this, 'password_render' ], 'wp_to_diaspora_settings', 'wp_to_diaspora_setup_section' );
 	}
 
 	/**
@@ -576,7 +576,7 @@ class WP2D_Options {
 	 */
 	public function username_render() {
 		?>
-		<input type="text" name="wp_to_diaspora_settings[username]" value="<?php echo esc_attr( $this->get_option( 'username' ) ); ?>" placeholder="<?php esc_attr_e( 'Username' ); ?>" required>
+		<input type="text" name="wp_to_diaspora_settings[username]" value="<?php echo esc_attr( $this->get_option( 'username' ) ); ?>" placeholder="<?php esc_attr_e( 'Username', 'wp-to-diaspora' ); ?>" required>
 		<?php
 	}
 
@@ -586,7 +586,7 @@ class WP2D_Options {
 	public function password_render() {
 		// Special case if we already have a password.
 		$has_password = ( '' !== $this->get_option( 'password', '' ) );
-		$placeholder  = $has_password ? __( 'Password already set.', 'wp-to-diaspora' ) : __( 'Password' );
+		$placeholder  = $has_password ? __( 'Password already set.', 'wp-to-diaspora' ) : __( 'Password', 'wp-to-diaspora' );
 		$required     = $has_password ? '' : ' required';
 		?>
 		<input type="password" name="wp_to_diaspora_settings[password]" value="" placeholder="<?php echo esc_attr( $placeholder ); ?>"<?php echo esc_attr( $required ); ?>>
@@ -657,7 +657,7 @@ class WP2D_Options {
 	 * @param bool $post_to_diaspora If this checkbox is checked or not.
 	 */
 	public function post_to_diaspora_render( $post_to_diaspora ) {
-		$label = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id ) ? __( 'Yes' ) : __( 'Post to diaspora*', 'wp-to-diaspora' );
+		$label = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id ) ? __( 'Yes', 'wp-to-diaspora' ) : __( 'Post to diaspora*', 'wp-to-diaspora' );
 		?>
 		<label><input type="checkbox" id="post-to-diaspora" name="wp_to_diaspora_settings[post_to_diaspora]" value="1" <?php checked( $post_to_diaspora ); ?>><?php echo esc_html( $label ); ?></label>
 		<?php
@@ -673,10 +673,10 @@ class WP2D_Options {
 		$checkbox    = '<input type="checkbox" id="fullentrylink" name="wp_to_diaspora_settings[fullentrylink]" value="1"' . checked( $show_link, true, false ) . '>';
 
 		if ( 'settings_page_wp_to_diaspora' === get_current_screen()->id ) : ?>
-			<label><?php echo $checkbox; ?><?php esc_html_e( 'Yes' ); ?></label>
+			<label><?php echo $checkbox; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php esc_html_e( 'Yes', 'wp-to-diaspora' ); ?></label>
 			<p class="description"><?php echo esc_html( $description ); ?></p>
 		<?php else : ?>
-			<label title="<?php echo esc_attr( $description ); ?>"><?php echo $checkbox; ?><?php esc_html_e( 'Show "Posted at" link?', 'wp-to-diaspora' ); ?></label>
+			<label title="<?php echo esc_attr( $description ); ?>"><?php echo $checkbox; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php esc_html_e( 'Show "Posted at" link?', 'wp-to-diaspora' ); ?></label>
 		<?php endif;
 	}
 
@@ -688,8 +688,8 @@ class WP2D_Options {
 	public function display_render( $display ) {
 		?>
 		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $display, 'full' ); ?>><?php esc_html_e( 'Full Post', 'wp-to-diaspora' ); ?></label><br/>
-		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php esc_html_e( 'Excerpt' ); ?></label><br/>
-		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="none" <?php checked( $display, 'none' ); ?>><?php esc_html_e( 'None' ); ?></label>
+		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php esc_html_e( 'Excerpt', 'wp-to-diaspora' ); ?></label><br/>
+		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="none" <?php checked( $display, 'none' ); ?>><?php esc_html_e( 'None', 'wp-to-diaspora' ); ?></label>
 		<?php
 	}
 
@@ -745,7 +745,7 @@ class WP2D_Options {
 			<?php esc_html_e( 'Custom tags', 'wp-to-diaspora' ); ?>
 			<input type="text" class="widefat wp2d-tags" name="wp_to_diaspora_settings[custom_tags]" value="<?php echo esc_attr( $tags ); ?>">
 		</label>
-		<p class="description"><?php esc_html_e( 'Separate tags with commas' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Separate tags with commas', 'wp-to-diaspora' ); ?></p>
 		<?php
 	}
 
@@ -762,7 +762,7 @@ class WP2D_Options {
 			case 'aspects':
 				$refresh_button = __( 'Refresh Aspects', 'wp-to-diaspora' );
 				$description    = esc_html__( 'Choose which aspects to share to.', 'wp-to-diaspora' );
-				$empty_label    = '<input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" checked="checked">' . esc_html__( 'Public' );
+				$empty_label    = '<input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="public" checked="checked">' . esc_html__( 'Public', 'wp-to-diaspora' );
 				break;
 
 			case 'services':
@@ -786,7 +786,7 @@ class WP2D_Options {
 		$on_settings_page = ( 'settings_page_wp_to_diaspora' === get_current_screen()->id );
 
 		if ( ! $on_settings_page ) {
-			echo $description;
+			echo $description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$description = '';
 		}
 
@@ -794,17 +794,17 @@ class WP2D_Options {
 		<div id="<?php echo esc_attr( $type ); ?>-container" data-<?php echo esc_attr( $type ); ?>-selected="<?php echo esc_attr( implode( ',', $items ) ); ?>">
 			<?php if ( $list = (array) $this->get_option( $type . '_list' ) ) : ?>
 				<?php foreach ( $list as $id => $name ) : ?>
-					<label><input type="checkbox" name="wp_to_diaspora_settings[<?php echo esc_attr( $type ); ?>][]" value="<?php echo esc_attr( $id ); ?>" <?php checked( in_array( $id, $items ) ); ?>><?php echo esc_html( $name ); ?></label>
+					<label><input type="checkbox" name="wp_to_diaspora_settings[<?php echo esc_attr( $type ); ?>][]" value="<?php echo esc_attr( $id ); ?>" <?php checked( in_array( $id, $items, true ) ); ?>><?php echo esc_html( $name ); ?></label>
 				<?php endforeach; ?>
 			<?php else : ?>
-				<label><?php echo $empty_label; ?></label>
+				<label><?php echo $empty_label; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label>
 			<?php endif; ?>
 		</div>
 		<p class="description">
-			<?php echo $description; ?>
+			<?php echo $description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<a id="refresh-<?php echo esc_attr( $type ); ?>-list" class="button hide-if-no-js"><?php echo esc_html( $refresh_button ); ?></a>
 			<span class="spinner"></span>
-			<span class="hide-if-js"><?php printf( esc_html_x( 'To update this list, %sre-save your login info%s.', 'placeholders are link tags to the settings page.', 'wp-to-diaspora' ), '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '&amp;tab=setup" target="_blank">', '</a>' ); ?></span>
+			<span class="hide-if-js"><?php printf( esc_html_x( 'To update this list, %1$sre-save your login info%2$s.', 'placeholders are link tags to the settings page.', 'wp-to-diaspora' ), '<a href="' . esc_url( admin_url( 'options-general.php?page=wp_to_diaspora' ) ) . '&amp;tab=setup" target="_blank">', '</a>' ); ?></span>
 		</p>
 		<?php
 	}
@@ -907,12 +907,12 @@ class WP2D_Options {
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param bool $save
+	 * @param bool $save If the password should be saved to the options immediately.
 	 */
 	public function attempt_password_upgrade( $save = false ) {
 		if ( AUTH_KEY !== WP2D_ENC_KEY ) {
 			$old_pw = WP2D_Helpers::decrypt( (string) $this->get_option( 'password' ), AUTH_KEY );
-			if ( $old_pw !== null ) {
+			if ( null !== $old_pw ) {
 				$new_pw = WP2D_Helpers::encrypt( $old_pw, WP2D_ENC_KEY );
 				$this->set_option( 'password', $new_pw, $save );
 			}

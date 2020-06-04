@@ -3,7 +3,7 @@
  * All helper methods for the WP2D tests.
  *
  * @package WP_To_Diaspora\Tests\Helpers
- * @since 1.7.0
+ * @since   1.7.0
  */
 
 /**

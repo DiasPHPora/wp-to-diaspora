@@ -123,11 +123,11 @@ class WP2D_Contextual_Help {
 			'content' => '<p><strong>' . esc_html__( 'Enter your diaspora* login details to connect your account.', 'wp-to-diaspora' ) . '</strong></p>
 				<ul>
 					<li><strong>' . esc_html__( 'diaspora* Pod', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'This is the domain name of the pod you are on (e.g. joindiaspora.com)', 'wp-to-diaspora' ) . '
+						esc_html__( 'This is the domain name of the pod you are on (e.g. joindiaspora.com)', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Username', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Your diaspora* username (without the pod domain).', 'wp-to-diaspora' ) . '
+						esc_html__( 'Your diaspora* username (without the pod domain).', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Password', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Your diaspora* password.', 'wp-to-diaspora' ) . '
+						esc_html__( 'Your diaspora* password.', 'wp-to-diaspora' ) . '
 				</ul>',
 		] );
 
@@ -138,28 +138,28 @@ class WP2D_Contextual_Help {
 			'content' => '<p><strong>' . esc_html__( 'Define the default posting behaviour.', 'wp-to-diaspora' ) . '</strong></p>
 				<ul>
 					<li><strong>' . esc_html__( 'Post types', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Choose the post types that are allowed to be shared to diaspora*.', 'wp-to-diaspora' ) . '
+						esc_html__( 'Choose the post types that are allowed to be shared to diaspora*.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Post to diaspora*', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Automatically share new posts to diaspora* when publishing them.', 'wp-to-diaspora' ) . '
+						esc_html__( 'Automatically share new posts to diaspora* when publishing them.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Show "Posted at" link?', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Add a link back to your original post, at the bottom of the diaspora* post.', 'wp-to-diaspora' ) . '
+						esc_html__( 'Add a link back to your original post, at the bottom of the diaspora* post.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Display', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Choose whether you would like to post the whole post or just the excerpt.', 'wp-to-diaspora' ) . '
+						esc_html__( 'Choose whether you would like to post the whole post or just the excerpt.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Tags to post', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'You can add tags to your post to make it easier to find on diaspora*.' ) . '<br>
+						esc_html__( 'You can add tags to your post to make it easier to find on diaspora*.', 'wp-to-diaspora' ) . '<br>
 						<ul>
 							<li><strong>' . esc_html__( 'Global tags', 'wp-to-diaspora' ) . '</strong>: ' . esc_html__( 'Tags that apply to all posts.', 'wp-to-diaspora' ) . '
 							<li><strong>' . esc_html__( 'Custom tags', 'wp-to-diaspora' ) . '</strong>: ' . esc_html__( 'Tags that apply to individual posts (can be set on each post).', 'wp-to-diaspora' ) . '
 							<li><strong>' . esc_html__( 'Post tags', 'wp-to-diaspora' ) . '</strong>: ' . esc_html__( 'Default WordPress Tags of individual posts.', 'wp-to-diaspora' ) . '
 						</ul>
 					<li><strong>' . esc_html__( 'Global tags', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'A list of tags that gets added to every post.', 'wp-to-diaspora' ) . '
+						esc_html__( 'A list of tags that gets added to every post.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Aspects', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Decide which of your diaspora* aspects can see your posts.', 'wp-to-diaspora' ) . '<br>
-							<em>' . sprintf( esc_html__( 'Use the "%s" button to load your aspects from diaspora*.', 'wp-to-diaspora' ), esc_html__( 'Refresh Aspects', 'wp-to-diaspora' ) ) . '</em>
+						esc_html__( 'Decide which of your diaspora* aspects can see your posts.', 'wp-to-diaspora' ) . '<br>
+						<em>' . sprintf( esc_html__( 'Use the "%s" button to load your aspects from diaspora*.', 'wp-to-diaspora' ), esc_html__( 'Refresh Aspects', 'wp-to-diaspora' ) ) . '</em>
 					<li><strong>' . esc_html__( 'Services', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Choose the services your new diaspora* post gets shared to.', 'wp-to-diaspora' ) . '<br>
-							<em>' . sprintf( esc_html__( 'Use the "%s" button to fetch the list of your connected services from diaspora*.', 'wp-to-diaspora' ), esc_html__( 'Refresh Services', 'wp-to-diaspora' ) ) . '</em>
+						esc_html__( 'Choose the services your new diaspora* post gets shared to.', 'wp-to-diaspora' ) . '<br>
+						<em>' . sprintf( esc_html__( 'Use the "%s" button to fetch the list of your connected services from diaspora*.', 'wp-to-diaspora' ), esc_html__( 'Refresh Services', 'wp-to-diaspora' ) ) . '</em>
 				</ul>',
 		] );
 
@@ -182,9 +182,9 @@ class WP2D_Contextual_Help {
 				<p>' . esc_html__( 'There are a few important differences to the settings page:', 'wp-to-diaspora' ) . '</p>
 				<ul>
 					<li><strong>' . esc_html__( 'Already posted to diaspora*', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'If the post has already been posted to diaspora* a link to the diaspora* post will appear at the top.', 'wp-to-diaspora' ) . '
+						esc_html__( 'If the post has already been posted to diaspora* a link to the diaspora* post will appear at the top.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Custom tags', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'A list of tags that gets added to this post. Note that they are seperate from the WordPress post tags!', 'wp-to-diaspora' ) . '
+						esc_html__( 'A list of tags that gets added to this post. Note that they are seperate from the WordPress post tags!', 'wp-to-diaspora' ) . '
 				</ul>
 				<p class="dashicons-before dashicons-info">' . esc_html__( 'If you don\'t see the meta box, make sure the post type you\'re on has been added to the "Post types" list on the settings page. Also make sure it has been selected from the "Screen Options" at the top of the screen.', 'wp-to-diaspora' ) . '</p>',
 		] );
@@ -197,19 +197,17 @@ class WP2D_Contextual_Help {
 				<p>' . esc_html__( 'Here are a few common errors and their possible solutions:', 'wp-to-diaspora' ) . '</p>
 				<ul>
 					<li><strong>' . esc_html( sprintf( __( 'Failed to initialise connection to pod "%s"', 'wp-to-diaspora' ), 'xyz' ) ) . '</strong>: ' .
-			             esc_html__( 'This could have multiple reasons.' ) . '
+						esc_html__( 'This could have multiple reasons.', 'wp-to-diaspora' ) . '
 						<ul>
 							<li>' . esc_html__( 'Make sure that your pod domain is entered correctly.', 'wp-to-diaspora' ) . '
-							<li>' .
-			             esc_html__( 'It might be an SSL problem.', 'wp-to-diaspora' ) .
-			             sprintf( ' <a href="https://github.com/DiasPHPora/wp-to-diaspora/wiki/SSL-and-TLS-Issues" class="open-help-tab" data-help-tab="ssl">%s</a>', esc_html__( 'Learn more', 'wp-to-diaspora' ) ) . '
+							<li>' . esc_html__( 'It might be an SSL problem.', 'wp-to-diaspora' ) . sprintf( ' <a href="https://github.com/DiasPHPora/wp-to-diaspora/wiki/SSL-and-TLS-Issues" class="open-help-tab" data-help-tab="ssl">%s</a>', esc_html__( 'Learn more', 'wp-to-diaspora' ) ) . '
 							<li>' . esc_html__( 'The pod might be offline at the moment.', 'wp-to-diaspora' ) . '
 						</ul>
 					<li><strong>' . esc_html__( 'Login failed. Check your login details.', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'Make sure that your username and password are entered correctly.', 'wp-to-diaspora' ) . '
+						esc_html__( 'Make sure that your username and password are entered correctly.', 'wp-to-diaspora' ) . '
 					<li><strong>' . esc_html__( 'Invalid credentials. Please re-save your login info.', 'wp-to-diaspora' ) . '</strong>: ' .
-			             esc_html__( 'This may be due to defining WP2D_ENC_KEY after upgrading to 2.2.0, which saves a new encrypted version of your password.', 'wp-to-diaspora' ) .
-			             sprintf( ' <a href="https://github.com/DiasPHPora/wp-to-diaspora/wiki/Configuration#wp2d_enc_key-since-220" target="_blank">%s</a>', esc_html__( 'Learn more', 'wp-to-diaspora' ) ) . '
+						esc_html__( 'This may be due to defining WP2D_ENC_KEY after upgrading to 2.2.0, which saves a new encrypted version of your password.', 'wp-to-diaspora' ) .
+						sprintf( ' <a href="https://github.com/DiasPHPora/wp-to-diaspora/wiki/Configuration#wp2d_enc_key-since-220" target="_blank">%s</a>', esc_html__( 'Learn more', 'wp-to-diaspora' ) ) . '
 				</ul>',
 		] );
 
@@ -237,11 +235,12 @@ class WP2D_Contextual_Help {
 			'title'   => esc_html__( 'WP to diaspora*', 'wp-to-diaspora' ),
 			'content' => sprintf(
 				'<p>' . esc_html_x(
-					'For detailed information, refer to the contextual help on the %sWP to diaspora*%s settings page.',
+					'For detailed information, refer to the contextual help on the %1$sWP to diaspora*%2$s settings page.',
 					'Placeholders represent the link.',
 					'wp-to-diaspora'
 				) . '</p>',
-				'<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '" target="_blank">', '</a>'
+				'<a href="' . esc_url( admin_url( 'options-general.php?page=wp_to_diaspora' ) ) . '" target="_blank">',
+				'</a>'
 			),
 		] );
 	}

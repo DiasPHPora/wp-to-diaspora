@@ -211,7 +211,9 @@ class WP2D_API {
 	 */
 	public function get_last_error_object( $clear = true ) {
 		$last_error = $this->last_error;
-		$clear && $this->last_error = null;
+		if ( $clear ) {
+			$this->last_error = null;
+		}
 
 		return $last_error;
 	}
@@ -225,7 +227,9 @@ class WP2D_API {
 	 */
 	public function get_last_error( $clear = false ) {
 		$last_error = $this->has_last_error() ? $this->last_error->get_error_message() : '';
-		$clear && $this->last_error = null;
+		if ( $clear ) {
+			$this->last_error = null;
+		}
 
 		return $last_error;
 	}
@@ -321,9 +325,9 @@ class WP2D_API {
 
 		// If we are already logged in and not forcing a relogin, return.
 		if ( ! $force &&
-		     $username === $this->username &&
-		     $password === $this->password &&
-		     $this->is_logged_in()
+			$username === $this->username &&
+			$password === $this->password &&
+			$this->is_logged_in()
 		) {
 			return true;
 		}
@@ -432,10 +436,7 @@ class WP2D_API {
 			$post_data += $extra_data;
 		}
 
-		// Check if we can use the new wp_json_encode function.
-		$post_data = function_exists( 'wp_json_encode' )
-			? wp_json_encode( $post_data )
-			: json_encode( $post_data );
+		$post_data = wp_json_encode( $post_data );
 
 		$args = [
 			'method'  => 'POST',
@@ -458,10 +459,10 @@ class WP2D_API {
 
 		$diaspost = json_decode( $response->body );
 		if ( 201 !== $response->code ) {
-			$this->error( 'wp2d_api_post_failed',
-				isset( $diaspost->error )
-					? $diaspost->error
-					: _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' ) );
+			$this->error(
+				'wp2d_api_post_failed',
+				$diaspost->error ?? _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' )
+			);
 
 			return false;
 		}
@@ -596,9 +597,8 @@ class WP2D_API {
 			}
 
 			// Load the aspects or services.
-			if ( is_array( $raw_list = json_decode( $this->parse_regex( $type, $response->body ) ) ) ) {
-				/** @var array $raw_list */
-
+			$raw_list = json_decode( $this->parse_regex( $type, $response->body ) );
+			if ( is_array( $raw_list ) ) {
 				// In case this fetch is forced, empty the list.
 				$list = [];
 
@@ -696,18 +696,19 @@ class WP2D_API {
 	/**
 	 * Helper method to set the last occurred error.
 	 *
-	 * @see   WP_Error::__construct()
 	 * @since 1.6.0
 	 *
-	 * @param  string|int $code    Error code.
-	 * @param  string     $message Error message.
-	 * @param  mixed      $data    Error data.
+	 * @see   WP_Error::__construct()
+	 *
+	 * @param string|int $code    Error code.
+	 * @param string     $message Error message.
+	 * @param mixed      $data    Error data.
 	 */
 	private function error( $code, $message, $data = '' ) {
 		// Always add the code and message of the last request.
 		$data = array_merge( array_filter( (array) $data ), [
-			'code'    => isset( $this->last_request->code ) ? $this->last_request->code : null,
-			'message' => isset( $this->last_request->message ) ? $this->last_request->message : null,
+			'code'    => $this->last_request->code ?? null,
+			'message' => $this->last_request->message ?? null,
 		] );
 
 		$this->last_error = new WP_Error( $code, $message, $data );

@@ -71,7 +71,7 @@ class WP2D {
 	 */
 	private function constants() {
 		// Are we in debugging mode?
-		if ( isset( $_GET['debugging'] ) ) {
+		if ( isset( $_GET['debugging'] ) ) { // phpcs:ignore
 			define( 'WP2D_DEBUGGING', true );
 		}
 
@@ -110,7 +110,7 @@ class WP2D {
 		deactivate_plugins( WP2D_BASENAME );
 
 		// Get rid of the "Plugin activated" message.
-		unset( $_GET['activate'] );
+		unset( $_GET['activate'] ); // phpcs:ignore
 
 		// Then display the admin notice.
 		?>
@@ -239,12 +239,12 @@ class WP2D {
 
 		// Only load the styles and scripts on the settings page and the allowed post types.
 		if ( 'settings_page_wp_to_diaspora' === $screen->id || ( in_array( $screen->post_type, $enabled_post_types, true ) && 'post' === $screen->base ) ) {
-			wp_enqueue_style( 'tag-it', plugins_url( '/css/jquery.tagit.css', WP2D_BASENAME ) );
-			wp_enqueue_style( 'chosen', plugins_url( '/css/chosen.min.css', WP2D_BASENAME ) );
-			wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', WP2D_BASENAME ) );
-			wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.min.js', WP2D_BASENAME ), [ 'jquery' ], false, true );
-			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', WP2D_BASENAME ), [ 'jquery', 'jquery-ui-autocomplete' ], false, true );
-			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', WP2D_BASENAME ), [ 'jquery' ], false, true );
+			wp_enqueue_style( 'tag-it', plugins_url( '/css/jquery.tagit.css', WP2D_BASENAME ), [], WP2D_VERSION );
+			wp_enqueue_style( 'chosen', plugins_url( '/css/chosen.min.css', WP2D_BASENAME ), [], WP2D_VERSION );
+			wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', WP2D_BASENAME ), [], WP2D_VERSION );
+			wp_enqueue_script( 'chosen', plugins_url( '/js/chosen.jquery.min.js', WP2D_BASENAME ), [ 'jquery' ], WP2D_VERSION, true );
+			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.min.js', WP2D_BASENAME ), [ 'jquery', 'jquery-ui-autocomplete' ], WP2D_VERSION, true );
+			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', WP2D_BASENAME ), [ 'jquery' ], WP2D_VERSION, true );
 			// Javascript-specific l10n.
 			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', [
 				'resave_credentials'    => __( 'Resave your credentials and try again.', 'wp-to-diaspora' ),
@@ -272,8 +272,8 @@ class WP2D {
 		if ( md5( AUTH_KEY ) !== $options->get_option( 'auth_key_hash' ) ) {
 			printf( '<div class="error notice is-dismissible"><p>%1$s</p></div>',
 				sprintf(
-					esc_html_x( 'Looks like your WordPress secret keys have changed! Please %sre-save your login info%s.', 'placeholders are link tags to the settings page.', 'wp-to-diaspora' ),
-					'<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '&amp;tab=setup" target="_blank">',
+					esc_html_x( 'Looks like your WordPress secret keys have changed! Please %1$sre-save your login info%2$s.', 'placeholders are link tags to the settings page.', 'wp-to-diaspora' ),
+					'<a href="' . esc_url( admin_url( 'options-general.php?page=wp_to_diaspora' ) ) . '&amp;tab=setup" target="_blank">',
 					'</a>'
 				)
 			);
@@ -288,7 +288,7 @@ class WP2D {
 	 * @return array Links to display for plugin on plugins page.
 	 */
 	public function settings_link( $links ) {
-		$links[] = '<a href="' . admin_url( 'options-general.php?page=wp_to_diaspora' ) . '">' . __( 'Settings' ) . '</a>';
+		$links[] = '<a href="' . esc_url( admin_url( 'options-general.php?page=wp_to_diaspora' ) ) . '">' . __( 'Settings', 'wp-to-diaspora' ) . '</a>';
 
 		return $links;
 	}
@@ -313,7 +313,7 @@ class WP2D {
 
 		// Make sure that we have at least the 'Public' aspect.
 		if ( 'aspects' === $type && empty( $list ) ) {
-			$list = [ 'public' => __( 'Public' ) ];
+			$list = [ 'public' => __( 'Public', 'wp-to-diaspora' ) ];
 		}
 
 		// Set up the connection to diaspora*.
@@ -380,7 +380,7 @@ class WP2D {
 	 * @todo esc_html
 	 */
 	public function check_pod_connection_status_callback() {
-		if ( ! defined( 'WP2D_DEBUGGING' ) && isset( $_REQUEST['debugging'] ) ) {
+		if ( ! defined( 'WP2D_DEBUGGING' ) && isset( $_REQUEST['debugging'] ) ) { // phpcs:ignore
 			define( 'WP2D_DEBUGGING', true );
 		}
 

@@ -32,15 +32,15 @@ class WP2D_Helpers {
 		// Make sure we're in debug mode.
 		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
 			$d = '';
-			foreach ( debug_backtrace() as $dbt ) {
-				extract( $dbt );
+			foreach ( debug_backtrace() as $dbt ) { // phpcs:ignore
+				extract( $dbt ); // phpcs:ignore
 				// Only trace back as far as the plugin goes.
 				if ( strstr( $file, plugin_dir_path( __DIR__ ) ) ) {
 					$d = sprintf( "%s%s%s [%s:%s]\n", $class, $type, $function, basename( $file ), $line ) . $d;
 				}
 			}
 
-			self::$debugging .= sprintf( "%s\n%s\n", date( 'Y.m.d H:i:s' ), $d . $text );
+			self::$debugging .= sprintf( "%s\n%s\n", gmdate( 'Y.m.d H:i:s' ), $d . $text );
 
 			return true;
 		}
@@ -149,7 +149,7 @@ class WP2D_Helpers {
 		$pod       = (string) $options->get_option( 'pod' );
 		$is_secure = true;
 		$username  = (string) $options->get_option( 'username' );
-		$password  = WP2D_Helpers::decrypt( (string) $options->get_option( 'password' ) );
+		$password  = self::decrypt( (string) $options->get_option( 'password' ) );
 
 		$api = new WP2D_API( $pod, $is_secure );
 

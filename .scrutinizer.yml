@@ -19,4 +19,5 @@ tools:
 
   php_mess_detector:
     config:
-      controversial_rules: { superglobals: false }
+      controversial_rules:
+        superglobals: false
