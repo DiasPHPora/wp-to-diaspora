@@ -87,6 +87,8 @@ Quite straightforward, right?
 == Changelog ==
 
 = unreleased =
+* Rewrite for usage with Gutenberg
+* Fix admin notice for Gutenberg
 * Test for WP 5.0 and up to PHP 7.3
 * Update html-to-markdown to 4.8.1
 * Fetch pod list from the-federation.info API (which allows filtering only diaspora pods)

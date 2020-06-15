@@ -197,4 +197,54 @@ jQuery( document ).ready( function ( $ ) {
 		$( '#aspects-container' ).find( 'input[type="checkbox"]' ).removeAttr( 'disabled' );
 	} );
 
+	(function ( wp ) {
+		if ( typeof wp.data === 'undefined' ) {
+			return;
+		}
+
+		let editPost = wp.data.select( 'core/edit-post' ),
+			lastIsSaving = false;
+
+		wp.data.subscribe( function () {
+			let isSaving = editPost.isSavingMetaBoxes();
+			if ( isSaving !== lastIsSaving && !isSaving ) {
+				lastIsSaving = isSaving;
+
+				// Remove any old notice that might still be there.
+				wp.data.dispatch( 'core/notices' ).removeNotice( 'wp2d' );
+
+				// Get the URL of the diaspora* post and create an admin notice.
+				$.get( ajaxurl, {
+					'action': 'wp_to_diaspora_get_post_history',
+					'post_id': wp.data.select( 'core/editor' ).getCurrentPostId()
+				} ).done( function ( response ) {
+					if ( typeof response.success === 'undefined' ) {
+						return;
+					}
+
+					let notice = {
+						id: 'wp2d',
+						isDismissible: true,
+					}
+
+					if ( response.success ) {
+						$( '#post-to-diaspora' ).prop( 'checked', null );
+
+						// Attach link to diaspora* post on success.
+						notice.actions = [ {
+							url: response.data.action.url,
+							label: response.data.action.label
+						} ];
+					}
+
+					wp.data.dispatch( 'core/notices' ).createNotice(
+						response.success ? 'success' : 'error',
+						response.data.message,
+						notice
+					);
+				} );
+			}
+			lastIsSaving = isSaving;
+		} );
+	})( window.wp );
 } );

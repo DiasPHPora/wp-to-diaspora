@@ -140,6 +140,9 @@ class WP2D_Post {
 		// Add meta boxes.
 		add_action( 'add_meta_boxes', [ $instance, 'add_meta_boxes' ] );
 
+		// AJAX callback for diaspora* post history.
+		add_action( 'wp_ajax_wp_to_diaspora_get_post_history', [ $instance, 'get_post_history_callback' ] );
+
 		self::$is_set_up = true;
 	}
 
@@ -205,6 +208,11 @@ class WP2D_Post {
 	 * @return bool If the post was posted successfully.
 	 */
 	public function post( $post_id, $post ) {
+		// Ignore any revisions and auto-saves.
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return false;
+		}
+
 		$this->assign_wp_post( $post );
 
 		$options = WP2D_Options::instance();
@@ -271,6 +279,9 @@ class WP2D_Post {
 		$meta                     = get_post_meta( $post_id, '_wp_to_diaspora', true );
 		$meta['post_to_diaspora'] = false;
 		update_post_meta( $post_id, '_wp_to_diaspora', $meta );
+
+		// Prevent any duplicate hook firing.
+		remove_action( 'save_post', [ $this, 'post' ], 20, 2 );
 
 		return true;
 	}
@@ -815,6 +826,42 @@ class WP2D_Post {
 		// If "Ignore" link has been clicked, delete the post error meta data.
 		if ( isset( $_GET['wp2d_ignore_post_error'], $_GET['post'] ) ) { // phpcs:ignore
 			delete_post_meta( absint( $_GET['post'] ), '_wp_to_diaspora_post_error' ); // phpcs:ignore
+		}
+	}
+
+	/**
+	 * Get latest diaspora* share of this post.
+	 *
+	 * @since unreleased
+	 */
+	public function get_post_history_callback() {
+		if ( ! defined( 'WP2D_DEBUGGING' ) && isset( $_REQUEST['debugging'] ) ) { // phpcs:ignore
+			define( 'WP2D_DEBUGGING', true );
+		}
+
+		$post_id = (int) $_REQUEST['post_id'];
+
+		if ( $error = get_post_meta( $post_id, '_wp_to_diaspora_post_error', true ) ) {
+			// This notice will only be shown if posting to diaspora* has failed.
+			wp_send_json_error( [
+				'message' => esc_html__( 'Failed to post to diaspora*.', 'wp-to-diaspora' ) . ' - ' . esc_html( $error ),
+			] );
+		}
+
+		if ( ( $diaspora_post_history = get_post_meta( $post_id, '_wp_to_diaspora_post_history', true ) ) && is_array( $diaspora_post_history ) ) {
+			// Get the latest post from the history.
+			$latest_post = end( $diaspora_post_history );
+
+			// Only show if this post is a fresh share.
+			if ( get_post( $post_id )->post_modified === $latest_post['created_at'] ) { // phpcs:ignore
+				wp_send_json_success( [
+					'message' => esc_html__( 'Successfully posted to diaspora*.', 'wp-to-diaspora' ),
+					'action'  => [
+						'label' => esc_html__( 'View Post', 'wp-to-diaspora' ),
+						'url'   => esc_url( $latest_post['post_url'] ),
+					],
+				] );
+			}
 		}
 	}
 }
