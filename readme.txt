@@ -3,9 +3,9 @@ Contributors: gutobenn, noplanman
 Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 4.6
-Tested up to: 5.0.0
+Tested up to: 5.4.2
 Minimum PHP: 7.2
-Stable tag: 2.1.0
+Stable tag: unreleased
 Author URI: https://github.com/gutobenn
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -89,6 +89,7 @@ Quite straightforward, right?
 = unreleased =
 * Rewrite for usage with Gutenberg
 * Fix admin notice for Gutenberg
+* Min WP 4.6 and PHP 7.2
 * Test for WP 5.0 and up to PHP 7.3
 * Update html-to-markdown to 4.8.1
 * Fetch pod list from the-federation.info API (which allows filtering only diaspora pods)
@@ -240,6 +241,9 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
+
+= unreleased =
+This update requires at least WordPress 4.6 and PHP 7.2.
 
 = 2.0.0 =
 This update requires at least PHP 5.4.

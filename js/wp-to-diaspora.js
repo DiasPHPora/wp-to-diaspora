@@ -3,16 +3,16 @@ jQuery( document ).ready( function ( $ ) {
 	// Clearly we have JS, so remove the hidden input field marking no-js.
 	$( '#wp2d_no_js' ).remove();
 
-	var onSettingsPage = ('settings_page_wp_to_diaspora' === adminpage);
+	let onSettingsPage = ('settings_page_wp_to_diaspora' === adminpage);
 
 	$( '.wrap, .contextual-help-tabs-wrap' ).on( 'click', '.open-help-tab', function ( e ) {
 		e.preventDefault();
-		var tab = onSettingsPage ? $( this ).attr( 'data-help-tab' ) : 'wp-to-diaspora';
-		var $tabLink = $( '#tab-link-' + tab );
+		let tab = onSettingsPage ? $( this ).attr( 'data-help-tab' ) : 'wp-to-diaspora';
+		let $tabLink = $( '#tab-link-' + tab );
 
 		if ( '' !== tab && $tabLink.length ) {
 			// Drop down the help window if it isn't open already.
-			var $helpLink = $( '#contextual-help-link' );
+			let $helpLink = $( '#contextual-help-link' );
 			if ( 'false' === $helpLink.attr( 'aria-expanded' ) ) {
 				$helpLink.click();
 			}
@@ -34,9 +34,9 @@ jQuery( document ).ready( function ( $ ) {
 	 * Make the aspect checkboxes clever, giving the 'public' aspect the power to disable all others.
 	 */
 	function smartAspectSelection() {
-		var $allAspectCheckboxes = $( '#aspects-container' ).find( 'input[type="checkbox"]' );
-		var setDisabledAttrs = function () {
-			var disabled = ($allAspectCheckboxes.filter( '[value="public"]' ).removeAttr( 'disabled' ).is( ':checked' )) ? 'disabled' : null;
+		let $allAspectCheckboxes = $( '#aspects-container' ).find( 'input[type="checkbox"]' );
+		let setDisabledAttrs = function () {
+			let disabled = ($allAspectCheckboxes.filter( '[value="public"]' ).removeAttr( 'disabled' ).is( ':checked' )) ? 'disabled' : null;
 			$allAspectCheckboxes.not( '[value="public"]' ).attr( 'disabled', disabled );
 			// We only have a 'Public' checkbox, so it can't be unchecked.
 			if ( 1 === $allAspectCheckboxes.length ) {
@@ -51,12 +51,12 @@ jQuery( document ).ready( function ( $ ) {
 
 	// Refresh the list of aspects and update the checkboxes.
 	$( '#refresh-aspects-list' ).click( function () {
-		var $refreshButton = $( this ).hide();
-		var $spinner = $refreshButton.next( '.spinner' ).addClass( 'is-active' );
-		var $aspectsContainer = $( '#aspects-container' );
+		let $refreshButton = $( this ).hide();
+		let $spinner = $refreshButton.next( '.spinner' ).addClass( 'is-active' );
+		let $aspectsContainer = $( '#aspects-container' );
 
 		// Before loading the new checkboxes, disable all the current ones.
-		var $aspectsCheckboxes = $aspectsContainer.find( 'input[type="checkbox"]' ).attr( 'disabled', 'disabled' );
+		let $aspectsCheckboxes = $aspectsContainer.find( 'input[type="checkbox"]' ).attr( 'disabled', 'disabled' );
 
 		$.post( ajaxurl, { 'action': 'wp_to_diaspora_update_aspects_list' }, function ( aspects ) {
 			if ( false === aspects ) {
@@ -66,7 +66,7 @@ jQuery( document ).ready( function ( $ ) {
 
 			// Remember the selected aspects and clear the list.
 			$aspectsContainer.empty();
-			var aspectsSelected = [];
+			let aspectsSelected = [];
 			if ( $aspectsCheckboxes.length ) {
 				$aspectsCheckboxes.each( function () {
 					if ( this.checked ) {
@@ -81,7 +81,7 @@ jQuery( document ).ready( function ( $ ) {
 			// Add fresh checkboxes.
 			for ( var id in aspects ) {
 				if ( aspects.hasOwnProperty( id ) ) {
-					var checked = (-1 !== $.inArray( id, aspectsSelected )) ? ' checked="checked"' : '';
+					let checked = (-1 !== $.inArray( id, aspectsSelected )) ? ' checked="checked"' : '';
 					$aspectsContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="' + id + '"' + checked + '>' + aspects[ id ] + '</label> ' );
 				}
 			}
@@ -95,12 +95,12 @@ jQuery( document ).ready( function ( $ ) {
 
 	// Refresh the list of services and update the checkboxes.
 	$( '#refresh-services-list' ).click( function () {
-		var $refreshButton = $( this ).hide();
-		var $spinner = $refreshButton.next( '.spinner' ).addClass( 'is-active' );
-		var $servicesContainer = $( '#services-container' );
+		let $refreshButton = $( this ).hide();
+		let $spinner = $refreshButton.next( '.spinner' ).addClass( 'is-active' );
+		let $servicesContainer = $( '#services-container' );
 
 		// Before loading the new checkboxes, disable all the current ones.
-		var $servicesCheckboxes = $servicesContainer.find( 'input[type="checkbox"]' ).attr( 'disabled', 'disabled' );
+		let $servicesCheckboxes = $servicesContainer.find( 'input[type="checkbox"]' ).attr( 'disabled', 'disabled' );
 
 		$.post( ajaxurl, { 'action': 'wp_to_diaspora_update_services_list' }, function ( services ) {
 			if ( false === services ) {
@@ -109,7 +109,7 @@ jQuery( document ).ready( function ( $ ) {
 
 			// Remember the selected services and clear the list.
 			$servicesContainer.empty();
-			var servicesSelected = [];
+			let servicesSelected = [];
 			if ( $servicesCheckboxes.length ) {
 				$servicesCheckboxes.each( function () {
 					if ( this.checked ) {
@@ -125,7 +125,7 @@ jQuery( document ).ready( function ( $ ) {
 			if ( services.length > 0 ) {
 				for ( var id in services ) {
 					if ( services.hasOwnProperty( id ) ) {
-						var checked = (-1 !== $.inArray( id, servicesSelected )) ? ' checked="checked"' : '';
+						let checked = (-1 !== $.inArray( id, servicesSelected )) ? ' checked="checked"' : '';
 						$servicesContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="' + id + '"' + checked + '>' + services[ id ] + '</label> ' );
 					}
 				}
@@ -142,12 +142,12 @@ jQuery( document ).ready( function ( $ ) {
 
 	if ( onSettingsPage ) {
 		// Check the pod connection status.
-		var $pcs = $( '#pod-connection-status' );
-		var $spinner = $pcs.next( '.spinner' ).addClass( 'is-active' ).show();
+		let $pcs = $( '#pod-connection-status' );
+		let $spinner = $pcs.next( '.spinner' ).addClass( 'is-active' ).show();
 		$pcs.parent().attr( 'title', WP2DL10n.conn_testing );
 
-		var $msg = $( '#wp2d-message' );
-		var show_debug = (typeof $msg.attr( 'data-debugging' ) !== 'undefined');
+		let $msg = $( '#wp2d-message' );
+		let show_debug = (typeof $msg.attr( 'data-debugging' ) !== 'undefined');
 		$.post( ajaxurl, {
 				'action': 'wp_to_diaspora_check_pod_connection_status',
 				'debugging': show_debug
@@ -159,7 +159,7 @@ jQuery( document ).ready( function ( $ ) {
 
 				// After testing the connection, mark the "Setup" tab appropriately
 				// and output an error message if the connection failed.
-				var debug_msg = (show_debug) ? '<strong>Debug</strong><textarea rows="5" style="width:100%" readonly>' + status.data.debug + '</textarea>' : '';
+				let debug_msg = (show_debug) ? '<strong>Debug</strong><textarea rows="5" style="width:100%" readonly>' + status.data.debug + '</textarea>' : '';
 
 				if ( status.success ) {
 					$msg.addClass( 'updated' );

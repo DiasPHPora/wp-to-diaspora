@@ -755,7 +755,7 @@ class WP2D_Options {
 	 * @param array $args Array containing the type and items to output as checkboxes.
 	 */
 	public function aspects_services_render( $args ) {
-		list( $type, $items ) = $args;
+		[ $type, $items ] = $args;
 
 		// This is where the 2 types show their differences.
 		switch ( $type ) {
@@ -794,7 +794,7 @@ class WP2D_Options {
 		<div id="<?php echo esc_attr( $type ); ?>-container" data-<?php echo esc_attr( $type ); ?>-selected="<?php echo esc_attr( implode( ',', $items ) ); ?>">
 			<?php if ( $list = (array) $this->get_option( $type . '_list' ) ) : ?>
 				<?php foreach ( $list as $id => $name ) : ?>
-					<label><input type="checkbox" name="wp_to_diaspora_settings[<?php echo esc_attr( $type ); ?>][]" value="<?php echo esc_attr( $id ); ?>" <?php checked( in_array( $id, $items, true ) ); ?>><?php echo esc_html( $name ); ?></label>
+					<label><input type="checkbox" name="wp_to_diaspora_settings[<?php echo esc_attr( $type ); ?>][]" value="<?php echo esc_attr( $id ); ?>" <?php checked( in_array( $id, $items, false ) ); ?>><?php echo esc_html( $name ); ?></label>
 				<?php endforeach; ?>
 			<?php else : ?>
 				<label><?php echo $empty_label; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label>
