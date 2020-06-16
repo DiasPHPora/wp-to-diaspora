@@ -31,6 +31,7 @@ SVN_IGNORE="
 composer.json
 composer.lock
 deploy.sh
+phpcs.xml.dist
 phpunit.xml.dist
 README.md
 tests"

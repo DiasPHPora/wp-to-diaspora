@@ -832,7 +832,7 @@ class WP2D_Post {
 	/**
 	 * Get latest diaspora* share of this post.
 	 *
-	 * @since unreleased
+	 * @since 3.0.0
 	 */
 	public function get_post_history_callback() {
 		if ( ! check_ajax_referer( 'wp2d', 'nonce', false ) ) {

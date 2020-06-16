@@ -4,6 +4,10 @@ WP to diaspora*
 [![Coverage via Codecov](https://codecov.io/github/DiasPHPora/wp-to-diaspora/coverage.svg?branch=master)](https://codecov.io/github/DiasPHPora/wp-to-diaspora?branch=master)
 [![Scrutinizer Code Quality Score](https://scrutinizer-ci.com/g/DiasPHPora/wp-to-diaspora/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/DiasPHPora/wp-to-diaspora)
 
+> **We are looking for new maintainers for this plugin!**
+
+> **Get in touch with [@noplanman](https://noplanman.ch) if you'd like to help keep this project alive.**
+
 Automatically share WordPress posts on diaspora*
 
 https://wordpress.org/plugins/wp-to-diaspora/

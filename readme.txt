@@ -5,8 +5,8 @@ Tags: diaspora, integration, share, post, social, network
 Requires at least: 4.6
 Tested up to: 5.4.2
 Minimum PHP: 7.2
-Stable tag: unreleased
-Author URI: https://github.com/gutobenn
+Stable tag: 3.0.0
+Author URI: https://github.com/DiasPHPora/wp-to-diaspora/graphs/contributors
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -14,6 +14,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Automatically share your WordPress posts on your diaspora* profile.
 
 == Description ==
+
+**We are looking for new maintainers for this plugin!**
+
+**Get in touch with [@noplanman](https://noplanman.ch) if you'd like to help keep this project alive.**
 
 With WP to diaspora* and just a few clicks, you can automatically share your WordPress posts on your diaspora* profile.
 
@@ -42,6 +46,10 @@ Many thanks to our many friendly translators, doing an amazing job.
 Feel free to help and [contribute translations](https://translate.wordpress.org/projects/wp-plugins/wp-to-diaspora).
 
 = Development =
+**We are looking for new maintainers for this plugin!**
+
+**Get in touch with [@noplanman](https://noplanman.ch) if you'd like to help keep this project alive.**
+
 This plugin is completely open source and is a work of love by all who have [contributed](https://github.com/DiasPHPora/wp-to-diaspora/graphs/contributors).
 If you would like to be part of it and join in, make your way over to the [project page on GitHub](https://github.com/DiasPHPora/wp-to-diaspora) now.
 Also, if you have an idea you would like to see in this plugin or if you've found a bug, please [let us know](https://github.com/DiasPHPora/wp-to-diaspora/issues/new).
@@ -86,7 +94,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= unreleased =
+= 3.0.0 =
 * Rewrite for usage with Gutenberg
 * Fix admin notice for Gutenberg
 * Min WP 4.6 and PHP 7.2
@@ -242,8 +250,9 @@ Quite straightforward, right?
 
 == Upgrade Notice ==
 
-= unreleased =
+= 3.0.0 =
 This update requires at least WordPress 4.6 and PHP 7.2.
+We are looking for new maintainers to keep this project alive, [get in touch](https://noplanman.ch)!
 
 = 2.0.0 =
 This update requires at least PHP 5.4.
