@@ -835,11 +835,16 @@ class WP2D_Post {
 	 * @since unreleased
 	 */
 	public function get_post_history_callback() {
-		if ( ! defined( 'WP2D_DEBUGGING' ) && isset( $_REQUEST['debugging'] ) ) { // phpcs:ignore
-			define( 'WP2D_DEBUGGING', true );
+		if ( ! check_ajax_referer( 'wp2d', 'nonce', false ) ) {
+			wp_send_json_error( [
+				'message' => 'WP2D: ' . __( 'AJAX Nonce failure.', 'wp-to-diaspora' ),
+			] );
 		}
 
-		$post_id = (int) $_REQUEST['post_id'];
+		$post_id = sanitize_key( $_REQUEST['post_id'] ?? '' );
+		if ( ! is_numeric( $post_id ) ) {
+			return;
+		}
 
 		if ( $error = get_post_meta( $post_id, '_wp_to_diaspora_post_error', true ) ) {
 			// This notice will only be shown if posting to diaspora* has failed.

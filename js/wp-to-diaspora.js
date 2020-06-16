@@ -54,13 +54,17 @@ jQuery( document ).ready( function ( $ ) {
 		let $refreshButton = $( this ).hide();
 		let $spinner = $refreshButton.next( '.spinner' ).addClass( 'is-active' );
 		let $aspectsContainer = $( '#aspects-container' );
+		$aspectsContainer.find( '.error-message' ).remove();
 
 		// Before loading the new checkboxes, disable all the current ones.
 		let $aspectsCheckboxes = $aspectsContainer.find( 'input[type="checkbox"]' ).attr( 'disabled', 'disabled' );
 
-		$.post( ajaxurl, { 'action': 'wp_to_diaspora_update_aspects_list' }, function ( aspects ) {
+		$.post( ajaxurl, {
+			'nonce': WP2D._nonce,
+			'action': 'wp_to_diaspora_update_aspects_list'
+		} ).done( function ( aspects ) {
 			if ( false === aspects ) {
-				$aspectsContainer.append( '<p class="error-message">' + WP2DL10n.conn_failed + ' ' + WP2DL10n.resave_credentials + '</p>' );
+				$aspectsContainer.append( '<p class="error-message">' + WP2D.conn_failed + ' ' + WP2D.resave_credentials + '</p>' );
 				return;
 			}
 
@@ -79,14 +83,16 @@ jQuery( document ).ready( function ( $ ) {
 			}
 
 			// Add fresh checkboxes.
-			for ( var id in aspects ) {
+			for ( let id in aspects ) {
 				if ( aspects.hasOwnProperty( id ) ) {
 					let checked = (-1 !== $.inArray( id, aspectsSelected )) ? ' checked="checked"' : '';
 					$aspectsContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[aspects][]" value="' + id + '"' + checked + '>' + aspects[ id ] + '</label> ' );
 				}
 			}
-			smartAspectSelection();
 
+			smartAspectSelection();
+		} ).fail( function () {
+			$aspectsContainer.append( '<p class="error-message">' + WP2D.nonce_failure + '</p>' );
 		} ).always( function () {
 			$spinner.removeClass( 'is-active' );
 			$refreshButton.show();
@@ -98,13 +104,18 @@ jQuery( document ).ready( function ( $ ) {
 		let $refreshButton = $( this ).hide();
 		let $spinner = $refreshButton.next( '.spinner' ).addClass( 'is-active' );
 		let $servicesContainer = $( '#services-container' );
+		$servicesContainer.find( '.error-message' ).remove();
 
 		// Before loading the new checkboxes, disable all the current ones.
 		let $servicesCheckboxes = $servicesContainer.find( 'input[type="checkbox"]' ).attr( 'disabled', 'disabled' );
 
-		$.post( ajaxurl, { 'action': 'wp_to_diaspora_update_services_list' }, function ( services ) {
+		$.post( ajaxurl, {
+			'nonce': WP2D._nonce,
+			'action': 'wp_to_diaspora_update_services_list'
+		} ).done( function ( services ) {
 			if ( false === services ) {
-				$servicesContainer.append( '<p class="error-message">' + WP2DL10n.conn_failed + ' ' + WP2DL10n.resave_credentials + '</p>' );
+				$servicesContainer.append( '<p class="error-message">' + WP2D.conn_failed + ' ' + WP2D.resave_credentials + '</p>' );
+				return;
 			}
 
 			// Remember the selected services and clear the list.
@@ -123,16 +134,17 @@ jQuery( document ).ready( function ( $ ) {
 
 			// Add fresh checkboxes if we have connected services.
 			if ( services.length > 0 ) {
-				for ( var id in services ) {
+				for ( let id in services ) {
 					if ( services.hasOwnProperty( id ) ) {
 						let checked = (-1 !== $.inArray( id, servicesSelected )) ? ' checked="checked"' : '';
 						$servicesContainer.append( '<label><input type="checkbox" name="wp_to_diaspora_settings[services][]" value="' + id + '"' + checked + '>' + services[ id ] + '</label> ' );
 					}
 				}
 			} else {
-				$servicesContainer.append( WP2DL10n.no_services_connected );
+				$servicesContainer.append( WP2D.no_services_connected );
 			}
-
+		} ).fail( function () {
+			$servicesContainer.append( '<p class="error-message">' + WP2D.nonce_failure + '</p>' );
 		} ).always( function () {
 			$spinner.removeClass( 'is-active' );
 			$refreshButton.show();
@@ -144,51 +156,50 @@ jQuery( document ).ready( function ( $ ) {
 		// Check the pod connection status.
 		let $pcs = $( '#pod-connection-status' );
 		let $spinner = $pcs.next( '.spinner' ).addClass( 'is-active' ).show();
-		$pcs.parent().attr( 'title', WP2DL10n.conn_testing );
+		$pcs.parent().attr( 'title', WP2D.conn_testing );
 
 		let $msg = $( '#wp2d-message' );
 		let show_debug = (typeof $msg.attr( 'data-debugging' ) !== 'undefined');
 		$.post( ajaxurl, {
-				'action': 'wp_to_diaspora_check_pod_connection_status',
-				'debugging': show_debug
-			} )
-			.done( function ( status ) {
-				if ( typeof status.success === 'undefined' ) {
-					return;
-				}
+			'nonce': WP2D._nonce,
+			'action': 'wp_to_diaspora_check_pod_connection_status',
+			'debugging': show_debug
+		} ).done( function ( status ) {
+			if ( typeof status.success === 'undefined' ) {
+				return;
+			}
 
-				// After testing the connection, mark the "Setup" tab appropriately
-				// and output an error message if the connection failed.
-				let debug_msg = (show_debug) ? '<strong>Debug</strong><textarea rows="5" style="width:100%" readonly>' + status.data.debug + '</textarea>' : '';
+			// After testing the connection, mark the "Setup" tab appropriately
+			// and output an error message if the connection failed.
+			let debug_msg = (show_debug) ? '<strong>Debug</strong><textarea rows="5" style="width:100%" readonly>' + status.data.debug + '</textarea>' : '';
 
-				if ( status.success ) {
-					$msg.addClass( 'updated' );
-					$pcs.parent().attr( 'title', WP2DL10n.conn_successful );
-					$pcs.addClass( 'dashicons-yes' )
-						.css( 'color', '#008000' )
-						.show();
-				} else {
-					$msg.addClass( 'error' );
-					$pcs.parent().attr( 'title', WP2DL10n.conn_failed );
-					$pcs.addClass( 'dashicons-no' )
-						.css( 'color', '#800000' )
-						.show();
-				}
+			if ( status.success ) {
+				$msg.addClass( 'updated' );
+				$pcs.parent().attr( 'title', WP2D.conn_successful );
+				$pcs.addClass( 'dashicons-yes' )
+					.css( 'color', '#008000' )
+					.show();
+			} else {
+				$msg.addClass( 'error' );
+				$pcs.parent().attr( 'title', WP2D.conn_failed );
+				$pcs.addClass( 'dashicons-no' )
+					.css( 'color', '#800000' )
+					.show();
+			}
 
-				// Show the message panel if the connection failed or debug is enabled.
-				if ( show_debug || !status.success ) {
-					$msg.html( '<p>' + status.data.message + '</p>' )
-						.append( debug_msg )
-						.show();
-				}
-			} )
-			.always( function () {
-				$spinner.removeClass( 'is-active' ).hide();
-			} );
+			// Show the message panel if the connection failed or debug is enabled.
+			if ( show_debug || !status.success ) {
+				$msg.html( '<p>' + status.data.message + '</p>' )
+					.append( debug_msg )
+					.show();
+			}
+		} ).always( function () {
+			$spinner.removeClass( 'is-active' ).hide();
+		} );
 
 		// Confirmation when resetting to default settings.
 		$( '#reset-defaults' ).click( function () {
-			return confirm( WP2DL10n.sure_reset_defaults );
+			return confirm( WP2D.sure_reset_defaults );
 		} );
 	}
 
@@ -215,6 +226,7 @@ jQuery( document ).ready( function ( $ ) {
 
 				// Get the URL of the diaspora* post and create an admin notice.
 				$.get( ajaxurl, {
+					'nonce': WP2D._nonce,
 					'action': 'wp_to_diaspora_get_post_history',
 					'post_id': wp.data.select( 'core/editor' ).getCurrentPostId()
 				} ).done( function ( response ) {

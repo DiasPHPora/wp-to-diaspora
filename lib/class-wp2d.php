@@ -235,7 +235,9 @@ class WP2D {
 			wp_enqueue_script( 'tag-it', plugins_url( '/js/tag-it.jquery.min.js', WP2D_BASENAME ), [ 'jquery', 'jquery-ui-autocomplete' ], WP2D_VERSION, true );
 			wp_enqueue_script( 'wp-to-diaspora-admin', plugins_url( '/js/wp-to-diaspora.js', WP2D_BASENAME ), [ 'jquery' ], WP2D_VERSION, true );
 			// Javascript-specific l10n.
-			wp_localize_script( 'wp-to-diaspora-admin', 'WP2DL10n', [
+			wp_localize_script( 'wp-to-diaspora-admin', 'WP2D', [
+				'_nonce'                => wp_create_nonce( 'wp2d' ),
+				'nonce_failure'         => __( 'AJAX Nonce failure.', 'wp-to-diaspora' ),
 				'resave_credentials'    => __( 'Resave your credentials and try again.', 'wp-to-diaspora' ),
 				'no_services_connected' => __( 'No services connected yet.', 'wp-to-diaspora' ),
 				'sure_reset_defaults'   => __( 'Are you sure you want to reset to default values?', 'wp-to-diaspora' ),
@@ -336,6 +338,7 @@ class WP2D {
 	 * Update the list of aspects and return them for use with AJAX.
 	 */
 	public function update_aspects_list_callback() {
+		check_ajax_referer( 'wp2d', 'nonce' );
 		wp_send_json( $this->update_aspects_services_list( 'aspects' ) );
 	}
 
@@ -343,6 +346,7 @@ class WP2D {
 	 * Update the list of services and return them for use with AJAX.
 	 */
 	public function update_services_list_callback() {
+		check_ajax_referer( 'wp2d', 'nonce' );
 		wp_send_json( $this->update_aspects_services_list( 'services' ) );
 	}
 
@@ -371,6 +375,10 @@ class WP2D {
 	public function check_pod_connection_status_callback() {
 		if ( ! defined( 'WP2D_DEBUGGING' ) && isset( $_REQUEST['debugging'] ) ) { // phpcs:ignore
 			define( 'WP2D_DEBUGGING', true );
+		}
+
+		if ( ! check_ajax_referer( 'wp2d', 'nonce', false ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid AJAX nonce', 'wp-to-diaspora' ) ] );
 		}
 
 		$status = $this->check_pod_connection_status();
