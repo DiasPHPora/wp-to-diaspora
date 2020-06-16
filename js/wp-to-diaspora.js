@@ -242,6 +242,11 @@ jQuery( document ).ready( function ( $ ) {
 					if ( response.success ) {
 						$( '#post-to-diaspora' ).prop( 'checked', null );
 
+						// Update the "Already posted to diaspora*" link with the new URL.
+						$( '#diaspora-post-url' )
+							.prop( 'href', response.data.action.url )
+							.parent().show();
+
 						// Attach link to diaspora* post on success.
 						notice.actions = [ {
 							url: response.data.action.url,

@@ -680,13 +680,13 @@ class WP2D_Post {
 		$this->services         = $this->services ?: [];
 
 		// Have we already posted on diaspora*?
+		$diaspora_post_url = '#';
 		if ( is_array( $this->post_history ) ) {
-			$latest_post = end( $this->post_history );
-			?>
-			<p><a href="<?php echo esc_attr( $latest_post['post_url'] ); ?>" target="_blank"><?php esc_html_e( 'Already posted to diaspora*.', 'wp-to-diaspora' ); ?></a></p>
-			<?php
+			$latest_post       = end( $this->post_history );
+			$diaspora_post_url = $latest_post['post_url'];
 		}
 		?>
+		<p<?php echo $diaspora_post_url === '#' ? ' style="display: none;"' : ''; ?>><a id="diaspora-post-url" href="<?php echo esc_attr( $diaspora_post_url ); ?>" target="_blank"><?php esc_html_e( 'Already posted to diaspora*.', 'wp-to-diaspora' ); ?></a></p>
 
 		<p><?php $options->post_to_diaspora_render( $this->post_to_diaspora ); ?></p>
 		<p><?php $options->fullentrylink_render( $this->fullentrylink ); ?></p>
