@@ -686,7 +686,7 @@ class WP2D_Post {
 			$diaspora_post_url = $latest_post['post_url'];
 		}
 		?>
-		<p<?php echo $diaspora_post_url === '#' ? ' style="display: none;"' : ''; ?>><a id="diaspora-post-url" href="<?php echo esc_attr( $diaspora_post_url ); ?>" target="_blank"><?php esc_html_e( 'Already posted to diaspora*.', 'wp-to-diaspora' ); ?></a></p>
+		<p<?php echo '#' === $diaspora_post_url ? ' style="display: none;"' : ''; ?>><a id="diaspora-post-url" href="<?php echo esc_attr( $diaspora_post_url ); ?>" target="_blank"><?php esc_html_e( 'Already posted to diaspora*.', 'wp-to-diaspora' ); ?></a></p>
 
 		<p><?php $options->post_to_diaspora_render( $this->post_to_diaspora ); ?></p>
 		<p><?php $options->fullentrylink_render( $this->fullentrylink ); ?></p>
