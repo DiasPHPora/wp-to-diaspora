@@ -68,9 +68,6 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	public function test_setup() {
 		$wp2d = WP2D::instance();
 
-		// Load languages.
-		$this->assertNotEmpty( has_action( 'plugins_loaded', [ $wp2d, 'l10n' ] ) );
-
 		// Add "Settings" link to plugin page.
 		$this->assertNotEmpty( has_filter( 'plugin_action_links_' . WP2D_BASENAME, [ $wp2d, 'settings_link' ] ) );
 
