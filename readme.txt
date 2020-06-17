@@ -5,7 +5,7 @@ Tags: diaspora, integration, share, post, social, network
 Requires at least: 4.6
 Tested up to: 5.4.2
 Minimum PHP: 7.2
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 Author URI: https://github.com/DiasPHPora/wp-to-diaspora/graphs/contributors
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -93,6 +93,9 @@ Basically, the server your WordPress installation is set up on makes a connectio
 Quite straightforward, right?
 
 == Changelog ==
+
+= 3.0.1 =
+* Fix deploy script, which borked up version 3.0.0
 
 = 3.0.0 =
 * Rewrite for usage with Gutenberg
@@ -250,7 +253,7 @@ Quite straightforward, right?
 
 == Upgrade Notice ==
 
-= 3.0.0 =
+= 3.0.1 =
 This update requires at least WordPress 4.6 and PHP 7.2.
 We are looking for new maintainers to keep this project alive, [get in touch](https://noplanman.ch)!
 

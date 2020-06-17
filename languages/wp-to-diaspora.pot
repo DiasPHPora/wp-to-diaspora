@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the WP to diaspora* plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP to diaspora* 2.1.0\n"
+"Project-Id-Version: WP to diaspora* 3.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-to-diaspora\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-06-04T04:00:34+00:00\n"
+"POT-Creation-Date: 2020-06-17T11:26:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wp-to-diaspora\n"
@@ -33,7 +33,7 @@ msgid "Augusto Bennemann, Armando Lüscher"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "https://github.com/DiasPHPora"
+msgid "https://github.com/DiasPHPora/wp-to-diaspora/graphs/contributors"
 msgstr ""
 
 #: lib/class-wp2d-api.php:184
@@ -95,8 +95,8 @@ msgid "Error loading services."
 msgstr ""
 
 #: lib/class-wp2d-api.php:607
-#: lib/class-wp2d-options.php:765
-#: lib/class-wp2d.php:316
+#: lib/class-wp2d-options.php:689
+#: lib/class-wp2d.php:307
 msgid "Public"
 msgstr ""
 
@@ -153,7 +153,7 @@ msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:127
 #: lib/class-wp2d-options.php:298
-#: lib/class-wp2d-options.php:579
+#: lib/class-wp2d-options.php:503
 msgid "Username"
 msgstr ""
 
@@ -163,7 +163,7 @@ msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:129
 #: lib/class-wp2d-options.php:301
-#: lib/class-wp2d-options.php:589
+#: lib/class-wp2d-options.php:513
 msgid "Password"
 msgstr ""
 
@@ -181,7 +181,7 @@ msgid "Define the default posting behaviour."
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:140
-#: lib/class-wp2d-options.php:606
+#: lib/class-wp2d-options.php:530
 msgid "Post types"
 msgstr ""
 
@@ -190,8 +190,8 @@ msgid "Choose the post types that are allowed to be shared to diaspora*."
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:142
-#: lib/class-wp2d-options.php:609
-#: lib/class-wp2d-options.php:660
+#: lib/class-wp2d-options.php:533
+#: lib/class-wp2d-options.php:584
 msgid "Post to diaspora*"
 msgstr ""
 
@@ -200,8 +200,8 @@ msgid "Automatically share new posts to diaspora* when publishing them."
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:144
-#: lib/class-wp2d-options.php:612
-#: lib/class-wp2d-options.php:679
+#: lib/class-wp2d-options.php:536
+#: lib/class-wp2d-options.php:603
 msgid "Show \"Posted at\" link?"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgid "Add a link back to your original post, at the bottom of the diaspora* pos
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:146
-#: lib/class-wp2d-options.php:615
+#: lib/class-wp2d-options.php:539
 msgid "Display"
 msgstr ""
 
@@ -219,7 +219,7 @@ msgid "Choose whether you would like to post the whole post or just the excerpt.
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:148
-#: lib/class-wp2d-options.php:618
+#: lib/class-wp2d-options.php:542
 msgid "Tags to post"
 msgstr ""
 
@@ -229,9 +229,9 @@ msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:151
 #: lib/class-wp2d-contextual-help.php:155
-#: lib/class-wp2d-options.php:621
-#: lib/class-wp2d-options.php:711
-#: lib/class-wp2d-options.php:731
+#: lib/class-wp2d-options.php:545
+#: lib/class-wp2d-options.php:635
+#: lib/class-wp2d-options.php:655
 msgid "Global tags"
 msgstr ""
 
@@ -241,8 +241,8 @@ msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:152
 #: lib/class-wp2d-contextual-help.php:186
-#: lib/class-wp2d-options.php:712
-#: lib/class-wp2d-options.php:745
+#: lib/class-wp2d-options.php:636
+#: lib/class-wp2d-options.php:669
 msgid "Custom tags"
 msgstr ""
 
@@ -251,7 +251,7 @@ msgid "Tags that apply to individual posts (can be set on each post)."
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:153
-#: lib/class-wp2d-options.php:713
+#: lib/class-wp2d-options.php:637
 msgid "Post tags"
 msgstr ""
 
@@ -264,7 +264,7 @@ msgid "A list of tags that gets added to every post."
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:157
-#: lib/class-wp2d-options.php:624
+#: lib/class-wp2d-options.php:548
 msgid "Aspects"
 msgstr ""
 
@@ -277,12 +277,12 @@ msgid "Use the \"%s\" button to load your aspects from diaspora*."
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:159
-#: lib/class-wp2d-options.php:763
+#: lib/class-wp2d-options.php:687
 msgid "Refresh Aspects"
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:160
-#: lib/class-wp2d-options.php:627
+#: lib/class-wp2d-options.php:551
 msgid "Services"
 msgstr ""
 
@@ -295,7 +295,7 @@ msgid "Use the \"%s\" button to fetch the list of your connected services from d
 msgstr ""
 
 #: lib/class-wp2d-contextual-help.php:162
-#: lib/class-wp2d-options.php:769
+#: lib/class-wp2d-options.php:693
 msgid "Refresh Services"
 msgstr ""
 
@@ -434,8 +434,8 @@ msgid "First of all, set up the connection to your pod below."
 msgstr ""
 
 #: lib/class-wp2d-options.php:203
-#: lib/class-wp2d.php:254
-#: lib/class-wp2d.php:391
+#: lib/class-wp2d.php:245
+#: lib/class-wp2d.php:388
 msgid "Connection successful."
 msgstr ""
 
@@ -463,135 +463,147 @@ msgstr ""
 msgid "Diaspora* Pod"
 msgstr ""
 
-#: lib/class-wp2d-options.php:589
+#: lib/class-wp2d-options.php:513
 msgid "Password already set."
 msgstr ""
 
-#: lib/class-wp2d-options.php:594
+#: lib/class-wp2d-options.php:518
 msgid "If you would like to change the password type a new one. Otherwise leave this blank."
 msgstr ""
 
-#: lib/class-wp2d-options.php:603
+#: lib/class-wp2d-options.php:527
 msgid "Define the default posting behaviour for all posts here. These settings can be modified for each post individually, by changing the values in the \"WP to diaspora*\" meta box, which gets displayed in your post edit screen."
 msgstr ""
 
-#: lib/class-wp2d-options.php:643
-#: lib/class-wp2d-options.php:692
+#: lib/class-wp2d-options.php:567
+#: lib/class-wp2d-options.php:616
 msgid "None"
 msgstr ""
 
-#: lib/class-wp2d-options.php:649
+#: lib/class-wp2d-options.php:573
 msgid "Choose which post types can be posted to diaspora*."
 msgstr ""
 
-#: lib/class-wp2d-options.php:660
-#: lib/class-wp2d-options.php:676
+#: lib/class-wp2d-options.php:584
+#: lib/class-wp2d-options.php:600
 msgid "Yes"
 msgstr ""
 
-#: lib/class-wp2d-options.php:672
+#: lib/class-wp2d-options.php:596
 msgid "Include a link back to your original post."
 msgstr ""
 
-#: lib/class-wp2d-options.php:690
+#: lib/class-wp2d-options.php:614
 msgid "Full Post"
 msgstr ""
 
-#: lib/class-wp2d-options.php:691
+#: lib/class-wp2d-options.php:615
 msgid "Excerpt"
 msgstr ""
 
-#: lib/class-wp2d-options.php:703
+#: lib/class-wp2d-options.php:627
 msgid "Choose which tags should be posted to diaspora*."
 msgstr ""
 
-#: lib/class-wp2d-options.php:710
+#: lib/class-wp2d-options.php:634
 msgid "No tags"
 msgstr ""
 
-#: lib/class-wp2d-options.php:732
+#: lib/class-wp2d-options.php:656
 msgid "Custom tags to add to all posts being posted to diaspora*."
 msgstr ""
 
-#: lib/class-wp2d-options.php:744
+#: lib/class-wp2d-options.php:668
 msgid "Custom tags to add to this post when it's posted to diaspora*."
 msgstr ""
 
-#: lib/class-wp2d-options.php:748
+#: lib/class-wp2d-options.php:672
 msgid "Separate tags with commas"
 msgstr ""
 
-#: lib/class-wp2d-options.php:764
+#: lib/class-wp2d-options.php:688
 msgid "Choose which aspects to share to."
 msgstr ""
 
-#: lib/class-wp2d-options.php:772
+#: lib/class-wp2d-options.php:696
 msgid "Choose which services to share to."
 msgstr ""
 
-#: lib/class-wp2d-options.php:774
+#: lib/class-wp2d-options.php:698
 msgid "Show available services on my pod."
 msgstr ""
 
-#: lib/class-wp2d-options.php:776
-#: lib/class-wp2d.php:251
+#: lib/class-wp2d-options.php:700
+#: lib/class-wp2d.php:242
 msgid "No services connected yet."
 msgstr ""
 
-#: lib/class-wp2d-options.php:807
+#: lib/class-wp2d-options.php:731
 msgctxt "placeholders are link tags to the settings page."
 msgid "To update this list, %1$sre-save your login info%2$s."
 msgstr ""
 
-#: lib/class-wp2d-post.php:460
+#: lib/class-wp2d-post.php:471
 msgid "Originally posted at:"
 msgstr ""
 
-#: lib/class-wp2d-post.php:462
+#: lib/class-wp2d-post.php:473
 msgid "Permalink"
 msgstr ""
 
-#: lib/class-wp2d-post.php:675
+#: lib/class-wp2d-post.php:689
 msgid "Already posted to diaspora*."
 msgstr ""
 
-#: lib/class-wp2d-post.php:787
+#: lib/class-wp2d-post.php:798
+#: lib/class-wp2d-post.php:852
 msgid "Failed to post to diaspora*."
 msgstr ""
 
-#: lib/class-wp2d-post.php:791
+#: lib/class-wp2d-post.php:802
 msgid "Ignore"
 msgstr ""
 
-#: lib/class-wp2d-post.php:801
+#: lib/class-wp2d-post.php:812
+#: lib/class-wp2d-post.php:863
 msgid "Successfully posted to diaspora*."
 msgstr ""
 
-#: lib/class-wp2d-post.php:803
+#: lib/class-wp2d-post.php:814
+#: lib/class-wp2d-post.php:865
 msgid "View Post"
 msgstr ""
 
-#: lib/class-wp2d.php:250
+#: lib/class-wp2d-post.php:840
+#: lib/class-wp2d.php:240
+msgid "AJAX Nonce failure."
+msgstr ""
+
+#: lib/class-wp2d.php:241
 msgid "Resave your credentials and try again."
 msgstr ""
 
-#: lib/class-wp2d.php:252
+#: lib/class-wp2d.php:243
 msgid "Are you sure you want to reset to default values?"
 msgstr ""
 
-#: lib/class-wp2d.php:253
+#: lib/class-wp2d.php:244
 msgid "Testing connection..."
 msgstr ""
 
-#: lib/class-wp2d.php:255
+#: lib/class-wp2d.php:246
 msgid "Connection failed."
 msgstr ""
 
-#: lib/class-wp2d.php:275
+#: lib/class-wp2d.php:266
 msgctxt "placeholders are link tags to the settings page."
 msgid "Looks like your WordPress secret keys have changed! Please %1$sre-save your login info%2$s."
 msgstr ""
 
-#: lib/class-wp2d.php:291
+#: lib/class-wp2d.php:282
 msgid "Settings"
+msgstr ""
+
+#: lib/class-wp2d.php:381
+msgid "Invalid AJAX nonce"
 msgstr ""

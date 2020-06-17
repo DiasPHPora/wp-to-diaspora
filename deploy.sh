@@ -114,6 +114,8 @@ echo " Done."
 echo
 
 printf "Exporting the HEAD of master from git to the trunk of SVN..."
+# Remove files from the SVN trunk to ensure a clean export from git.
+rm -rf "${SVN_PATH}/trunk"/*
 git checkout-index -a -f --prefix="${SVN_PATH}/trunk/"
 mv -f "${SVN_PATH}/trunk/assets"/* "${SVN_PATH}/assets"
 rm -rf "${SVN_PATH}/trunk/assets"
