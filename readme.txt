@@ -94,6 +94,9 @@ Quite straightforward, right?
 
 == Changelog ==
 
+= unreleased =
+* Fix duplicate posting problem by updating meta data earlier, preventing any race condition
+
 = 3.0.1 =
 * Fix deploy script, which borked up version 3.0.0
 

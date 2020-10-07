@@ -227,6 +227,11 @@ class WP2D_Post {
 			return false;
 		}
 
+		// Unset post_to_diaspora meta field to prevent mistakenly republishing to diaspora*.
+		$meta                     = get_post_meta( $post_id, '_wp_to_diaspora', true );
+		$meta['post_to_diaspora'] = false;
+		update_post_meta( $post_id, '_wp_to_diaspora', $meta );
+
 		$status_message = $this->get_title_link();
 
 		// Post the full post text, just the excerpt, or nothing at all?
@@ -274,11 +279,6 @@ class WP2D_Post {
 
 		// If there is still a previous post error around, remove it.
 		delete_post_meta( $post_id, '_wp_to_diaspora_post_error' );
-
-		// Unset post_to_diaspora meta field to prevent mistakenly republishing to diaspora*.
-		$meta                     = get_post_meta( $post_id, '_wp_to_diaspora', true );
-		$meta['post_to_diaspora'] = false;
-		update_post_meta( $post_id, '_wp_to_diaspora', $meta );
 
 		// Prevent any duplicate hook firing.
 		remove_action( 'save_post', [ $this, 'post' ], 20, 2 );
