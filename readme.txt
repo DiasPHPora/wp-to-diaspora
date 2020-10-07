@@ -3,9 +3,9 @@ Contributors: gutobenn, noplanman
 Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 4.6
-Tested up to: 5.4.2
+Tested up to: 5.5.1
 Minimum PHP: 7.2
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 Author URI: https://github.com/DiasPHPora/wp-to-diaspora/graphs/contributors
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -94,7 +94,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= unreleased =
+= 3.0.2 =
 * Fix duplicate posting problem by updating meta data earlier, preventing any race condition
 
 = 3.0.1 =
