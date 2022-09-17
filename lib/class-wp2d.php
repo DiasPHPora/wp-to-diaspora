@@ -16,9 +16,9 @@ class WP2D {
 	/**
 	 * Only instance of this class.
 	 *
-	 * @var WP2D
+	 * @var WP2D|null
 	 */
-	private static $instance;
+	private static ?WP2D $instance = null;
 
 	/**
 	 * The minimum required WordPress version.
@@ -27,7 +27,7 @@ class WP2D {
 	 *
 	 * @var string
 	 */
-	private $min_wp = '4.6-src';
+	private string $min_wp = '4.6-src';
 
 	/**
 	 * The minimum required PHP version.
@@ -36,21 +36,21 @@ class WP2D {
 	 *
 	 * @var string
 	 */
-	private $min_php = '7.2';
+	private string $min_php = '8.0';
 
 	/**
 	 * Instance of the API class.
 	 *
-	 * @var WP2D_API
+	 * @var WP2D_API|null
 	 */
-	private $api;
+	private ?WP2D_API $api = null;
 
 	/**
 	 * Create / Get the instance of this class.
 	 *
-	 * @return WP2D Instance of this class.
+	 * @return WP2D|null Instance of this class.
 	 */
-	public static function instance() {
+	public static function instance(): ?WP2D {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 			if ( self::$instance->version_check() ) {
@@ -69,7 +69,7 @@ class WP2D {
 	 *
 	 * @since 1.5.0
 	 */
-	private function constants() {
+	private function constants(): void {
 		// Are we in debugging mode?
 		if ( isset( $_GET['debugging'] ) ) { // phpcs:ignore
 			define( 'WP2D_DEBUGGING', true );
@@ -89,7 +89,7 @@ class WP2D {
 	 *
 	 * @return bool If version requirements are met.
 	 */
-	private function version_check() {
+	private function version_check(): bool {
 		// Check for version requirements.
 		if ( version_compare( PHP_VERSION, $this->min_php, '<' ) || version_compare( $GLOBALS['wp_version'], $this->min_wp, '<' ) ) {
 			add_action( 'admin_notices', [ $this, 'deactivate' ] );
@@ -105,14 +105,14 @@ class WP2D {
 	 *
 	 * @since 1.5.4
 	 */
-	public function deactivate() {
-		// First of all, deactivate the plugin.
+	public function deactivate(): void {
+		// Deactivate this plugin.
 		deactivate_plugins( WP2D_BASENAME );
 
 		// Get rid of the "Plugin activated" message.
 		unset( $_GET['activate'] ); // phpcs:ignore
 
-		// Then display the admin notice.
+		// Display the admin notice.
 		?>
 		<div class="error">
 			<p><?php echo esc_html( sprintf( 'WP to diaspora* requires at least WordPress %1$s (you have %2$s) and PHP %3$s (you have %4$s)!', $this->min_wp, $GLOBALS['wp_version'], $this->min_php, PHP_VERSION ) ); ?></p>
@@ -123,7 +123,7 @@ class WP2D {
 	/**
 	 * Set up the plugin.
 	 */
-	private function setup() {
+	private function setup(): void {
 		// Add "Settings" link to plugin page.
 		add_filter( 'plugin_action_links_' . WP2D_BASENAME, [ $this, 'settings_link' ] );
 
@@ -155,7 +155,7 @@ class WP2D {
 	 *
 	 * @return WP2D_API The API object.
 	 */
-	private function load_api() {
+	private function load_api(): WP2D_API {
 		if ( null === $this->api ) {
 			$this->api = WP2D_Helpers::api_quick_connect();
 		}
@@ -166,7 +166,7 @@ class WP2D {
 	/**
 	 * Initialise upgrade sequence.
 	 */
-	public function upgrade() {
+	public function upgrade(): void {
 		// Get the current options, or assign defaults.
 		$options = WP2D_Options::instance();
 		$version = $options->get_option( 'version' );
@@ -194,9 +194,9 @@ class WP2D {
 				// Turn tags_to_post string into an array.
 				$tags_to_post_old = $options->get_option( 'tags_to_post' );
 				$tags_to_post     = array_filter( [
-					( false !== strpos( $tags_to_post_old, 'g' ) ) ? 'global' : null,
-					( false !== strpos( $tags_to_post_old, 'c' ) ) ? 'custom' : null,
-					( false !== strpos( $tags_to_post_old, 'p' ) ) ? 'post' : null,
+					str_contains( $tags_to_post_old, 'g' ) ? 'global' : null,
+					str_contains( $tags_to_post_old, 'c' ) ? 'custom' : null,
+					str_contains( $tags_to_post_old, 'p' ) ? 'post' : null,
 				] );
 				$options->set_option( 'tags_to_post', $tags_to_post );
 			}
@@ -219,7 +219,7 @@ class WP2D {
 	/**
 	 * Load scripts and styles for Settings and Post pages of allowed post types.
 	 */
-	public function admin_load_scripts() {
+	public function admin_load_scripts(): void {
 		// Get the enabled post types to load the script for.
 		$enabled_post_types = WP2D_Options::instance()->get_option( 'enabled_post_types', [] );
 
@@ -227,7 +227,7 @@ class WP2D {
 		$screen = get_current_screen();
 
 		// Only load the styles and scripts on the settings page and the allowed post types.
-		if ( 'settings_page_wp_to_diaspora' === $screen->id || ( in_array( $screen->post_type, $enabled_post_types, true ) && 'post' === $screen->base ) ) {
+		if ( 'settings_page_wp_to_diaspora' === $screen?->id || ( 'post' === $screen?->base && in_array( $screen?->post_type, $enabled_post_types, true ) ) ) {
 			wp_enqueue_style( 'tag-it', plugins_url( '/css/tag-it.min.css', WP2D_BASENAME ), [], WP2D_VERSION );
 			wp_enqueue_style( 'chosen', plugins_url( '/css/chosen.min.css', WP2D_BASENAME ), [], WP2D_VERSION );
 			wp_enqueue_style( 'wp-to-diaspora-admin', plugins_url( '/css/wp-to-diaspora.css', WP2D_BASENAME ), [], WP2D_VERSION );
@@ -253,7 +253,7 @@ class WP2D {
 	 *
 	 * @since 2.2.0
 	 */
-	public function admin_notices() {
+	public function admin_notices(): void {
 		// If a custom WP2D_ENC_KEY is set, it doesn't matter if the AUTH_KEY has changed.
 		if ( AUTH_KEY !== WP2D_ENC_KEY ) {
 			return;
@@ -278,7 +278,7 @@ class WP2D {
 	 *
 	 * @return array Links to display for plugin on plugins page.
 	 */
-	public function settings_link( $links ) {
+	public function settings_link( array $links ): array {
 		$links[] = '<a href="' . esc_url( admin_url( 'options-general.php?page=wp_to_diaspora' ) ) . '">' . __( 'Settings', 'wp-to-diaspora' ) . '</a>';
 
 		return $links;
@@ -293,7 +293,7 @@ class WP2D {
 	 *
 	 * @return array|bool The list of aspects or services, false if an illegal parameter is passed.
 	 */
-	private function update_aspects_services_list( $type ) {
+	private function update_aspects_services_list( string $type ): bool|array {
 		// Check for correct argument value.
 		if ( ! in_array( $type, [ 'aspects', 'services' ], true ) ) {
 			return false;
@@ -337,7 +337,7 @@ class WP2D {
 	/**
 	 * Update the list of aspects and return them for use with AJAX.
 	 */
-	public function update_aspects_list_callback() {
+	public function update_aspects_list_callback(): void {
 		check_ajax_referer( 'wp2d', 'nonce' );
 		wp_send_json( $this->update_aspects_services_list( 'aspects' ) );
 	}
@@ -345,7 +345,7 @@ class WP2D {
 	/**
 	 * Update the list of services and return them for use with AJAX.
 	 */
-	public function update_services_list_callback() {
+	public function update_services_list_callback(): void {
 		check_ajax_referer( 'wp2d', 'nonce' );
 		wp_send_json( $this->update_aspects_services_list( 'services' ) );
 	}
@@ -353,9 +353,9 @@ class WP2D {
 	/**
 	 * Check the pod connection status.
 	 *
-	 * @return bool The status of the connection.
+	 * @return bool|null The status of the connection.
 	 */
-	private function check_pod_connection_status() {
+	private function check_pod_connection_status(): ?bool {
 		$options = WP2D_Options::instance();
 
 		$status = null;
@@ -372,7 +372,7 @@ class WP2D {
 	 *
 	 * @todo esc_html
 	 */
-	public function check_pod_connection_status_callback() {
+	public function check_pod_connection_status_callback(): void {
 		if ( ! defined( 'WP2D_DEBUGGING' ) && isset( $_REQUEST['debugging'] ) ) { // phpcs:ignore
 			define( 'WP2D_DEBUGGING', true );
 		}

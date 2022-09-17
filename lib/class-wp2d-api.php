@@ -31,92 +31,92 @@ class WP2D_API {
 	 *
 	 * @var string
 	 */
-	public $provider = 'WP to diaspora*';
+	public string $provider = 'WP to diaspora*';
 
 	/**
 	 * The last http request error that occurred.
 	 *
-	 * @var WP_Error
+	 * @var WP_Error|null
 	 */
-	private $last_error;
+	private ?WP_Error $last_error;
 
 	/**
 	 * Security token to be used for making requests.
 	 *
 	 * @var string
 	 */
-	private $token;
+	private string $token = '';
 
 	/**
 	 * Save the cookies for the requests.
 	 *
 	 * @var array
 	 */
-	private $cookies;
+	private array $cookies = [];
 
 	/**
 	 * The last http request made to diaspora*.
 	 * Contains the response and request infos.
 	 *
-	 * @var object
+	 * @var object|null
 	 */
-	private $last_request;
+	private ?object $last_request = null;
 
 	/**
 	 * Is this a secure server, use HTTPS instead of HTTP?
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
-	private $is_secure;
+	private bool $is_secure;
 
 	/**
 	 * The pod domain to make the http requests to.
 	 *
 	 * @var string
 	 */
-	private $pod;
+	private string $pod;
 
 	/**
 	 * Username to use when logging in to diaspora*.
 	 *
 	 * @var string
 	 */
-	private $username;
+	private string $username = '';
 
 	/**
 	 * Password to use when logging in to diaspora*.
 	 *
 	 * @var string
 	 */
-	private $password;
+	private string $password = '';
 
 	/**
 	 * Remember the current login state.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
-	private $is_logged_in = false;
+	private bool $is_logged_in = false;
 
 	/**
 	 * The list of user's aspects, which get set after ever http request.
 	 *
 	 * @var array
 	 */
-	private $aspects = [];
+	private array $aspects = [];
 
 	/**
 	 * The list of user's connected services, which get set after ever http request.
 	 *
 	 * @var array
 	 */
-	private $services = [];
+	private array $services = [];
 
 	/**
 	 * List of regex expressions used to filter out details from http request responses.
 	 *
 	 * @var array
 	 */
-	private static $regexes = [
+	private static array $regexes = [
 		'token'    => '/content="(.*?)" name="csrf-token"|name="csrf-token" content="(.*?)"/',
 		'aspects'  => '/"aspects"\:(\[.*?\])/',
 		'services' => '/"configured_services"\:(\[.*?\])/',
@@ -129,7 +129,7 @@ class WP2D_API {
 	 *
 	 * @return string Full pod url.
 	 */
-	public function get_pod_url( $path = '' ) {
+	public function get_pod_url( string $path = '' ): string {
 		$path = trim( $path, ' /' );
 
 		// Add a slash to the beginning?
@@ -146,10 +146,9 @@ class WP2D_API {
 	 * @param string $pod       The pod domain to connect to.
 	 * @param bool   $is_secure Is this a secure server? (Default: true).
 	 */
-	public function __construct( $pod, $is_secure = true ) {
-		// Set class variables.
+	public function __construct( string $pod, bool $is_secure = true ) {
 		$this->pod       = $pod;
-		$this->is_secure = (bool) $is_secure;
+		$this->is_secure = $is_secure;
 	}
 
 	/**
@@ -161,18 +160,18 @@ class WP2D_API {
 	 *
 	 * @return bool True if we could get the token, else false.
 	 */
-	public function init( $pod = null, $is_secure = true ) {
+	public function init( string $pod = '', bool $is_secure = true ): bool {
 		// If we are changing pod, we need to fetch a new token.
 		$force_new_token = false;
 
 		// When initialising a connection, clear the last error.
-		// This is important when multiple init tries happen.
+		// This is important with multiple inits.
 		$this->last_error = null;
 
 		// Change the pod we are connecting to?
-		if ( null !== $pod && ( $this->pod !== $pod || $this->is_secure !== $is_secure ) ) {
+		if ( '' !== $pod && ( $this->pod !== $pod || $this->is_secure !== $is_secure ) ) {
 			$this->pod       = $pod;
-			$this->is_secure = (bool) $is_secure;
+			$this->is_secure = $is_secure;
 			$force_new_token = true;
 		}
 
@@ -198,7 +197,7 @@ class WP2D_API {
 	 *
 	 * @return bool If there is an API error around.
 	 */
-	public function has_last_error() {
+	public function has_last_error(): bool {
 		return is_wp_error( $this->last_error );
 	}
 
@@ -209,7 +208,7 @@ class WP2D_API {
 	 *
 	 * @return WP_Error|null The last API error object or null.
 	 */
-	public function get_last_error_object( $clear = true ) {
+	public function get_last_error_object( bool $clear = true ): ?WP_Error {
 		$last_error = $this->last_error;
 		if ( $clear ) {
 			$this->last_error = null;
@@ -225,7 +224,7 @@ class WP2D_API {
 	 *
 	 * @return string The last API error message.
 	 */
-	public function get_last_error( $clear = false ) {
+	public function get_last_error( bool $clear = false ): string {
 		$last_error = $this->has_last_error() ? $this->last_error->get_error_message() : '';
 		if ( $clear ) {
 			$this->last_error = null;
@@ -241,8 +240,8 @@ class WP2D_API {
 	 *
 	 * @return string The fetched token.
 	 */
-	private function fetch_token( $force = false ) {
-		if ( null === $this->token || $force ) {
+	private function fetch_token( bool $force = false ): string {
+		if ( '' === $this->token || $force ) {
 			// Go directly to the sign in page, as it would redirect to there anyway.
 			// Since _request function automatically saves the new token, just call it with no data.
 			$this->request( '/users/sign_in' );
@@ -252,12 +251,12 @@ class WP2D_API {
 	}
 
 	/**
-	 * Check if the API has been initialised. Otherwise set the last error.
+	 * Check if the API has been initialised. Otherwise, set the last error.
 	 *
 	 * @return bool Has the connection been initialised?
 	 */
-	private function check_init() {
-		if ( null === $this->token ) {
+	private function check_init(): bool {
+		if ( '' === $this->token ) {
 			$this->error( 'wp2d_api_connection_not_initialised', __( 'Connection not initialised.', 'wp-to-diaspora' ) );
 
 			return false;
@@ -271,7 +270,7 @@ class WP2D_API {
 	 *
 	 * @return bool Are we logged in already?
 	 */
-	private function check_login() {
+	private function check_login(): bool {
 		if ( ! $this->check_init() ) {
 			return false;
 		}
@@ -289,7 +288,7 @@ class WP2D_API {
 	 *
 	 * @return bool Are we logged in already?
 	 */
-	public function is_logged_in() {
+	public function is_logged_in(): bool {
 		return $this->is_logged_in;
 	}
 
@@ -302,7 +301,7 @@ class WP2D_API {
 	 *
 	 * @return bool Did the login succeed?
 	 */
-	public function login( $username, $password, $force = false ) {
+	public function login( string $username, string $password, bool $force = false ): bool {
 		// Has the connection been initialised?
 		if ( ! $this->check_init() ) {
 			$this->logout();
@@ -355,7 +354,7 @@ class WP2D_API {
 		$response = $this->request( '/bookmarklet' );
 
 		// If the request isn't successful, we are not logged in correctly.
-		if ( is_wp_error( $response ) || 200 !== $response->code ) {
+		if ( 200 !== $response?->code || is_wp_error( $response ) ) {
 			// Login failed.
 			$this->error(
 				'wp2d_api_login_failed',
@@ -378,10 +377,10 @@ class WP2D_API {
 	 *
 	 * @since 1.6.0
 	 */
-	public function logout() {
+	public function logout(): void {
 		$this->is_logged_in = false;
-		$this->username     = null;
-		$this->password     = null;
+		$this->username     = '';
+		$this->password     = '';
 		$this->aspects      = [];
 		$this->services     = [];
 	}
@@ -391,10 +390,10 @@ class WP2D_API {
 	 *
 	 * @since 1.7.0
 	 */
-	public function deinit() {
+	public function deinit(): void {
 		$this->logout();
 		$this->last_error   = null;
-		$this->token        = null;
+		$this->token        = '';
 		$this->cookies      = [];
 		$this->last_request = null;
 	}
@@ -408,7 +407,7 @@ class WP2D_API {
 	 *
 	 * @return bool|object Return the response data of the new diaspora* post if successfully posted, else false.
 	 */
-	public function post( $text, $aspects = 'public', array $extra_data = [] ) {
+	public function post( string $text, array|string $aspects = 'public', array $extra_data = [] ): object|bool {
 		// Are we logged in?
 		if ( ! $this->check_login() ) {
 			return false;
@@ -452,13 +451,13 @@ class WP2D_API {
 		$response = $this->request( '/status_messages', $args );
 
 		if ( is_wp_error( $response ) ) {
-			$this->error( 'wp2d_api_post_failed', $response->get_error_message() );
+			$this->error( 'wp2d_api_post_failed', $response?->get_error_message() );
 
 			return false;
 		}
 
-		$diaspost = json_decode( $response->body );
-		if ( 201 !== $response->code ) {
+		$diaspost = json_decode( $response?->body, false );
+		if ( 201 !== $response?->code ) {
 			$this->error(
 				'wp2d_api_post_failed',
 				$diaspost->error ?? _x( 'Unknown error occurred.', 'When an unknown error occurred in the WP2D_API object.', 'wp-to-diaspora' )
@@ -483,7 +482,7 @@ class WP2D_API {
 	 *
 	 * @return bool If the deletion was successful.
 	 */
-	public function delete( $what, $id ) {
+	public function delete( string $what, string $id ): bool {
 		// Are we logged in?
 		if ( ! $this->check_login() ) {
 			return false;
@@ -509,9 +508,9 @@ class WP2D_API {
 		$response = $this->request( '/' . $what . 's/' . $id, $args );
 
 		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
+			$error_message = $response?->get_error_message();
 		} else {
-			switch ( $response->code ) {
+			switch ( $response?->code ) {
 				case 204:
 					return true;
 				case 404:
@@ -543,7 +542,7 @@ class WP2D_API {
 	 *
 	 * @return array|bool Array of aspect objects or false.
 	 */
-	public function get_aspects( $force = false ) {
+	public function get_aspects( bool $force = false ): bool|array {
 		$this->aspects = $this->get_aspects_services( 'aspects', $this->aspects, $force );
 
 		return is_array( $this->aspects ) ? $this->aspects : false;
@@ -556,7 +555,7 @@ class WP2D_API {
 	 *
 	 * @return array|bool Array of service objects or false.
 	 */
-	public function get_services( $force = false ) {
+	public function get_services( bool $force = false ): bool|array {
 		$this->services = $this->get_aspects_services( 'services', $this->services, $force );
 
 		return is_array( $this->services ) ? $this->services : false;
@@ -571,7 +570,7 @@ class WP2D_API {
 	 *
 	 * @return array|bool List of fetched aspects or services, or false.
 	 */
-	private function get_aspects_services( $type, $list, $force ) {
+	private function get_aspects_services( string $type, array $list, bool $force ): bool|array {
 		if ( ! $this->check_login() ) {
 			return false;
 		}
@@ -580,7 +579,7 @@ class WP2D_API {
 		if ( $force || empty( $list ) ) {
 			$response = $this->request( '/bookmarklet' );
 
-			if ( is_wp_error( $response ) || 200 !== $response->code ) {
+			if ( 200 !== $response?->code || is_wp_error( $response ) ) {
 				switch ( $type ) {
 					case 'aspects':
 						$this->error( 'wp2d_api_getting_aspects_failed', __( 'Error loading aspects.', 'wp-to-diaspora' ) );
@@ -597,7 +596,7 @@ class WP2D_API {
 			}
 
 			// Load the aspects or services.
-			$raw_list = json_decode( $this->parse_regex( $type, $response->body ) );
+			$raw_list = json_decode( $this->parse_regex( $type, $response?->body ), false );
 			if ( is_array( $raw_list ) ) {
 				// In case this fetch is forced, empty the list.
 				$list = [];
@@ -629,11 +628,11 @@ class WP2D_API {
 	 * @param string $url  The URL to request.
 	 * @param array  $args Arguments to be posted with the request.
 	 *
-	 * @return object An object containing details about this request.
+	 * @return object|null An object containing details about this request.
 	 */
-	private function request( $url, array $args = [] ) {
+	private function request( string $url, array $args = [] ): ?object {
 		// Prefix the full pod URL if necessary.
-		if ( 0 === strpos( $url, '/' ) ) {
+		if ( str_starts_with( $url, '/' ) ) {
 			$url = $this->get_pod_url( $url );
 		}
 
@@ -704,7 +703,7 @@ class WP2D_API {
 	 * @param string     $message Error message.
 	 * @param mixed      $data    Error data.
 	 */
-	private function error( $code, $message, $data = '' ) {
+	private function error( string|int $code, string $message, mixed $data = '' ): void {
 		// Always add the code and message of the last request.
 		$data = array_merge( array_filter( (array) $data ), [
 			'code'    => $this->last_request->code ?? null,
@@ -722,7 +721,7 @@ class WP2D_API {
 	 *
 	 * @return string The found string, or an empty string.
 	 */
-	private function parse_regex( $regex, $content ) {
+	private function parse_regex( string $regex, string $content ): string {
 		// Use a shorthand regex if available.
 		if ( array_key_exists( $regex, self::$regexes ) ) {
 			$regex = self::$regexes[ $regex ];
