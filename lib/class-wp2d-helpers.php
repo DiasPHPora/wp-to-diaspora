@@ -15,11 +15,11 @@ defined( 'ABSPATH' ) || exit;
 class WP2D_Helpers {
 
 	/**
-	 * Debug text that get's accumulated before output.
+	 * Debug text that gets accumulated before output.
 	 *
 	 * @var string
 	 */
-	private static $debugging = '';
+	private static string $debugging = '';
 
 	/**
 	 * Add a line to the debug output. Include the stack trace to see where it's coming from.
@@ -28,7 +28,7 @@ class WP2D_Helpers {
 	 *
 	 * @return bool
 	 */
-	public static function add_debugging( $text ) {
+	public static function add_debugging( string $text ): bool {
 		// Make sure we're in debug mode.
 		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
 			$d = '';
@@ -51,9 +51,9 @@ class WP2D_Helpers {
 	/**
 	 * Return the debug output.
 	 *
-	 * @return string The debug output.
+	 * @return bool|string The debug output.
 	 */
-	public static function get_debugging() {
+	public static function get_debugging(): bool|string {
 		if ( defined( 'WP2D_DEBUGGING' ) && true === WP2D_DEBUGGING ) {
 			return self::$debugging;
 		}
@@ -70,7 +70,7 @@ class WP2D_Helpers {
 	 *
 	 * @return array The converted array.
 	 */
-	public static function str_to_arr( &$input ) {
+	public static function str_to_arr( array|string &$input ): array {
 		if ( ! is_array( $input ) ) {
 			// Explode string > Trim each entry > Remove blanks > Re-index array.
 			$input = array_values( array_filter( array_map( 'trim', explode( ',', $input ) ) ) );
@@ -92,7 +92,7 @@ class WP2D_Helpers {
 	 *
 	 * @return string The converted string.
 	 */
-	public static function arr_to_str( &$input ) {
+	public static function arr_to_str( array|string &$input ): string {
 		if ( is_array( $input ) ) {
 			// Trim each entry > Remove blanks > Implode them together.
 			$input = implode( ',', array_filter( array_map( 'trim', $input ) ) );
@@ -111,10 +111,10 @@ class WP2D_Helpers {
 	 * @param string $input String to be encrypted.
 	 * @param string $key   The key used for the encryption.
 	 *
-	 * @return string The encrypted string.
+	 * @return string|null The encrypted string.
 	 */
-	public static function encrypt( $input, $key = WP2D_ENC_KEY ) {
-		if ( null === $input || '' === $input ) {
+	public static function encrypt( string $input, string $key = WP2D_ENC_KEY ): ?string {
+		if ( '' === $input ) {
 			return false;
 		}
 		global $wpdb;
@@ -128,12 +128,13 @@ class WP2D_Helpers {
 	 * @param string $input String to be decrypted.
 	 * @param string $key   The key used for the decryption.
 	 *
-	 * @return string The decrypted string.
+	 * @return string|null The decrypted string.
 	 */
-	public static function decrypt( $input, $key = WP2D_ENC_KEY ) {
-		if ( null === $input || '' === $input ) {
+	public static function decrypt( string $input, string $key = WP2D_ENC_KEY ): ?string {
+		if ( '' === $input ) {
 			return false;
 		}
+
 		global $wpdb;
 
 		return $wpdb->get_var( $wpdb->prepare( 'SELECT AES_DECRYPT(UNHEX(%s),%s)', $input, $key ) );
@@ -144,14 +145,13 @@ class WP2D_Helpers {
 	 *
 	 * @return WP2D_API The API object.
 	 */
-	public static function api_quick_connect() {
-		$options   = WP2D_Options::instance();
-		$pod       = (string) $options->get_option( 'pod' );
-		$is_secure = true;
-		$username  = (string) $options->get_option( 'username' );
-		$password  = self::decrypt( (string) $options->get_option( 'password' ) );
+	public static function api_quick_connect(): WP2D_API {
+		$options  = WP2D_Options::instance();
+		$pod      = (string) $options->get_option( 'pod' );
+		$username = (string) $options->get_option( 'username' );
+		$password = self::decrypt( (string) $options->get_option( 'password' ) );
 
-		$api = new WP2D_API( $pod, $is_secure );
+		$api = new WP2D_API( $pod, true );
 
 		// This is necessary for correct error handling!
 		if ( $api->init() ) {
