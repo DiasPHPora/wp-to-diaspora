@@ -47,7 +47,7 @@ class WP2D_API {
 	/**
 	 * @var WP_Error|null The last HTTP request error that occurred.
 	 */
-	private ?WP_Error $last_error;
+	private ?WP_Error $last_error = null;
 
 	/**
 	 * @var string CSRF token to be used for making requests.
@@ -534,9 +534,9 @@ class WP2D_API {
 			return $list;
 		}
 
-		$response = $this->client->get( '/bookmarklet' );
-
-		if ( 200 !== $response->getStatusCode() ) {
+		try {
+			$response = $this->client->get( '/bookmarklet' );
+		} catch ( Throwable ) {
 			match ( $type ) {
 				'aspects' => $this->error( 'wp2d_api_getting_aspects_failed', __( 'Error loading aspects.', 'wp-to-diaspora' ) ),
 				'services' => $this->error( 'wp2d_api_getting_services_failed', __( 'Error loading services.', 'wp-to-diaspora' ) ),
@@ -580,6 +580,8 @@ class WP2D_API {
 	 */
 	private function get_guzzle_handler(): HandlerStack {
 		$handler = HandlerStack::create();
+
+		$handler = apply_filters( 'wp2d_guzzle_handler', $handler );
 
 		$handler->push( Middleware::mapRequest( function ( RequestInterface $request ) {
 			if ( 'DELETE' === $request->getMethod() || '/status_messages' === $request->getUri()->getPath() ) {
@@ -626,8 +628,8 @@ class WP2D_API {
 	private function error( string|int $code, string $message, mixed $data = '' ): void {
 		// Always add the code and message of the last request.
 		$data = array_merge( array_filter( (array) $data ), [
-			'code'    => $this->last_response->getStatusCode(),
-			'message' => $this->last_response->getReasonPhrase(),
+			'code'    => $this->last_response?->getStatusCode(),
+			'message' => $this->last_response?->getReasonPhrase(),
 		] );
 
 		$this->last_error = new WP_Error( $code, $message, $data );

@@ -1,14 +1,15 @@
-<phpunit backupGlobals="false" bootstrap="tests/bootstrap.php" colors="true">
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="tests/bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+	<coverage>
+		<include>
+			<directory suffix=".php">.</directory>
+		</include>
+	</coverage>
 	<testsuites>
 		<testsuite name="WP to diaspora*">
 			<directory prefix="tests-" suffix=".php">tests</directory>
 		</testsuite>
 	</testsuites>
-	<filter>
-		<whitelist>
-			<directory suffix=".php">.</directory>
-		</whitelist>
-	</filter>
 	<php>
 		<const name="AUTH_KEY" value="put your unique phrase here"/>
 	</php>

@@ -6,6 +6,10 @@
  * @since   1.7.0
  */
 
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
+
 /**
  * Main WP to diaspora test class.
  *
@@ -97,6 +101,9 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_update_aspects_services_list() {
+		$mock = new MockHandler();
+		add_filter( 'wp2d_guzzle_handler', $handler = static fn() => HandlerStack::create( $mock ) );
+
 		// Get the necessary instances.
 		$wp2d    = WP2D::instance();
 		$options = WP2D_Options::instance();
@@ -105,8 +112,6 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		// Set our fake initialised API object.
 		wp2d_helper_set_private_property( $wp2d, 'api', $api );
 
-		add_filter( 'pre_http_request', 'wp_to_diaspora_pre_http_request_filter_update_aspects' );
-
 		// Make sure the options start off empty.
 		$this->assertEmpty( $options->get_option( 'aspects_list' ) );
 
@@ -114,23 +119,24 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		 * Make update calls for aspects.
 		 */
 		$res = [ 'public' => 'Public', 1 => 'Family' ];
+		$mock->append( new Response( 200, body: '"aspects":[{"id":1,"name":"Family","selected":true}]' ) );
 		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
 		$res = [ 'public' => 'Public', 2 => 'Friends' ];
+		$mock->append( new Response( 200, body: '"aspects":[{"id":2,"name":"Friends","selected":true}]' ) );
 		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
 		// When an update fails (WP_Error or error code response), the previously set option remains unchanged.
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
-		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
-		$this->assertEquals( 'Error loading aspects.', $api->get_last_error( true ) );
+		$mock->append( new Response( 400, reason: 'Bad Request' ) );
 		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 		$this->assertEquals( 'Error loading aspects.', $api->get_last_error( true ) );
 
 		// When getting an empty return, only the public aspect should exist.
 		$res = [ 'public' => 'Public' ];
+		$mock->append( new Response( 200, body: '"aspects":[]' ) );
 		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
@@ -138,27 +144,28 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		 * Make update calls for services.
 		 */
 		$res = [ 'facebook' => 'Facebook' ];
+		$mock->append( new Response( 200, body: '"configured_services":["facebook"]' ) );
 		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
 		$res = [ 'twitter' => 'Twitter' ];
+		$mock->append( new Response( 200, body: '"configured_services":["twitter"]' ) );
 		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
 		// When an update fails (WP_Error or error code response), the previously set option remains unchanged.
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
-		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
-		$this->assertEquals( 'Error loading services.', $api->get_last_error( true ) );
+		$mock->append( new Response( 400, reason: 'Bad Request' ) );
 		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 		$this->assertEquals( 'Error loading services.', $api->get_last_error( true ) );
 
 		// When getting an empty return, we get an empty array.
 		$res = [];
+		$mock->append( new Response( 200, body: '"configured_services":[]' ) );
 		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
-		remove_filter( 'pre_http_request', 'wp_to_diaspora_pre_http_request_filter_update_aspects' );
+		remove_filter( 'wp2d_guzzle_handler', $handler );
 	}
 
 	/**
@@ -171,6 +178,7 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		$wp2d    = WP2D::instance();
 		$options = WP2D_Options::instance();
 		$api     = wp2d_api_helper_get_fake_api_init_login();
+
 		// Set our fake initialised API object.
 		wp2d_helper_set_private_property( $wp2d, 'api', $api );
 

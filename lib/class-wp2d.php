@@ -318,7 +318,8 @@ class WP2D {
 		$list_new = $list;
 		if ( 'aspects' === $type ) {
 			$list_new = $api->get_aspects( true );
-		} elseif ( 'services' === $type ) {
+		}
+		if ( 'services' === $type ) {
 			$list_new = $api->get_services( true );
 		}
 

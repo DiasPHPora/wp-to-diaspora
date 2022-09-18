@@ -44,3 +44,20 @@ function wp2d_helper_set_private_property( $object, $property, $value ) {
 	$refProperty->setAccessible( true );
 	$refProperty->setValue( $object, $value );
 }
+
+/**
+ * Get the value of a private property of an object.
+ *
+ * @since unreleased
+ *
+ * @param object $object   Object that contains the private property.
+ * @param string $property Name of the property who's value we want to set.
+ *
+ * @return mixed
+ */
+function wp2d_helper_get_private_property( $object, $property ): mixed {
+	$refObject   = new ReflectionObject( $object );
+	$refProperty = $refObject->getProperty( $property );
+	$refProperty->setAccessible( true );
+	return $refProperty->getValue( $object );
+}
