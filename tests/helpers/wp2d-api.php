@@ -7,7 +7,7 @@
  */
 
 /**
- * Create an API instance and fake it's initialisation.
+ * Create an API instance and fake its initialisation.
  *
  * This method helps to prevent HTTP requests for tests that need a valid token.
  *
@@ -22,7 +22,7 @@ function wp2d_api_helper_get_fake_api_init( $pod = 'pod', $token = 'token' ) {
 	$api = new WP2D_API( $pod );
 
 	// Fake initialisation.
-	wp2d_helper_set_private_property( $api, 'token', $token );
+	wp2d_helper_set_private_property( $api, 'csrf_token', $token );
 
 	return $api;
 }

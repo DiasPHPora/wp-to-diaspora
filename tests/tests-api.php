@@ -6,6 +6,12 @@
  * @since   1.7.0
  */
 
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+
 /**
  * Main API test class.
  *
@@ -20,12 +26,13 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 */
 	public function test_constructor() {
 		$api = new WP2D_API( 'pod1' );
-		$this->assertAttributeSame( true, 'is_secure', $api );
-		$this->assertAttributeSame( 'pod1', 'pod', $api );
+		$this->assertTrue( wp2d_helper_get_private_property( $api, 'is_secure' ) );
+		$this->assertSame( 'pod1', wp2d_helper_get_private_property( $api, 'pod' ) );
 
 		$api = new WP2D_API( 'pod2', false );
-		$this->assertAttributeSame( false, 'is_secure', $api );
-		$this->assertAttributeSame( 'pod2', 'pod', $api );
+		$this->assertFalse( wp2d_helper_get_private_property( $api, 'is_secure' ) );
+		$this->assertSame( 'pod2', wp2d_helper_get_private_property( $api, 'pod' ) );
+
 	}
 
 	/**
@@ -55,7 +62,12 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_init_fail() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_fail' );
+		add_filter( 'wp2d_guzzle_handler', $handler = static function () {
+			return HandlerStack::create( new MockHandler( [
+				new RequestException( 'Error Communicating with Server', new Request( 'GET', '/users/sign_in' ) ),
+				new Response( 200, [], '<meta name="not-a-csrf-token" content="nope" />' ),
+			] ) );
+		} );
 
 		$api = new WP2D_API( 'pod' );
 
@@ -68,7 +80,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 
 		// False response, can't resolve host.
 		$this->assertFalse( $api->init() );
-		$this->assertContains(
+		$this->assertStringContainsString(
 			'Failed to initialise connection to pod "https://pod".',
 			$api->get_last_error()
 		);
@@ -80,7 +92,7 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 			$api->get_last_error()
 		);
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_fail' );
+		remove_filter( 'wp2d_guzzle_handler', $handler );
 	}
 
 	/**
@@ -89,29 +101,31 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_init_success() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_success' );
+		$mock = new MockHandler();
+		add_filter( 'wp2d_guzzle_handler', $handler = static fn() => HandlerStack::create( $mock ) );
 
 		$api = new WP2D_API( 'pod1' );
 
 		// First initialisation.
+		$mock->append( new Response( 200, body: '<meta name="csrf-token" content="token-a" />' ) );
 		$this->assertTrue( $api->init() );
-		$this->assertAttributeSame( 'token-a', 'token', $api );
-		// Only check for the cookie once, since it's always the same one.
-		$this->assertAttributeSame( [ 'the_cookie' ], 'cookies', $api );
+		$this->assertSame( 'token-a', wp2d_helper_get_private_property( $api, 'csrf_token' ) );
 
 		// Reinitialise with same pod, token isn't reloaded.
 		$this->assertTrue( $api->init( 'pod1' ) );
-		$this->assertAttributeSame( 'token-a', 'token', $api );
+		$this->assertSame( 'token-a', wp2d_helper_get_private_property( $api, 'csrf_token' ) );
 
 		// Reinitialise with different pod.
+		$mock->append( new Response( 200, body: '<meta name="csrf-token" content="token-b" />' ) );
 		$this->assertTrue( $api->init( 'pod2' ) );
-		$this->assertAttributeSame( 'token-b', 'token', $api );
+		$this->assertSame( 'token-b', wp2d_helper_get_private_property( $api, 'csrf_token' ) );
 
 		// Reinitialise with different protocol.
+		$mock->append( new Response( 200, body: '<meta name="csrf-token" content="token-c" />' ) );
 		$this->assertTrue( $api->init( 'pod2', false ) );
-		$this->assertAttributeSame( 'token-c', 'token', $api );
+		$this->assertSame( 'token-c', wp2d_helper_get_private_property( $api, 'csrf_token' ) );
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_init_success' );
+		remove_filter( 'wp2d_guzzle_handler', $handler );
 	}
 
 	/**
@@ -119,22 +133,24 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 *
 	 * @since 1.7.0
 	 */
-	public function test_fetch_token() {
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_fetch_token' );
+	public function test_load_csrf_token() {
+		$mock = new MockHandler();
+		add_filter( 'wp2d_guzzle_handler', $handler = static fn() => HandlerStack::create( $mock ) );
 
 		$api = wp2d_api_helper_get_fake_api_init( 'pod', 'token-initial' );
 
 		// Check the initial token.
-		$this->assertEquals( 'token-initial', wp2d_helper_call_private_method( $api, 'fetch_token' ) );
+		$this->assertEquals( 'token-initial', wp2d_helper_call_private_method( $api, 'load_csrf_token' ) );
 
 		// Directly set a new token.
-		wp2d_helper_set_private_property( $api, 'token', 'token-new' );
-		$this->assertEquals( 'token-new', wp2d_helper_call_private_method( $api, 'fetch_token' ) );
+		wp2d_helper_set_private_property( $api, 'csrf_token', 'token-new' );
+		$this->assertEquals( 'token-new', wp2d_helper_call_private_method( $api, 'load_csrf_token' ) );
 
 		// Force fetch a new token.
-		$this->assertEquals( 'token-forced', wp2d_helper_call_private_method( $api, 'fetch_token', true ) );
+		$mock->append( new Response( 200, body: '<meta name="csrf-token" content="token-forced" />' ) );
+		$this->assertEquals( 'token-forced', wp2d_helper_call_private_method( $api, 'load_csrf_token', true ) );
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_fetch_token' );
+		remove_filter( 'wp2d_guzzle_handler', $handler );
 	}
 
 	/**
@@ -167,6 +183,12 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_login_fail() {
+		add_filter( 'wp2d_guzzle_handler', $handler = static function () {
+			return HandlerStack::create( new MockHandler( [
+				new Response( 401, [], 'Login error.' ),
+			] ) );
+		} );
+
 		$api = new WP2D_API( 'pod' );
 		// Try login before initialised.
 		$this->assertFalse( $api->login( 'username', 'password' ) );
@@ -177,19 +199,20 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		// Both username AND password are required!
 		$this->assertFalse( $api->login( '', '' ) );
 		$this->assertFalse( $api->is_logged_in() );
+		$this->assertEquals( 'Invalid credentials. Please re-save your login info.', $api->get_last_error( true ) );
 
 		$this->assertFalse( $api->login( 'username-only', '' ) );
 		$this->assertFalse( $api->is_logged_in() );
+		$this->assertEquals( 'Invalid credentials. Please re-save your login info.', $api->get_last_error( true ) );
 
 		$this->assertFalse( $api->login( '', 'password-only' ) );
 		$this->assertFalse( $api->is_logged_in() );
-
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_fail' );
+		$this->assertEquals( 'Invalid credentials. Please re-save your login info.', $api->get_last_error( true ) );
 
 		$this->assertFalse( $api->login( 'username-wrong', 'password-wrong' ) );
-		$this->assertEquals( 'Login failed. Check your login details.', $api->get_last_error() );
+		$this->assertEquals( 'Login failed. Check your login details.', $api->get_last_error( true ) );
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_fail' );
+		remove_filter( 'wp2d_guzzle_handler', $handler );
 	}
 
 	/**
@@ -198,11 +221,16 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_login_success() {
+		$response_found = new Response( 302, reason: 'Found' );
+		$response_ok    = new Response( 200, reason: 'OK' );
+
+		$mock = new MockHandler();
+		add_filter( 'wp2d_guzzle_handler', $handler = static fn() => HandlerStack::create( $mock ) );
+
 		$api = wp2d_api_helper_get_fake_api_init();
 
-		add_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_success' );
-
 		// First login.
+		$mock->append( $response_found, $response_ok );
 		$this->assertTrue( $api->login( 'username', 'password' ) );
 		$this->assertTrue( $api->is_logged_in() );
 
@@ -211,14 +239,16 @@ class Tests_WP2D_API extends WP_UnitTestCase {
 		$this->assertTrue( $api->is_logged_in() );
 
 		// Force a new sign in.
+		$mock->append( $response_found, $response_ok );
 		$this->assertTrue( $api->login( 'username', 'password', true ) );
 		$this->assertTrue( $api->is_logged_in() );
 
 		// Login with new credentials.
+		$mock->append( $response_found, $response_ok );
 		$this->assertTrue( $api->login( 'username-new', 'password-new' ) );
 		$this->assertTrue( $api->is_logged_in() );
 
-		remove_filter( 'pre_http_request', 'wp2d_api_pre_http_request_filter_login_success' );
+		remove_filter( 'wp2d_guzzle_handler', $handler );
 	}
 
 	/**
