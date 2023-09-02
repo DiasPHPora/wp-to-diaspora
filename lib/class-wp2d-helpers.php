@@ -115,8 +115,9 @@ class WP2D_Helpers {
 	 */
 	public static function encrypt( string $input, string $key = WP2D_ENC_KEY ): ?string {
 		if ( '' === $input ) {
-			return false;
+			return null;
 		}
+
 		global $wpdb;
 
 		return $wpdb->get_var( $wpdb->prepare( 'SELECT HEX(AES_ENCRYPT(%s,%s))', $input, $key ) );
@@ -132,7 +133,7 @@ class WP2D_Helpers {
 	 */
 	public static function decrypt( string $input, string $key = WP2D_ENC_KEY ): ?string {
 		if ( '' === $input ) {
-			return false;
+			return null;
 		}
 
 		global $wpdb;

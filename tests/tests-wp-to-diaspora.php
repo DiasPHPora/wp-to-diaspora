@@ -15,7 +15,7 @@ use GuzzleHttp\Psr7\Response;
  *
  * @since 1.7.0
  */
-class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
+class Tests_WP2D_WP_To_Diaspora extends Tests_WP2D_UnitTestCase {
 
 	/**
 	 * Test for the static instance attribute.
@@ -107,10 +107,10 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		// Get the necessary instances.
 		$wp2d    = WP2D::instance();
 		$options = WP2D_Options::instance();
-		$api     = wp2d_api_helper_get_fake_api_init_login();
+		$api     = $this->getFakeApiLogin();
 
 		// Set our fake initialised API object.
-		wp2d_helper_set_private_property( $wp2d, 'api', $api );
+		invade( $wp2d )->api = $api;
 
 		// Make sure the options start off empty.
 		$this->assertEmpty( $options->get_option( 'aspects_list' ) );
@@ -120,24 +120,24 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		 */
 		$res = [ 'public' => 'Public', 1 => 'Family' ];
 		$mock->append( new Response( 200, body: '"aspects":[{"id":1,"name":"Family","selected":true}]' ) );
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
+		$this->assertEquals( $res, invade( $wp2d )->update_aspects_services_list( 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
 		$res = [ 'public' => 'Public', 2 => 'Friends' ];
 		$mock->append( new Response( 200, body: '"aspects":[{"id":2,"name":"Friends","selected":true}]' ) );
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
+		$this->assertEquals( $res, invade( $wp2d )->update_aspects_services_list( 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
 		// When an update fails (WP_Error or error code response), the previously set option remains unchanged.
 		$mock->append( new Response( 400, reason: 'Bad Request' ) );
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
+		$this->assertFalse( invade( $wp2d )->update_aspects_services_list( 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 		$this->assertEquals( 'Error loading aspects.', $api->get_last_error( true ) );
 
 		// When getting an empty return, only the public aspect should exist.
 		$res = [ 'public' => 'Public' ];
 		$mock->append( new Response( 200, body: '"aspects":[]' ) );
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'aspects' ) );
+		$this->assertEquals( $res, invade( $wp2d )->update_aspects_services_list( 'aspects' ) );
 		$this->assertEquals( $res, $options->get_option( 'aspects_list' ) );
 
 		/**
@@ -145,24 +145,24 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		 */
 		$res = [ 'facebook' => 'Facebook' ];
 		$mock->append( new Response( 200, body: '"configured_services":["facebook"]' ) );
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
+		$this->assertEquals( $res, invade( $wp2d )->update_aspects_services_list( 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
 		$res = [ 'twitter' => 'Twitter' ];
 		$mock->append( new Response( 200, body: '"configured_services":["twitter"]' ) );
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
+		$this->assertEquals( $res, invade( $wp2d )->update_aspects_services_list( 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
 		// When an update fails (WP_Error or error code response), the previously set option remains unchanged.
 		$mock->append( new Response( 400, reason: 'Bad Request' ) );
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
+		$this->assertFalse( invade( $wp2d )->update_aspects_services_list( 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 		$this->assertEquals( 'Error loading services.', $api->get_last_error( true ) );
 
 		// When getting an empty return, we get an empty array.
 		$res = [];
 		$mock->append( new Response( 200, body: '"configured_services":[]' ) );
-		$this->assertEquals( $res, wp2d_helper_call_private_method( $wp2d, 'update_aspects_services_list', 'services' ) );
+		$this->assertEquals( $res, invade( $wp2d )->update_aspects_services_list( 'services' ) );
 		$this->assertEquals( $res, $options->get_option( 'services_list' ) );
 
 		remove_filter( 'wp2d_guzzle_handler', $handler );
@@ -177,13 +177,13 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		// Get the necessary instances.
 		$wp2d    = WP2D::instance();
 		$options = WP2D_Options::instance();
-		$api     = wp2d_api_helper_get_fake_api_init_login();
+		$api     = $this->getFakeApiLogin();
 
 		// Set our fake initialised API object.
-		wp2d_helper_set_private_property( $wp2d, 'api', $api );
+		invade( $wp2d )->api = $api;
 
 		// Pod hasn't been set up yet, so return is null.
-		$this->assertNull( wp2d_helper_call_private_method( $wp2d, 'check_pod_connection_status' ) );
+		$this->assertNull( invade( $wp2d )->check_pod_connection_status() );
 
 		// Set pseudo options to simulate a set up pod.
 		$options->set_option( 'pod', 'pod1' );
@@ -192,10 +192,10 @@ class Tests_WP2D_WP_To_Diaspora extends WP_UnitTestCase {
 		$options->save();
 
 		// Fake init has no last_error, so it simulates a successful connection.
-		$this->assertTrue( wp2d_helper_call_private_method( $wp2d, 'check_pod_connection_status' ) );
+		$this->assertTrue( invade( $wp2d )->check_pod_connection_status() );
 
 		// Simulate an error in the API object.
-		wp2d_helper_set_private_property( $api, 'last_error', new WP_Error( 'wp_error_code', 'WP_Error message' ) );
-		$this->assertFalse( wp2d_helper_call_private_method( $wp2d, 'check_pod_connection_status' ) );
+		invade( $api )->last_error = new WP_Error( 'wp_error_code', 'WP_Error message' );
+		$this->assertFalse( invade( $wp2d )->check_pod_connection_status() );
 	}
 }

@@ -10,11 +10,6 @@
 // https://www.drupal.org/node/2597814
 defined( 'PHPUNIT_COMPOSER_INSTALL' ) || define( 'PHPUNIT_COMPOSER_INSTALL', __DIR__ . '/../vendor/autoload.php' );
 
-// Include helpers.
-require_once __DIR__ . '/helpers/general.php';
-require_once __DIR__ . '/helpers/wp2d-api.php';
-require_once __DIR__ . '/helpers/http-request-filters.php';
-
 /**
  * Determine where the WP test suite lives.
  *
@@ -46,3 +41,5 @@ tests_add_filter( 'muplugins_loaded', static function () {
 } );
 
 require_once $test_root . '/includes/bootstrap.php';
+
+require_once __DIR__ . '/helpers/wp2d-unit-test-case.php';

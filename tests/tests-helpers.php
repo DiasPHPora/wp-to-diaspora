@@ -1,72 +1,34 @@
 <?php
-/**
- * WP2D_Helpers tests.
- *
- * @package WP_To_Diaspora\Tests\WP2D_Helpers
- * @since   1.7.0
- */
 
-/**
- * Main API test class.
- *
- * @since 1.7.0
- */
-class Tests_WP2D_Helpers extends WP_UnitTestCase {
+class Tests_WP2D_Helpers extends Tests_WP2D_UnitTestCase {
 
 	/**
-	 * Test trying to add and get debug info when debugging is disabled.
-	 *
-	 * NOTE: Because of the constant, this test needs to run in
-	 * a separate process without preserving the global state.
-	 *
-	 * @since 1.7.0
-	 *
 	 * @preserveGlobalState disabled
 	 * @runInSeparateProcess
 	 */
 	public function test_debugging_disabled() {
-		$this->assertClassHasAttribute( 'debugging', 'WP2D_Helpers' );
-		$this->assertAttributeEmpty( 'debugging', 'WP2D_Helpers' );
-
 		define( 'WP2D_DEBUGGING', false );
 
 		$this->assertFalse( WP2D_Helpers::add_debugging( 'some debug info' ) );
-		$this->assertAttributeEmpty( 'debugging', 'WP2D_Helpers' );
-
 		$this->assertFalse( WP2D_Helpers::get_debugging() );
 	}
 
 	/**
-	 * Test adding and getting debug info.
-	 *
-	 * NOTE: Because of the constant, this test needs to run in
-	 * a separate process without preserving the global state.
-	 *
-	 * @since 1.7.0
-	 *
 	 * @preserveGlobalState disabled
 	 * @runInSeparateProcess
 	 */
 	public function test_debugging_enabled() {
-		$this->assertClassHasAttribute( 'debugging', 'WP2D_Helpers' );
-		$this->assertAttributeEmpty( 'debugging', 'WP2D_Helpers' );
-
 		define( 'WP2D_DEBUGGING', true );
 
 		$this->assertTrue( WP2D_Helpers::add_debugging( 'some debug info' ) );
-		$this->assertContains( 'some debug info', WP2D_Helpers::get_debugging() );
+		$this->assertStringContainsString( 'some debug info', WP2D_Helpers::get_debugging() );
 
 		$this->assertTrue( WP2D_Helpers::add_debugging( 'some more debug info' ) );
-		$this->assertContains( 'some debug info', WP2D_Helpers::get_debugging() );
-		$this->assertContains( 'some more debug info', WP2D_Helpers::get_debugging() );
+		$this->assertStringContainsString( 'some debug info', WP2D_Helpers::get_debugging() );
+		$this->assertStringContainsString( 'some more debug info', WP2D_Helpers::get_debugging() );
 	}
 
-	/**
-	 * Test converting a CSV string to an array.
-	 *
-	 * @since 1.7.0
-	 */
-	public function test_str_to_arr() {
+	public function test_converting_csv_string_to_array() {
 		// If we're already an array, stay an array.
 		$arr1a = [ 'a', 'b' ];
 		$arr1b = WP2D_Helpers::str_to_arr( $arr1a );
@@ -98,12 +60,7 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 		$this->assertEquals( $str5, $arr5 );
 	}
 
-	/**
-	 * Test converting an array to a CSV string.
-	 *
-	 * @since 1.7.0
-	 */
-	public function test_arr_to_str() {
+	public function test_converting_array_to_csv_string() {
 		// If we're already a string, stay a string.
 		$str1a = 'a,b';
 		$str1b = WP2D_Helpers::arr_to_str( $str1a );
@@ -135,11 +92,6 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 		$this->assertEquals( $arr5, $str5 );
 	}
 
-	/**
-	 * Test the encryption helpers.
-	 *
-	 * @since 1.7.0
-	 */
 	public function test_encryption() {
 		// Using the default key (AUTH_KEY).
 		$enc1 = WP2D_Helpers::encrypt( 'text-to-encrypt' );
@@ -153,26 +105,13 @@ class Tests_WP2D_Helpers extends WP_UnitTestCase {
 		$dec2 = WP2D_Helpers::decrypt( '51A7CCA3917CC6D5C6FE65A230858F14', 'custom-key' );
 		$this->assertEquals( 'text-to-encrypt', $dec2 );
 
-		// We can always encrypt.
+		$this->assertNull( WP2D_Helpers::encrypt( '' ) );
 		$this->assertNotEmpty( WP2D_Helpers::encrypt( 'i-always-work!' ) );
 
-		// If we actually pass a value, that is...
-		$this->assertFalse( WP2D_Helpers::encrypt( '' ) );
-		$this->assertFalse( WP2D_Helpers::encrypt( null ) );
-
-		// Same thing applies to decrypting. Where there is nothing, there is nothing.
-		$this->assertFalse( WP2D_Helpers::decrypt( '' ) );
-		$this->assertFalse( WP2D_Helpers::decrypt( null ) );
-
-		// Failed to decrypt.
+		$this->assertNull( WP2D_Helpers::decrypt( '' ) );
 		$this->assertNull( WP2D_Helpers::decrypt( 'some-totally-wrong-encrypted-value' ) );
 	}
 
-	/**
-	 * The API quick connect function.
-	 *
-	 * @since 1.7.0
-	 */
 	public function test_api_quick_connect() {
 		$this->markTestSkipped( 'Skipping for the moment.' );
 	}
