@@ -611,8 +611,8 @@ class WP2D_Options {
 	 */
 	public function display_render( $display ): void {
 		?>
-		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $display, 'full' ); ?>><?php esc_html_e( 'Full Post', 'wp-to-diaspora' ); ?></label><br />
-		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php esc_html_e( 'Excerpt', 'wp-to-diaspora' ); ?></label><br />
+		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="full" <?php checked( $display, 'full' ); ?>><?php esc_html_e( 'Full Post', 'wp-to-diaspora' ); ?></label><br/>
+		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="excerpt" <?php checked( $display, 'excerpt' ); ?>><?php esc_html_e( 'Excerpt', 'wp-to-diaspora' ); ?></label><br/>
 		<label><input type="radio" name="wp_to_diaspora_settings[display]" value="none" <?php checked( $display, 'none' ); ?>><?php esc_html_e( 'None', 'wp-to-diaspora' ); ?></label>
 		<?php
 	}
@@ -834,6 +834,7 @@ class WP2D_Options {
 	 * @since 2.2.0
 	 *
 	 * @param bool $save If the password should be saved to the options immediately.
+	 *
 	 */
 	public function attempt_password_upgrade( $save = false ): void {
 		if ( AUTH_KEY !== WP2D_ENC_KEY ) {
