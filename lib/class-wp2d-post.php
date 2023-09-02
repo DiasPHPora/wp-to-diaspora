@@ -198,9 +198,9 @@ class WP2D_Post {
 	/**
 	 * Post to diaspora* when saving a post.
 	 *
-	 * @since 1.5.0
-	 *
 	 * @todo  Maybe somebody wants to share a password protected post to a closed aspect.
+	 *
+	 * @since 1.5.0
 	 *
 	 * @param int     $post_id ID of the post being saved.
 	 * @param WP_Post $post    Post object being saved.
@@ -303,8 +303,9 @@ class WP2D_Post {
 		 *
 		 * @since 1.5.4.1
 		 *
-		 * @param string    $default   The whole HTML of the title link to be outputted.
 		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
+		 *
+		 * @param string    $default   The whole HTML of the title link to be outputted.
 		 */
 		return apply_filters( 'wp2d_title_filter', "<p>{$title_link}</p>", $this );
 	}
@@ -366,9 +367,9 @@ class WP2D_Post {
 	/**
 	 * Get the post's excerpt in a nice format.
 	 *
+	 * @return string Post's excerpt.
 	 * @since 1.5.0
 	 *
-	 * @return string Post's excerpt.
 	 */
 	private function get_excerpt_content(): string {
 		// Look for the excerpt in the following order:
@@ -390,8 +391,9 @@ class WP2D_Post {
 		 *
 		 * @since 2.1.0
 		 *
-		 * @param string    $default   The whole HTML of the excerpt to be outputted.
 		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the excerpt.
+		 *
+		 * @param string    $default   The whole HTML of the excerpt to be outputted.
 		 */
 		return apply_filters( 'wp2d_excerpt_filter', "<p>{$excerpt}</p>", $this );
 	}
@@ -452,9 +454,10 @@ class WP2D_Post {
 		 *
 		 * @since 2.1.0
 		 *
-		 * @param string    $default   The whole string of tags to be outputted.
 		 * @param array     $tags      All tags that are assigned to this post.
 		 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the tags output.
+		 *
+		 * @param string    $default   The whole string of tags to be outputted.
 		 */
 		return apply_filters( 'wp2d_tags_filter', $tags_to_add, $diaspora_tags, $this );
 	}
@@ -478,9 +481,10 @@ class WP2D_Post {
 			 *
 			 * @since 1.5.4.1
 			 *
-			 * @param string    $default   The whole HTML of the text and link to be outputted.
 			 * @param WP2D_Post $wp2d_post This object, to allow total customisation of the title.
 			 * @param string    $prefix    The "Originally posted at:" prefix before the link.
+			 *
+			 * @param string    $default   The whole HTML of the text and link to be outputted.
 			 */
 			return apply_filters( 'wp2d_posted_at_link_filter', "<p>{$posted_at_link}</p>", $this, $prefix );
 		}
@@ -494,6 +498,7 @@ class WP2D_Post {
 	 * @since 1.5.0
 	 *
 	 * @param object $response Response from the API containing the diaspora* post details.
+	 *
 	 */
 	private function save_to_history( object $response ): void {
 		// Make sure the post history is an array.
@@ -532,10 +537,10 @@ class WP2D_Post {
 	/**
 	 * Removes '[embed]' and '[/embed]' left by embed_url.
 	 *
-	 * @since 1.5.0
-	 *
 	 * @todo  It would be great to fix it using only one filter.
 	 *       It's happening because embed filter is being removed by remove_all_filters('the_content') on WP2D_Post::post().
+	 *
+	 * @since 1.5.0
 	 *
 	 * @param string $content Content of the post.
 	 *
@@ -565,8 +570,9 @@ class WP2D_Post {
 		 *
 		 * @since 1.5.3
 		 *
-		 * @param string $default The whole HTML of the caption.
 		 * @param string $caption The caption text.
+		 *
+		 * @param string $default The whole HTML of the caption.
 		 */
 		return apply_filters( 'wp2d_image_caption', "<blockquote>{$caption}</blockquote>", $caption );
 	}
@@ -578,9 +584,10 @@ class WP2D_Post {
 	 *
 	 * @see   img_caption_shortcode()
 	 *
+	 * @param string $content The image element, possibly wrapped in a hyperlink.
+	 *
 	 * @param string $empty   The caption output. Default empty.
 	 * @param array  $attr    Attributes of the caption shortcode.
-	 * @param string $content The image element, possibly wrapped in a hyperlink.
 	 *
 	 * @return string The caption shortcode output.
 	 */
@@ -661,6 +668,7 @@ class WP2D_Post {
 	 * @since 1.5.0
 	 *
 	 * @param WP_Post $post The object for the current post.
+	 *
 	 */
 	public function meta_box_render( WP_Post $post ): void {
 		$this->assign_wp_post( $post );
@@ -702,6 +710,7 @@ class WP2D_Post {
 	 * @since 1.5.0
 	 *
 	 * @param int $post_id The ID of the post being saved.
+	 *
 	 */
 	public function save_meta_box_data( int $post_id ): void {
 		/*
@@ -775,9 +784,9 @@ class WP2D_Post {
 	/**
 	 * Add admin notices when a post gets displayed.
 	 *
-	 * @since 1.5.0
-	 *
 	 * @todo  Ignore post error with AJAX.
+	 *
+	 * @since 1.5.0
 	 */
 	public function admin_notices(): void {
 		global $post, $pagenow;

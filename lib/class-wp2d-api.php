@@ -102,8 +102,8 @@ class WP2D_API {
 	/**
 	 * Constructor to initialise the connection to diaspora*.
 	 *
-	 * @param string $pod The pod domain to connect to.
-	 * @param bool $is_secure Is this a secure server? (Default: true).
+	 * @param string $pod       The pod domain to connect to.
+	 * @param bool   $is_secure Is this a secure server? (Default: true).
 	 */
 	public function __construct(
 		private string $pod,
@@ -139,8 +139,8 @@ class WP2D_API {
 	 * Initialise the connection to diaspora*. The pod and protocol can be changed by passing new parameters.
 	 * Check if we can connect to the pod to retrieve the token.
 	 *
-	 * @param string $pod Pod domain to connect to, if it should be changed.
-	 * @param bool $is_secure Is this a secure server? (Default: true).
+	 * @param string $pod       Pod domain to connect to, if it should be changed.
+	 * @param bool   $is_secure Is this a secure server? (Default: true).
 	 *
 	 * @return bool True if we could get the token, else false.
 	 */
@@ -287,7 +287,7 @@ class WP2D_API {
 	 *
 	 * @param string $username Username used for login.
 	 * @param string $password Password used for login.
-	 * @param bool $force Force a new login even if we are already logged in.
+	 * @param bool   $force    Force a new login even if we are already logged in.
 	 *
 	 * @return bool Did the login succeed?
 	 */
@@ -378,9 +378,9 @@ class WP2D_API {
 	/**
 	 * Post to diaspora*.
 	 *
-	 * @param string $text The text to post.
-	 * @param array|string $aspects The aspects to post to. Array or comma separated ids.
-	 * @param array $extra_data Any extra data to be added to the post call.
+	 * @param string       $text       The text to post.
+	 * @param array|string $aspects    The aspects to post to. Array or comma separated ids.
+	 * @param array        $extra_data Any extra data to be added to the post call.
 	 *
 	 * @return bool|object Return the response data of the new diaspora* post if successfully posted, else false.
 	 */
@@ -437,12 +437,12 @@ class WP2D_API {
 	/**
 	 * Delete a post or comment from diaspora*.
 	 *
-	 * @param string $what What to delete, 'post' or 'comment'.
-	 * @param string $id The ID of the post or comment to delete.
-	 *
-	 * @return bool If the deletion was successful.
 	 * @since 1.6.0
 	 *
+	 * @param string $id   The ID of the post or comment to delete.
+	 * @param string $what What to delete, 'post' or 'comment'.
+	 *
+	 * @return bool If the deletion was successful.
 	 */
 	public function delete( string $what, string $id ): bool {
 		if ( ! $this->check_login() ) {
@@ -520,9 +520,9 @@ class WP2D_API {
 	/**
 	 * Get the list of aspects or connected services.
 	 *
-	 * @param string $type Type of list to get.
-	 * @param array $list The current list of items.
-	 * @param bool $force Force to fetch new list.
+	 * @param string $type  Type of list to get.
+	 * @param array  $list  The current list of items.
+	 * @param bool   $force Force to fetch new list.
 	 *
 	 * @return array|bool List of fetched aspects or services, or false.
 	 */
@@ -575,9 +575,9 @@ class WP2D_API {
 	/**
 	 * Get the Handler Stack for Guzzle to extend Requests and Responses.
 	 *
-	 * @return HandlerStack
 	 * @since unreleased
 	 *
+	 * @return HandlerStack
 	 */
 	private function get_guzzle_handler(): HandlerStack {
 		$handler = HandlerStack::create();
@@ -618,14 +618,13 @@ class WP2D_API {
 	/**
 	 * Helper method to set the last occurred error.
 	 *
-	 * @param string|int $code Error code.
-	 * @param string $message Error message.
-	 * @param mixed $data Error data.
+	 * @since 1.6.0
 	 *
 	 * @see   WP_Error::__construct()
 	 *
-	 * @since 1.6.0
-	 *
+	 * @param string|int $code    Error code.
+	 * @param string     $message Error message.
+	 * @param mixed      $data    Error data.
 	 */
 	private function error( string|int $code, string $message, mixed $data = '' ): void {
 		// Always add the code and message of the last request.
@@ -640,7 +639,7 @@ class WP2D_API {
 	/**
 	 * Parse the regex and return the found string.
 	 *
-	 * @param string $regex Shorthand of a saved regex or a custom regex.
+	 * @param string $regex   Shorthand of a saved regex or a custom regex.
 	 * @param string $content Text to parse the regex with.
 	 *
 	 * @return string The found string, or an empty string.
