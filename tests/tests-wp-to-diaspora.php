@@ -23,7 +23,7 @@ class Tests_WP2D_WP_To_Diaspora extends Tests_WP2D_UnitTestCase {
 	 * @since 1.7.0
 	 */
 	public function test_wp_to_diaspora_instance() {
-		$this->assertClassHasStaticAttribute( 'instance', 'WP2D' );
+		$this->assertTrue( property_exists( 'WP2D', 'instance' ) );
 	}
 
 	/**
