@@ -1,8 +1,8 @@
 WP to diaspora*
 =====================
-[![Build Status](https://travis-ci.org/DiasPHPora/wp-to-diaspora.svg?branch=master)](https://travis-ci.org/DiasPHPora/wp-to-diaspora)
-[![Coverage via Codecov](https://codecov.io/github/DiasPHPora/wp-to-diaspora/coverage.svg?branch=master)](https://codecov.io/github/DiasPHPora/wp-to-diaspora?branch=master)
-[![Scrutinizer Code Quality Score](https://scrutinizer-ci.com/g/DiasPHPora/wp-to-diaspora/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/DiasPHPora/wp-to-diaspora)
+[![Tests](https://github.com/DiasPHPora/wp-to-diaspora/actions/workflows/tests.yaml/badge.svg)](https://github.com/DiasPHPora/wp-to-diaspora/actions/workflows/tests.yaml)
+[![Code Coverage](https://codecov.io/github/DiasPHPora/wp-to-diaspora/coverage.svg?branch=master)](https://codecov.io/github/DiasPHPora/wp-to-diaspora?branch=master)
+[![Code Quality](https://scrutinizer-ci.com/g/DiasPHPora/wp-to-diaspora/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/DiasPHPora/wp-to-diaspora)
 
 > **We are looking for new maintainers for this plugin!**
 
