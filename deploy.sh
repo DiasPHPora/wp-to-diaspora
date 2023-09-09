@@ -5,8 +5,6 @@
 # - https://gist.github.com/kloon/6487562
 # - https://github.com/GaryJones/wordpress-plugin-svn-deploy
 
-set -e
-
 echo
 echo "WordPress Plugin from Git to SVN"
 echo "================================"
@@ -132,11 +130,11 @@ cd "${SVN_PATH}/assets/"
 
 # Add all new files.
 printf " - Adding new files..."
-svn status | grep -v "^.[ \t]*\..*" | grep "^?" | awk '{print $2}' | xargs svn add &>/dev/null
+svn status | grep -v "^.[ \t]*\..*" | grep "^?" | awk '{print $2"@"}' | xargs svn add
 echo " Done."
 # Remove any deleted files.
 printf " - Removing deleted files..."
-svn status | grep -v "^.[ \t]*\..*" | grep "^\!" | awk '{print $2}' | xargs svn del &>/dev/null
+svn status | grep -v "^.[ \t]*\..*" | grep "^\!" | awk '{print $2"@"}' | xargs svn del
 echo " Done."
 printf " - Commit assets..."
 svn commit --username="${SVN_USER}" -m "Version ${NEW_VERSION}"
@@ -169,11 +167,11 @@ echo " Done."
 
 # Add all new files.
 printf " - Adding new files..."
-svn status | grep -v "^.[ \t]*\..*" | grep "^?" | awk '{print $2}' | xargs svn add &>/dev/null
+svn status | grep -v "^.[ \t]*\..*" | grep "^?" | awk '{print $2"@"}' | xargs svn add &>/dev/null
 echo " Done."
 # Remove any deleted files.
 printf " - Removing deleted files..."
-svn status | grep -v "^.[ \t]*\..*" | grep "^\!" | awk '{print $2}' | xargs svn del &>/dev/null
+svn status | grep -v "^.[ \t]*\..*" | grep "^\!" | awk '{print $2"@"}' | xargs svn del &>/dev/null
 echo " Done."
 
 printf " - Commit to trunk..."
