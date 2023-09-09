@@ -9,7 +9,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-use League\HTMLToMarkdown\HtmlConverter;
+use WP2D\Dependencies\League\HTMLToMarkdown\HtmlConverter;
 
 /**
  * Custom diaspora* post class to manage all post related things.

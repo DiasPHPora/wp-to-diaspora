@@ -41,7 +41,8 @@
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
     "symfony/var-dumper": "^5.4",
-    "spatie/invade": "^2.0"
+    "spatie/invade": "^2.0",
+    "bamarni/composer-bin-plugin": "^1.8"
   },
   "autoload": {
     "classmap": [
@@ -49,6 +50,7 @@
     ]
   },
   "scripts": {
+    "compose": "mozart compose && composer dump-autoload",
     "check-code": [
       "./vendor/bin/parallel-lint . --exclude vendor",
       "./vendor/bin/phpcs"
@@ -60,9 +62,23 @@
       "./vendor/bin/phpunit --coverage-clover=coverage.xml"
     ]
   },
+  "extra": {
+    "mozart": {
+      "dep_namespace": "WP2D\\Dependencies\\",
+      "dep_directory": "/lib/Dependencies/",
+      "classmap_directory": "/lib/Dependencies/",
+      "classmap_prefix": "WP2D_",
+      "packages": [
+        "guzzlehttp/guzzle",
+        "league/html-to-markdown"
+      ],
+      "delete_vendor_directories": true
+    }
+  },
   "config": {
     "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "bamarni/composer-bin-plugin": true
     }
   }
 }

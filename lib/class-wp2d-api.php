@@ -18,13 +18,13 @@
  * @since   1.2.7
  */
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use WP2D\Dependencies\GuzzleHttp\Client;
+use WP2D\Dependencies\GuzzleHttp\Exception\ClientException;
+use WP2D\Dependencies\GuzzleHttp\HandlerStack;
+use WP2D\Dependencies\GuzzleHttp\Middleware;
+use WP2D\Dependencies\Psr\Http\Client\ClientInterface;
+use WP2D\Dependencies\Psr\Http\Message\RequestInterface;
+use WP2D\Dependencies\Psr\Http\Message\ResponseInterface;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
