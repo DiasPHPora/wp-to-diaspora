@@ -37,8 +37,8 @@
   "require-dev": {
     "phpunit/phpunit": "^9.6",
     "php-parallel-lint/php-parallel-lint": "^1.3",
-    "wp-coding-standards/wpcs": "^2.3",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
+    "wp-coding-standards/wpcs": "^3.0",
+    "dealerdirect/phpcodesniffer-composer-installer": "^v1.0",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
     "symfony/var-dumper": "^5.4",
     "spatie/invade": "^2.0",
@@ -52,7 +52,7 @@
   "scripts": {
     "compose": "mozart compose && composer dump-autoload",
     "check-code": [
-      "./vendor/bin/parallel-lint . --exclude vendor",
+      "./vendor/bin/parallel-lint . --exclude vendor --exclude vendor-bin",
       "./vendor/bin/phpcs"
     ],
     "test": [

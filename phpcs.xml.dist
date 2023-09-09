@@ -4,8 +4,10 @@
 
 	<!-- What to scan -->
 	<file>.</file>
+	<exclude-pattern>/lib/Dependencies/</exclude-pattern>
 	<exclude-pattern>/tests/</exclude-pattern>
 	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/vendor-bin/</exclude-pattern>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
@@ -32,7 +34,10 @@
 	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
 	<config name="minimum_supported_wp_version" value="4.6"/>
 	<rule ref="WordPress">
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
+		<exclude name="Universal.NamingConventions.NoReservedKeywordParameterNames" />
+		<exclude name="Universal.Operators.DisallowShortTernary.Found" />
+		<exclude name="Generic.CodeAnalysis.AssignmentInCondition.Found" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
