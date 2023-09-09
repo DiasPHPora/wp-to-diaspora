@@ -34,7 +34,8 @@ deploy.sh
 phpcs.xml.dist
 phpunit.xml.dist
 README.md
-tests"
+tests
+vendor-bin"
 
 # Set the default editors for the commit messages.
 EDITOR="${EDITOR:-${SVN_EDITOR}}"
@@ -151,7 +152,13 @@ cd "${SVN_PATH}/trunk/"
 
 # Install the dependencies with composer
 printf " - Bring dependencies up to date (composer install)..."
-composer install --no-dev &>/dev/null
+composer install
+composer bin build install
+composer compose
+
+composer install --no-dev --prefer-dist --optimize-autoloader
+composer dump-autoload
+
 # We don't need the vendor bin folder.
 rm -rf vendor/bin &>/dev/null
 echo " Done."
