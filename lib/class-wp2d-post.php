@@ -584,10 +584,9 @@ class WP2D_Post {
 	 *
 	 * @see   img_caption_shortcode()
 	 *
-	 * @param string $content The image element, possibly wrapped in a hyperlink.
-	 *
 	 * @param string $empty   The caption output. Default empty.
 	 * @param array  $attr    Attributes of the caption shortcode.
+	 * @param string $content The image element, possibly wrapped in a hyperlink.
 	 *
 	 * @return string The caption shortcode output.
 	 */

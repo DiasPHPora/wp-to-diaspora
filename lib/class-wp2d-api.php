@@ -439,8 +439,8 @@ class WP2D_API {
 	 *
 	 * @since 1.6.0
 	 *
-	 * @param string $id   The ID of the post or comment to delete.
 	 * @param string $what What to delete, 'post' or 'comment'.
+	 * @param string $id   The ID of the post or comment to delete.
 	 *
 	 * @return bool If the deletion was successful.
 	 */
@@ -652,6 +652,6 @@ class WP2D_API {
 
 		preg_match( $regex, $content, $matches );
 
-		return trim( array_pop( $matches ) );
+		return trim( array_pop( $matches ) ?? '' );
 	}
 }
