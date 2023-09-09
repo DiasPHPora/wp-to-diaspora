@@ -260,7 +260,9 @@ class WP2D {
 		}
 
 		$options = WP2D_Options::instance();
-		if ( md5( AUTH_KEY ) !== $options->get_option( 'auth_key_hash' ) ) {
+
+		$auth_hash_key = $options->get_option( 'auth_key_hash' );
+		if ( $auth_hash_key && md5( AUTH_KEY ) !== $auth_hash_key ) {
 			printf( '<div class="error notice is-dismissible"><p>%1$s</p></div>',
 				sprintf(
 					esc_html_x( 'Looks like your WordPress secret keys have changed! Please %1$sre-save your login info%2$s.', 'placeholders are link tags to the settings page.', 'wp-to-diaspora' ),
