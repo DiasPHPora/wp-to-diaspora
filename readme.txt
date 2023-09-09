@@ -3,8 +3,8 @@ Contributors: gutobenn, noplanman
 Donate link: https://github.com/DiasPHPora/wp-to-diaspora/
 Tags: diaspora, integration, share, post, social, network
 Requires at least: 4.6
-Tested up to: 5.5.1
-Minimum PHP: 7.2
+Tested up to: 6.3.1
+Minimum PHP: 8.0
 Stable tag: 3.0.2
 Author URI: https://github.com/DiasPHPora/wp-to-diaspora/graphs/contributors
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
@@ -26,7 +26,7 @@ With the focus on being **intuitive**, sharing your posts to diaspora* is made *
 Simply write your post and have it shared to diaspora* at the same time you publish it on your website.
 
 = Minimum requirements =
-WordPress 4.6, PHP 7.2.
+WordPress 4.6, PHP 8.0.
 
 = Getting started =
 After installing and activating the plugin, be sure to visit the plugin's settings page at 'Settings -> WP to diaspora' on your WordPress Admin page.
@@ -59,7 +59,7 @@ Also, if you have an idea you would like to see in this plugin or if you've foun
 
 == Installation ==
 
-You can either use the built in WordPress installer or install the plugin manually.
+You can either use the built-in WordPress installer or install the plugin manually.
 
 For an automated installation:
 1. Go to 'Plugins -> Add New' on your WordPress Admin page.
@@ -93,6 +93,11 @@ Basically, the server your WordPress installation is set up on makes a connectio
 Quite straightforward, right?
 
 == Changelog ==
+
+= unreleased =
+* Min PHP 8.0.
+* Integrate PHP dependencies into WP2D namespace.
+* Move tests to GitHub Actions and test up to PHP 8.2.
 
 = 3.0.2 =
 * Fix duplicate posting problem by updating meta data earlier, preventing any race condition
@@ -255,6 +260,9 @@ Quite straightforward, right?
 * First version
 
 == Upgrade Notice ==
+
+= unreleased =
+This update requires at least PHP 8.0.
 
 = 3.0.1 =
 This update requires at least WordPress 4.6 and PHP 7.2.

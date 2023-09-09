@@ -95,7 +95,7 @@ class WP2D_Helpers {
 	public static function arr_to_str( array|string &$input ): string {
 		if ( is_array( $input ) ) {
 			// Trim each entry > Remove blanks > Implode them together.
-			$input = implode( ',', array_filter( array_map( 'trim', $input ) ) );
+			$input = implode( ',', array_filter( array_map( 'trim', array_filter( $input ) ) ) );
 		} else {
 			// If we're already a string, make sure we return it clean.
 			self::str_to_arr( $input );

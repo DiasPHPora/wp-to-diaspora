@@ -59,7 +59,7 @@
       "./vendor/bin/phpunit"
     ],
     "test-cov": [
-      "./vendor/bin/phpunit --coverage-clover=coverage.xml"
+      "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-clover coverage.xml"
     ]
   },
   "extra": {
