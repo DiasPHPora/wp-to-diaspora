@@ -9,7 +9,7 @@
     "social",
     "sharing"
   ],
-  "license": "GPL-2.0",
+  "license": "GPL-2.0-or-later",
   "homepage": "https://github.com/DiasPHPora/wp-to-diaspora",
   "support": {
     "issues": "https://github.com/DiasPHPora/wp-to-diaspora/issues",
