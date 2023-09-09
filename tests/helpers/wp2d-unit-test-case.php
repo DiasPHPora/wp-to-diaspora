@@ -1,7 +1,7 @@
 <?php
 
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
+use WP2D\Dependencies\GuzzleHttp\Handler\MockHandler;
+use WP2D\Dependencies\GuzzleHttp\HandlerStack;
 
 /**
  * WP_To_Diaspora tests.

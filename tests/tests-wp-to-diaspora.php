@@ -6,9 +6,9 @@
  * @since   1.7.0
  */
 
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
+use WP2D\Dependencies\GuzzleHttp\Handler\MockHandler;
+use WP2D\Dependencies\GuzzleHttp\HandlerStack;
+use WP2D\Dependencies\GuzzleHttp\Psr7\Response;
 
 /**
  * Main WP to diaspora test class.

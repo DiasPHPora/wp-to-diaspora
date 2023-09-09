@@ -1,4 +1,5 @@
 /lib/Dependencies
 /vendor
+/vendor-bin/build/vendor
 /phpunit.xml
 /.phpunit.result.cache

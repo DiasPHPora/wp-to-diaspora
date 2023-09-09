@@ -1,8 +1,8 @@
 <?php
 
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
+use WP2D\Dependencies\GuzzleHttp\Exception\RequestException;
+use WP2D\Dependencies\GuzzleHttp\Psr7\Request;
+use WP2D\Dependencies\GuzzleHttp\Psr7\Response;
 
 class Tests_WP2D_API extends Tests_WP2D_UnitTestCase {
 
