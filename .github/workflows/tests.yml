@@ -1,0 +1,97 @@
+name: Tests
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+permissions:
+  contents: read
+
+env:
+  WP_DEVELOP_DIR: /tmp/wordpress/
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['8.0', '8.1', '8.2']
+
+    services:
+      mariadb:
+        image: mariadb:10.3
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+
+    steps:
+    - name: Verify MariaDB connection
+      run: |
+        while ! mysqladmin ping -h127.0.0.1 -P3306 --silent; do
+          sleep 1
+        done
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+
+    - name: Install WordPress
+      run: |
+        # set up WP install
+        git clone --depth=1 --branch="trunk" git://develop.git.wordpress.org/ "$WP_DEVELOP_DIR"
+        cd "$WP_DEVELOP_DIR"
+        # set up tests config
+        mv wp-tests-config-sample.php wp-tests-config.php
+        sed -i "s/youremptytestdbnamehere/wordpress_test/" wp-tests-config.php
+        sed -i "s/yourusernamehere/root/" wp-tests-config.php
+        sed -i "s/yourpasswordhere/root/" wp-tests-config.php
+        # little hack to prevent redeclaration error, as we're setting AUTH_KEY in phpunit.xml.dist
+        sed -i "s/AUTH_KEY/AUTH_KEY_UNUSED/" wp-tests-config.php
+        # set up database
+        mysql -h127.0.0.1 -P3306 -uroot -proot -e "create database wordpress_test;"
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          vendor
+          vendor-bin/build/vendor
+          /tmp/wordpress
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Install dependencies
+      run: |
+        composer install --prefer-dist --no-progress
+        composer bin build install
+        composer compose
+
+    - name: Check PHP code
+      run: composer check-code
+
+    - name: Run test suite
+      if: ${{ matrix.php != '8.0'}}
+      run: composer test
+
+    - name: Run test suite (with coverage)
+      if: ${{ matrix.php == '8.0'}}
+      run: |
+        composer test-cov
+        bash <(curl -s https://codecov.io/bash)
