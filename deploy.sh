@@ -23,6 +23,7 @@ SVN_USER="gutobenn" # your svn username
 SVN_IGNORE="
 .editorconfig
 .git
+.github
 .gitignore
 .scrutinizer.yml
 .travis.yml

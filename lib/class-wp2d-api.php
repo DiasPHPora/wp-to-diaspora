@@ -575,7 +575,7 @@ class WP2D_API {
 	/**
 	 * Get the Handler Stack for Guzzle to extend Requests and Responses.
 	 *
-	 * @since unreleased
+	 * @since 4.0.0
 	 *
 	 * @return HandlerStack
 	 */

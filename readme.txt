@@ -5,7 +5,7 @@ Tags: diaspora, integration, share, post, social, network
 Requires at least: 4.6
 Tested up to: 6.3.1
 Minimum PHP: 8.0
-Stable tag: 3.0.2
+Stable tag: 4.0.0
 Author URI: https://github.com/DiasPHPora/wp-to-diaspora/graphs/contributors
 Plugin URI: https://github.com/DiasPHPora/wp-to-diaspora/
 License: GPLv2 or later
@@ -94,7 +94,7 @@ Quite straightforward, right?
 
 == Changelog ==
 
-= unreleased =
+= 4.0.0 =
 * Min PHP 8.0.
 * Integrate PHP dependencies into WP2D namespace.
 * Move tests to GitHub Actions and test up to PHP 8.2.
@@ -261,8 +261,9 @@ Quite straightforward, right?
 
 == Upgrade Notice ==
 
-= unreleased =
+= 4.0.0 =
 This update requires at least PHP 8.0.
+We are looking for new maintainers to keep this project alive, [get in touch](https://noplanman.ch)!
 
 = 3.0.1 =
 This update requires at least WordPress 4.6 and PHP 7.2.

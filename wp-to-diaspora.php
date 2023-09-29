@@ -3,7 +3,7 @@
  * Plugin Name:       WP to diaspora*
  * Plugin URI:        https://github.com/DiasPHPora/wp-to-diaspora
  * Description:       Automatically shares WordPress posts on diaspora*
- * Stable tag:        3.0.2
+ * Version:           4.0.0
  * Requires at least: 4.6
  * Tested up to:      6.3.1
  * Requires PHP:      8.0
@@ -31,14 +31,14 @@
  * @link      https://github.com/DiasPHPora/wp-to-diaspora
  * @author    Augusto Bennemann <gutobenn@gmail.com>
  * @copyright Copyright (c) 2023, Augusto Bennemann, Armando Lüscher
- * @version   3.0.2
+ * @version   4.0.0
  * @license   https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-define( 'WP2D_VERSION', '3.0.2' );
+define( 'WP2D_VERSION', '4.0.0' );
 define( 'WP2D_BASENAME', plugin_basename( __FILE__ ) );
 
 require_once __DIR__ . '/vendor/autoload.php';
